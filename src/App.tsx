@@ -54,7 +54,7 @@ export default function App() {
   const clock = useClock()
   // The desktop mounts underneath the boot curtain, not after it. If this
   // component threw, the site would still be there behind it.
-  const [booting, setBooting] = useState(shouldBoot)
+  const [booting, setBooting] = useState(() => shouldBoot(window.location.pathname))
   const [photoStatus, setPhotoStatus] = useState('')
   const [workStatus, setWorkStatus] = useState('')
 

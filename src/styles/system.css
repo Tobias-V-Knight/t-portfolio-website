@@ -625,34 +625,59 @@ body {
   pointer-events: none;
 }
 
-.mac-boot-inner { width: min(560px, 100%); }
+.mac-boot-inner { width: min(760px, 100%); }
+
+/* The site's name, at a size that makes it obvious what you are entering.
+   This is the one place on the site where bitmap type is set large, and it
+   works here because it is four words on a black screen, not a paragraph. */
+.mac-boot-title {
+  margin: 0 0 22px;
+  font-family: var(--mac-chrome);
+  font-size: 34px;
+  line-height: 1;
+  letter-spacing: 0.03em;
+  color: #d8ffdd;
+  word-break: break-word;
+}
 
 .mac-boot-log {
-  margin: 0;
   font-family: var(--mac-chrome);
   font-size: 16px;
   line-height: 1.75;
   color: #9ef0a8;
-  white-space: pre-wrap;
-  word-break: break-word;
 }
 
-.mac-boot-log span[data-dim='true'] { color: #4e7a58; }
+.mac-boot-line[data-dim='true'] { color: #4e7a58; }
 
-/* The caret blinks. It is the only animation on the site, and it is the one
-   place a blinking thing is period correct rather than decorative. */
-.mac-boot-caret {
-  display: inline-block;
-  width: 9px;
-  height: 15px;
-  background: #9ef0a8;
-  vertical-align: -2px;
-  animation: mac-blink 1s steps(1) infinite;
+.mac-boot-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  line-height: 1.9;
+  white-space: nowrap;
 }
 
-@keyframes mac-blink {
-  0%, 50% { opacity: 1; }
-  50.01%, 100% { opacity: 0; }
+.mac-boot-epoch { color: #6fbf80; }
+.mac-boot-num { color: #9ef0a8; }
+.mac-boot-best { color: #d8ffdd; min-width: 40px; }
+
+/* The training bar. An element that fills, not hash marks retyped every
+   tick, so it actually reads as a measurement of something. */
+.mac-boot-bar {
+  flex: 0 0 auto;
+  width: 190px;
+  height: 11px;
+  border: 1px solid #2f5c39;
+  background: #0a1b0f;
+  padding: 1px;
+  display: block;
+}
+
+.mac-boot-bar i {
+  display: block;
+  height: 100%;
+  background: #3ddc63;
+  transition: width 90ms linear;
 }
 
 .mac-boot-skip {
@@ -661,6 +686,40 @@ body {
   font-size: 16px;
   line-height: 1;
   color: #3f5f48;
+}
+
+/* The prompt that waits for Enter. Brighter than everything above it, because
+   at this point it is the only thing on screen the visitor has to act on. */
+.mac-boot-prompt {
+  margin: 26px 0 0;
+  font-family: var(--mac-chrome);
+  font-size: 16px;
+  line-height: 1;
+  color: #d8ffdd;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.mac-boot-caret {
+  display: inline-block;
+  width: 9px;
+  height: 15px;
+  background: #d8ffdd;
+  animation: mac-blink 1s steps(1) infinite;
+}
+
+@keyframes mac-blink {
+  0%, 50% { opacity: 1; }
+  50.01%, 100% { opacity: 0; }
+}
+
+@media (max-width: 768px) {
+  .mac-boot-title { font-size: 22px; }
+  .mac-boot-log { font-size: 16px; }
+  .mac-boot-bar { width: 90px; }
+  .mac-boot-row { gap: 8px; }
+  .mac-boot-line { word-break: break-word; }
 }
 
 /* --- Unanswered copy blanks ---------------------------------------------- */
