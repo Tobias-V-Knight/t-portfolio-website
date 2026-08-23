@@ -188,7 +188,9 @@ body {
 .mac-icons {
   position: absolute;
   top: 18px;
-  right: 18px;
+  /* Left, not right. The CRT owns the right side now, and left is where a
+     real Mac put the disk and the folders anyway. */
+  left: 18px;
   display: flex;
   flex-direction: column;
   gap: 6px;
@@ -497,6 +499,111 @@ body {
   border-top: 1px solid var(--mac-lo);
 }
 
+/* --- The CRT ------------------------------------------------------------- */
+
+/* Scenery. It sits behind every window, takes no clicks, and is the one thing
+   on the desktop that is an object rather than a control. */
+.mac-crt {
+  position: absolute;
+  right: 24px;
+  bottom: 18px;
+  width: 340px;
+  max-width: 34vw;
+  pointer-events: none;
+  user-select: none;
+  filter: drop-shadow(3px 4px 0 rgba(0, 0, 0, 0.3));
+}
+
+.mac-crt svg { width: 100%; height: auto; display: block; }
+
+/* --- WORK window: filter chips and the project list ---------------------- */
+
+.mac-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 10px;
+  margin: 0 0 18px;
+  background: var(--mac-face);
+  border: 1px solid var(--mac-line);
+  box-shadow: inset 1px 1px 0 var(--mac-lo), inset -1px -1px 0 var(--mac-hi);
+}
+
+.mac-chip {
+  font-family: var(--mac-chrome);
+  font-size: 16px;
+  line-height: 1;
+  padding: 8px 10px;
+  min-height: 32px;
+  background: var(--mac-paper);
+  color: var(--mac-ink);
+  border: 1px solid var(--mac-line);
+  box-shadow: inset 1px 1px 0 var(--mac-hi), inset -1px -1px 0 var(--mac-lo);
+  cursor: default;
+  white-space: nowrap;
+}
+
+/* The selected chip inverts rather than tinting, which is how a classic Mac
+   showed selection and is legible without relying on colour. */
+.mac-chip[data-on='true'] {
+  background: var(--mac-ink);
+  color: var(--mac-paper);
+  box-shadow: inset 1px 1px 0 var(--mac-lo);
+}
+
+.mac-worklist {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.mac-workrow {
+  padding: 0 0 14px;
+  margin: 0 0 14px;
+  border-bottom: 1px solid #d5d2cb;
+}
+
+.mac-workrow:last-child { border-bottom: 0; }
+
+.mac-workrow-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 4px;
+}
+
+/* A project with a case study is a button and looks like one. A project
+   without one is plain text, so nothing on this list promises a page that
+   does not exist. */
+.mac-workrow-title {
+  font-family: var(--mac-body);
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--mac-accent);
+  background: none;
+  border: 0;
+  padding: 0;
+  text-align: left;
+  cursor: default;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.mac-workrow-title[data-static='true'] {
+  color: var(--mac-ink);
+  text-decoration: none;
+}
+
+.mac-workrow-line {
+  margin: 0 0 6px;
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+.mac-workrow .mac-meta a { color: var(--mac-accent); }
+
 /* --- Focus, motion, selection ------------------------------------------- */
 
 :focus-visible {
@@ -559,6 +666,16 @@ body {
   }
 
   .mac-icon { width: 100%; min-height: 96px; }
+
+  .mac-crt {
+    position: static;
+    order: 2;
+    width: 260px;
+    max-width: 70%;
+    margin: 8px auto 28px;
+  }
+
+  .mac-chips { position: sticky; top: 0; z-index: 2; }
 
   .mac-window {
     position: fixed !important;

@@ -11,9 +11,9 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useLocation, useNavigate, useNavigationType } from 'react-router-dom'
-import { projects } from '../data/content'
+import { windowProjects } from '../data/content'
 
-export type WindowKind = 'intro' | 'project' | 'photos' | 'text' | 'trash'
+export type WindowKind = 'intro' | 'project' | 'photos' | 'text' | 'trash' | 'work'
 
 export interface WindowDef {
   id: string
@@ -50,6 +50,15 @@ export const windowDefs: WindowDef[] = [
     spawn: { x: 0.3, y: 0.2 },
   },
   {
+    id: 'work',
+    title: 'WORK',
+    kind: 'work',
+    route: '/work',
+    width: 640,
+    height: 500,
+    spawn: { x: 0.16, y: 0.1 },
+  },
+  {
     id: 'photos',
     title: 'PHOTOS',
     kind: 'photos',
@@ -67,7 +76,9 @@ export const windowDefs: WindowDef[] = [
     height: 240,
     spawn: { x: 0.42, y: 0.34 },
   },
-  ...projects.map((p, i) => ({
+  // Only projects with a full case study get a window. Everything else is a
+  // row in the WORK list, which is not the same thing as a thin window.
+  ...windowProjects.map((p, i) => ({
     id: `project:${p.slug}`,
     title: p.windowTitle,
     kind: 'project' as const,

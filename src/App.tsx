@@ -1,22 +1,25 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { MenuBar, type Menu } from './components/MenuBar'
-import { AppIcon, DocIcon, FolderIcon, TrashIcon } from './components/Icons'
+import { AppIcon, DiskIcon, DocIcon, FolderIcon, TrashIcon } from './components/Icons'
+import { Crt } from './components/Crt'
 import { MacWindow } from './components/Window'
 import { useWindowManager } from './system/windows'
-import { projects } from './data/content'
+import { projects, windowProjects } from './data/content'
 import { AboutPanel, IntroPanel, TrashPanel } from './windows/Panels'
 import { ProjectPanel } from './windows/Project'
 import { PhotosPanel } from './windows/Photos'
+import { WorkPanel } from './windows/Work'
 import './styles/system.css'
 
 // Five desktop objects, which is the middle of the four to six the spec asks
 // for in phase 1. Every one of them opens something real. An icon that does
 // nothing is the fastest way to make the desktop feel like set dressing.
 const desktopItems = [
-  { id: 'about', label: 'ABOUT_ME.TXT', Art: DocIcon },
-  { id: 'project:pickleball-iq', label: 'PICKLEBALL_IQ', Art: AppIcon },
+  { id: 'work', label: 'WORK', Art: DiskIcon },
   { id: 'project:gravl', label: 'GRAVL', Art: AppIcon },
+  { id: 'project:pickleball-iq', label: 'PICKLEBALL_IQ', Art: AppIcon },
   { id: 'photos', label: 'PHOTOS', Art: FolderIcon },
+  { id: 'about', label: 'ABOUT_ME.TXT', Art: DocIcon },
   { id: 'trash', label: 'TRASH', Art: TrashIcon },
 ]
 
@@ -49,6 +52,7 @@ export default function App() {
   const { openWindows, topId, open, close, focus, move } = useWindowManager()
   const clock = useClock()
   const [photoStatus, setPhotoStatus] = useState('')
+  const [workStatus, setWorkStatus] = useState('')
 
   const menus: Menu[] = useMemo(
     () => [
@@ -86,9 +90,13 @@ export default function App() {
         // it has to reach every part of the site in one click.
         title: 'Go',
         items: [
-          { label: 'About', onSelect: () => open('about') },
-          ...projects.map((p) => ({ label: p.title, onSelect: () => open(`project:${p.slug}`) })),
+          { label: 'Work', onSelect: () => open('work') },
+          ...windowProjects.map((p) => ({
+            label: p.title,
+            onSelect: () => open(`project:${p.slug}`),
+          })),
           { label: 'Photos', onSelect: () => open('photos'), separatorBefore: true },
+          { label: 'About', onSelect: () => open('about') },
         ],
       },
       {
@@ -104,12 +112,17 @@ export default function App() {
   )
 
   const handlePhotoStatus = useCallback((s: string) => setPhotoStatus(s), [])
+  const handleWorkStatus = useCallback((s: string) => setWorkStatus(s), [])
 
   return (
     <>
       <MenuBar menus={menus} clock={clock} />
 
       <main className="mac-desktop">
+        {/* Scenery, and the only object on the desktop that is not a control.
+            It sits behind every window and takes no pointer events. */}
+        <Crt />
+
         <div className="mac-icons">
           {desktopItems.map(({ id, label, Art }) => {
             const isOpen = openWindows.some((w) => w.id === id)
@@ -148,6 +161,8 @@ export default function App() {
               status={
                 w.def.kind === 'photos'
                   ? photoStatus
+                  : w.def.kind === 'work'
+                    ? workStatus
                   : w.def.kind === 'project' && project
                     ? `${project.status}`
                     : undefined
@@ -157,6 +172,12 @@ export default function App() {
               {w.def.kind === 'text' && <AboutPanel />}
               {w.def.kind === 'trash' && <TrashPanel />}
               {w.def.kind === 'photos' && <PhotosPanel onStatus={handlePhotoStatus} />}
+              {w.def.kind === 'work' && (
+                <WorkPanel
+                  onOpenProject={(slug) => open(`project:${slug}`)}
+                  onStatus={handleWorkStatus}
+                />
+              )}
               {w.def.kind === 'project' && project && <ProjectPanel project={project} />}
             </MacWindow>
           )

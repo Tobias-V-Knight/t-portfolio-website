@@ -57,6 +57,20 @@ state. The URL always points at the window on top of that stack.
 
 Retrofitting routing into a window manager is a rewrite. This model is settled.
 
+## CSI, and the override T made on 2026-08-23
+
+The handoff says do not write a word about the CSI work until the university
+IP release lands. **T overrode that on 2026-08-23 and cleared CSI for the
+site**, framed as: the highway contractor, what was built, the architecture,
+and never the code.
+
+One narrower question is still open and the CSI architecture section stays
+empty until T answers it. CSI is bid intelligence for asphalt paving
+contractors. Gravl is pre bid intelligence for construction. A detailed CSI
+system description is adjacent enough that it may describe Gravl's mechanism
+by proxy, which is the exact thing the Gravl constraint below exists to
+prevent. Tracked as Q-06 in `TICKETS.md`.
+
 ## Gravl constraint. Not negotiable without T saying so.
 
 The Gravl window is **outcome only**. What it is, who it serves, what changed,
@@ -90,7 +104,12 @@ Every other project on this site can be as technically open as T likes.
    390px as well as desktop. The mobile specification is as demanding as the
    desktop one.
 7. **Edit with literal replacements that you assert match exactly once.**
-   Never compute string bounds by index arithmetic.
+   Never compute string bounds by index arithmetic. And never open a file for
+   writing until the replacement string is fully built and verified: opening
+   for write truncates immediately, so a script that throws between the open
+   and the write leaves an empty file. That happened to `system.css` on
+   2026-08-23 and hot reload wiped the browser's copy before it could be
+   recovered. Build the new content first, assert it, then write.
 8. **Grep before naming a CSS class.**
 9. **Never invent facts about T or his projects.** Placeholder copy is fine
    and must be visibly marked as placeholder. Invented specifics are not.
