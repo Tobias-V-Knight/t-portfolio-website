@@ -50,8 +50,8 @@ that gets consulted before a new file is ever created.
 | `components/Icons.tsx` | Desktop icons | Folder, document, application, disk and trash, drawn as crisp edged SVG rather than bitmaps |
 | `windows/Panels.tsx` | Small windows | The intro card, the about window, the trash Easter egg, and the placeholder tag component |
 | `windows/Work.tsx` | WORK window | Category filter chips and the full project list. Projects with a case study open a window, the rest are rows with a link |
-| `components/Landing.tsx` | The landing scene | Hosts the 3D scene and puts the boot log inside the iMac's screen. Falls through to the desktop if WebGL cannot start |
-| `scene/imacScene.ts` | The iMac in 3D | three.js. Procedural G3 geometry, physically based translucent plastic, a procedural room for the reflections, and the camera push through the glass on Enter |
+| `components/Landing.tsx` | The landing scene | A photograph of a real iMac G3 with the live boot log inside its actual screen. Holds the measured screen corners, which must stay in step with the asset |
+| `system/quad.ts` | Projective transform | Solves a homography from four point pairs and packs it into a CSS `matrix3d`, which is what puts flat DOM onto the trapezoid of a screen in a photo |
 | `components/Boot.tsx` | Boot sequence | An ML training run that plays once per session and skips on any key. Never blocks content: the desktop is already mounted underneath it |
 | `windows/Project.tsx` | Project window | The twelve section project template. Sections render only when the data has them, which is how Gravl stays outcome only |
 | `windows/Photos.tsx` | Photo viewer | Contact sheet, single image view, next and previous, and the byte formatter for the status bar |
@@ -61,6 +61,8 @@ that gets consulted before a new file is ever created.
 
 | File | What it is | What it does |
 |---|---|---|
+| `imac-g3-v2.jpg` | The hero photograph | 2000px. Felix Winkelnkemper, CC BY 2.0, via Wikimedia Commons, credited in the colophon. Its screen is painted black in the asset itself, so a small misalignment in the overlay shows black rather than the original Finder window |
+| `imac-g3-v2-small.jpg` | The hero, phone sized | 1000px, served under 768px wide |
 | `og.png` | Link preview card | 1200x630. The actual front door, because almost every visitor sees this on LinkedIn before they see the site |
 | `favicon.svg` | Favicon | A small beige computer |
 | `photos/*.JPG` | Placeholder photographs | Eight generated stand ins at mixed resolutions and compression levels. Replaced the day real photos land |

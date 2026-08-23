@@ -76,6 +76,31 @@ export function AboutPanel() {
         ))}
       </ul>
 
+      <h2>COLOPHON</h2>
+      <p className="mac-meta">
+        Built with Vite and React. Silkscreen and Inter. No backend, no
+        framework, no analytics.
+      </p>
+      <p className="mac-meta">
+        The iMac G3 on the way in is a photograph by Felix Winkelnkemper,{' '}
+        <a
+          href="https://creativecommons.org/licenses/by/2.0"
+          target="_blank"
+          rel="noreferrer"
+        >
+          CC BY 2.0
+        </a>
+        , via{' '}
+        <a
+          href="https://commons.wikimedia.org/wiki/File:Apple_iMac_G3_(cropped).jpg"
+          target="_blank"
+          rel="noreferrer"
+        >
+          Wikimedia Commons
+        </a>
+        . Its screen was painted out and replaced with live output.
+      </p>
+
       {about.copyState === 'PLACEHOLDER' && <PlaceholderTag />}
     </div>
   )

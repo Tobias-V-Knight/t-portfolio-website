@@ -1,40 +1,40 @@
 import { useEffect, useRef, useState } from 'react'
 
-// The boot sequence.
+// The boot sequence, running on the iMac's own screen.
 //
-// An ML training run rather than a Happy Mac, per T. Four corrections came
-// after seeing it, all of them right, and all of them are why it looks like
-// this now:
+// It is a single rolling buffer, not a page. That is the fix for the log being
+// clipped: a fixed block of text has to fit the glass, so either the type
+// shrinks until it cannot be read or the content gets cut off. A terminal
+// scrolls. The imports appear, scroll up and away as training starts, and the
+// screen only ever holds the last dozen lines. Nothing is ever cut off, and
+// the type can be large enough to read from across the room.
 //
-//   1. The loss has to move up and down. A curve that only ever falls is the
-//      tell that nobody involved has watched one.
-//   2. It waits for Enter. No timeout. The visitor decides when to go in.
-//   3. The imports are the real stack T works in, because the libraries a
-//      person actually reaches for say more about them than a bio does.
-//   4. The epoch progress is a real bar that fills, drawn as elements rather
-//      than typed out of hash marks.
+// The site name and the prompt live OUTSIDE the machine, in Landing, for the
+// same reason: they are the two things a visitor must be able to read, and the
+// screen is the smallest surface on the page.
 //
-// The cost of waiting for input is real and worth stating: a boot that waits
-// is a gate, and spec section 22 bans a mandatory boot animation. Three things
-// keep it honest. It plays once per session. Any key, click or tap continues,
-// not only Enter, so a phone works. And it only plays on the homepage, so a
+// Rules that still hold: it plays once per session, any key or tap continues,
+// it never runs under reduced motion, and it only plays on the homepage so a
 // shared deep link goes straight to the work.
-//
-// It also never blocks content. The desktop is mounted underneath the whole
-// time, so if this component threw, the site would still be there.
 
 const SESSION_KEY = 'tk-booted'
 const EPOCHS = 30
 const EPOCH_MS = 58
-const VISIBLE_EPOCHS = typeof window !== 'undefined' && window.innerWidth <= 768 ? 3 : 7
+
+const isSmallScreen = () => typeof window !== 'undefined' && window.innerWidth <= 768
+
+// How many lines the glass holds. A phone's screen is physically smaller, so
+// its type is larger and fewer lines fit.
+const MAX_LINES = isSmallScreen() ? 8 : 12
 
 // Time multiplier, 1 in production. It exists because the sequence runs faster
 // than a screenshot round trip, so verifying it by eye means slowing it down.
 // Never commit anything but 1.
 const SPEED = 1
 
-// T's actual stack. Not a generic list: these are the libraries in his repos.
-const ALL_IMPORTS = [
+// T's actual stack, taken from his repos rather than made up. All of them get
+// shown now: they scroll away rather than competing for space.
+const IMPORTS = [
   'import numpy as np',
   'import pandas as pd',
   'import matplotlib.pyplot as plt',
@@ -45,39 +45,16 @@ const ALL_IMPORTS = [
   'from transformers import AutoModel, AutoTokenizer',
 ]
 
-// A phone screen at this scale fits about half of them, and a list that runs
-// off the glass looks broken rather than busy.
-const IMPORTS =
-  typeof window !== 'undefined' && window.innerWidth <= 768
-    ? ['import numpy as np', 'import pandas as pd', 'import torch', 'from transformers import AutoModel']
-    : ALL_IMPORTS
-
 function lossAt(epoch: number) {
   return 0.94 * Math.exp(-epoch / 6.5) + 0.036
 }
 
-function accAt(epoch: number) {
-  return 0.61 + 0.362 * (1 - Math.exp(-epoch / 5.5))
-}
+type Line =
+  | { kind: 'text'; text: string; dim?: boolean }
+  | { kind: 'epoch'; epoch: number; loss: number; best: boolean }
 
-interface Line {
-  text: string
-  dim?: boolean
-}
-
-interface EpochRow {
-  epoch: number
-  loss: number
-  acc: number
-  best: boolean
-}
-
-export function Boot({ onDone }: { onDone: () => void }) {
-  const [head, setHead] = useState<Line[]>([])
-  const [rows, setRows] = useState<EpochRow[]>([])
-  const [tail, setTail] = useState<Line[]>([])
-  const [ready, setReady] = useState(false)
-  const [done, setDone] = useState(false)
+export function Boot({ onDone, onReady }: { onDone: () => void; onReady: () => void }) {
+  const [lines, setLines] = useState<Line[]>([])
   const finished = useRef(false)
 
   const finish = useRef(() => {
@@ -89,8 +66,7 @@ export function Boot({ onDone }: { onDone: () => void }) {
       // Private browsing throws on write. Losing the flag only means the boot
       // plays again, which is not worth failing over.
     }
-    setDone(true)
-    window.setTimeout(onDone, 260)
+    onDone()
   })
 
   useEffect(() => {
@@ -105,21 +81,20 @@ export function Boot({ onDone }: { onDone: () => void }) {
 
     const timers: number[] = []
     const push = (line: Line, at: number) => {
-      timers.push(window.setTimeout(() => setHead((prev) => [...prev, line]), at * SPEED))
+      timers.push(
+        window.setTimeout(() => setLines((prev) => [...prev, line].slice(-MAX_LINES)), at * SPEED),
+      )
     }
 
-    push({ text: '$ python train.py', dim: true }, 0)
-    IMPORTS.forEach((imp, i) => push({ text: imp }, 180 + i * 78))
+    push({ kind: 'text', text: '$ python train.py', dim: true }, 0)
+    IMPORTS.forEach((imp, i) => push({ kind: 'text', text: imp }, 170 + i * 74))
 
-    const afterImports = 180 + IMPORTS.length * 78 + 90
-    push({ text: 'loading weights ................ ok', dim: true }, afterImports)
-    push({ text: 'mounting MACINTOSH_HD .......... ok', dim: true }, afterImports + 150)
-    push(
-      { text: `training: ${EPOCHS} epochs, batch 32, lr 3e-4`, dim: true },
-      afterImports + 290,
-    )
+    const afterImports = 170 + IMPORTS.length * 74 + 80
+    push({ kind: 'text', text: 'loading weights ......... ok', dim: true }, afterImports)
+    push({ kind: 'text', text: 'mounting MACINTOSH_HD ... ok', dim: true }, afterImports + 140)
+    push({ kind: 'text', text: `training: ${EPOCHS} epochs`, dim: true }, afterImports + 270)
 
-    const start = afterImports + 400
+    const start = afterImports + 380
     let best = Infinity
     for (let epoch = 1; epoch <= EPOCHS; epoch++) {
       timers.push(
@@ -129,83 +104,59 @@ export function Boot({ onDone }: { onDone: () => void }) {
             const noise = (Math.random() - 0.46) * 0.055
             const spike = Math.random() < 0.12 ? Math.random() * 0.07 : 0
             const loss = Math.max(0.004, lossAt(epoch) + noise + spike)
-            const acc = Math.min(0.999, Math.max(0.4, accAt(epoch) + (Math.random() - 0.5) * 0.022))
             const improved = loss < best
             if (improved) best = loss
-            setRows((prev) => [...prev, { epoch, loss, acc, best: improved }].slice(-VISIBLE_EPOCHS))
+            setLines((prev) =>
+              [...prev, { kind: 'epoch' as const, epoch, loss, best: improved }].slice(-MAX_LINES),
+            )
           },
           (start + epoch * EPOCH_MS) * SPEED,
         ),
       )
     }
 
-    const endAt = start + EPOCHS * EPOCH_MS + 260
-    timers.push(
-      window.setTimeout(
-        () => setTail([{ text: 'converged. checkpoint saved to MACINTOSH_HD.', dim: true }]),
-        endAt * SPEED,
-      ),
-    )
-    timers.push(window.setTimeout(() => setReady(true), endAt * SPEED))
+    const endAt = start + EPOCHS * EPOCH_MS + 240
+    push({ kind: 'text', text: 'converged. checkpoint saved.', dim: true }, endAt)
+    timers.push(window.setTimeout(onReady, endAt * SPEED))
 
     return () => {
       window.removeEventListener('keydown', advance)
       window.removeEventListener('pointerdown', advance)
       timers.forEach(window.clearTimeout)
     }
-  }, [])
+  }, [onReady])
 
   return (
-    <div className="mac-boot" data-done={done} role="status" aria-live="polite">
-      <div className="mac-boot-inner">
-        <h1 className="mac-boot-title">TOBIASKNIGHT.DEV</h1>
-
-        <div className="mac-boot-log">
-          {head.map((l, i) => (
-            <div className="mac-boot-line" key={`h${i}`} data-dim={l.dim}>
+    <div className="mac-boot" role="status" aria-live="polite">
+      <div className="mac-boot-log">
+        {lines.map((l, i) =>
+          l.kind === 'text' ? (
+            <div className="mac-boot-line" key={i} data-dim={l.dim}>
               {l.text}
             </div>
-          ))}
-
-          {rows.map((r) => (
-            <div className="mac-boot-row" key={r.epoch}>
+          ) : (
+            <div className="mac-boot-row" key={i}>
               <span className="mac-boot-epoch">
-                epoch {String(r.epoch).padStart(2, '0')}/{EPOCHS}
+                {String(l.epoch).padStart(2, '0')}/{EPOCHS}
               </span>
-              {/* A real bar rather than typed hash marks, so it fills rather
-                  than being redrawn as text on every tick. */}
+              {/* A real bar that fills, not hash marks retyped every tick. */}
               <span className="mac-boot-bar">
-                <i style={{ width: `${(r.epoch / EPOCHS) * 100}%` }} />
+                <i style={{ width: `${(l.epoch / EPOCHS) * 100}%` }} />
               </span>
-              <span className="mac-boot-num">loss {r.loss.toFixed(4)}</span>
-              <span className="mac-boot-num mac-boot-acc">acc {r.acc.toFixed(3)}</span>
-              <span className="mac-boot-best">{r.best ? 'best' : ''}</span>
+              <span className="mac-boot-num">loss {l.loss.toFixed(4)}</span>
+              <span className="mac-boot-best">{l.best ? '*' : ''}</span>
             </div>
-          ))}
-
-          {tail.map((l, i) => (
-            <div className="mac-boot-line" key={`t${i}`} data-dim={l.dim} style={{ marginTop: 14 }}>
-              {l.text}
-            </div>
-          ))}
-        </div>
-
-        {ready ? (
-          <p className="mac-boot-prompt">
-            &gt; PRESS ENTER TO CONTINUE
-            <span className="mac-boot-caret" aria-hidden />
-          </p>
-        ) : (
-          <p className="mac-boot-skip">[ press any key to skip ]</p>
+          ),
         )}
+        <span className="mac-boot-caret" aria-hidden />
       </div>
     </div>
   )
 }
 
-// Whether the curtain should be drawn at all. Checked before Boot mounts, so
-// a returning visitor, a deep link, or anyone who asked for reduced motion
-// never renders it.
+// Whether the landing should be drawn at all. Checked before it mounts, so a
+// returning visitor, a deep link, or anyone who asked for reduced motion never
+// renders it.
 export function shouldBoot(pathname: string) {
   if (typeof window === 'undefined') return false
   if (pathname !== '/') return false
