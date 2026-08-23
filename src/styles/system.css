@@ -1,0 +1,609 @@
+/* ============================================================================
+   SYSTEM.CSS
+   The whole visual language of the site: palette, bevels, chrome, type.
+   Every colour in the codebase comes from a token declared here. If you find
+   yourself typing a hex value in a component, it belongs in this file instead.
+
+   The look is Mac OS 8 Platinum, warmed slightly. Not System 7 (too austere),
+   not Windows 95 (wrong bevels, wrong everything), not vaporwave.
+   Class prefix is mac- throughout so nothing collides.
+   ============================================================================ */
+
+:root {
+  /* Desktop. A muted lavender grey, dithered, not a flat fill. */
+  --mac-desk-a: #7b7a85;
+  --mac-desk-b: #84838e;
+
+  /* Window face and the three tones that make a bevel read as 3D.
+     Light source is top left, always, on every control on the site. */
+  --mac-face: #dedbd4;
+  --mac-face-dim: #cbc8c1;
+  --mac-hi: #ffffff;
+  --mac-lo: #85827b;
+  --mac-line: #000000;
+
+  --mac-ink: #101010;
+  --mac-ink-soft: #5a5852;
+  --mac-paper: #f4f2ed;
+
+  --mac-accent: #4a4a8c;      /* muted lavender blue, selection and links */
+  --mac-accent-ink: #ffffff;
+  --mac-hot: #c1401f;         /* the one saturated colour, used sparingly */
+
+  --mac-menu-h: 24px;
+  --mac-title-h: 22px;
+
+  --mac-chrome: 'Silkscreen', 'Courier New', monospace;
+  --mac-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+html, body, #root { height: 100%; }
+
+body {
+  margin: 0;
+  font-family: var(--mac-body);
+  color: var(--mac-ink);
+  /* The dither. A checkerboard of two greys, which is what an old desktop
+     pattern actually was, rather than a gradient pretending to be one. */
+  background-color: var(--mac-desk-a);
+  background-image: repeating-conic-gradient(
+    var(--mac-desk-a) 0% 25%,
+    var(--mac-desk-b) 0% 50%
+  );
+  background-size: 4px 4px;
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Silkscreen is a bitmap face. Fractional sizes make it blurry, so it only
+   ever gets whole even numbers, and it never sets a paragraph. */
+.mac-chrome-type {
+  font-family: var(--mac-chrome);
+  font-size: 16px;
+  line-height: 1;
+  letter-spacing: 0.02em;
+}
+
+/* --- Bevels -------------------------------------------------------------- */
+
+.mac-raised {
+  background: var(--mac-face);
+  border: 1px solid var(--mac-line);
+  box-shadow: inset 1px 1px 0 var(--mac-hi), inset -1px -1px 0 var(--mac-lo);
+}
+
+.mac-sunken {
+  background: var(--mac-paper);
+  border: 1px solid var(--mac-line);
+  box-shadow: inset 1px 1px 0 var(--mac-lo), inset -1px -1px 0 var(--mac-hi);
+}
+
+/* --- Menu bar ------------------------------------------------------------ */
+
+.mac-menubar {
+  position: fixed;
+  inset: 0 0 auto 0;
+  height: var(--mac-menu-h);
+  z-index: 9000;
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+  background: var(--mac-paper);
+  border-bottom: 1px solid var(--mac-line);
+  box-shadow: inset 0 1px 0 var(--mac-hi);
+}
+
+.mac-menu {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.mac-menu-title {
+  font-family: var(--mac-chrome);
+  font-size: 16px;
+  line-height: 1;
+  padding: 0 10px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  background: none;
+  border: 0;
+  color: var(--mac-ink);
+  cursor: default;
+  white-space: nowrap;
+}
+
+.mac-menu[data-open='true'] .mac-menu-title,
+.mac-menu-title:hover {
+  background: var(--mac-ink);
+  color: var(--mac-paper);
+}
+
+.mac-menu-drop {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  min-width: 190px;
+  padding: 3px 0;
+  background: var(--mac-paper);
+  border: 1px solid var(--mac-line);
+  box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.45);
+  z-index: 9001;
+}
+
+.mac-menu-item {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 6px 14px;
+  min-height: 30px;
+  background: none;
+  border: 0;
+  font-family: var(--mac-chrome);
+  font-size: 16px;
+  line-height: 1;
+  color: var(--mac-ink);
+  text-align: left;
+  cursor: default;
+}
+
+.mac-menu-item:hover:not(:disabled),
+.mac-menu-item:focus-visible {
+  background: var(--mac-ink);
+  color: var(--mac-paper);
+}
+
+.mac-menu-item:disabled { color: #a6a49e; }
+
+.mac-menu-sep {
+  height: 1px;
+  margin: 3px 0;
+  background: #b9b6b0;
+}
+
+.mac-menubar-right {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 0 12px;
+  font-family: var(--mac-chrome);
+  font-size: 16px;
+  line-height: 1;
+  color: var(--mac-ink-soft);
+}
+
+/* --- Desktop and icons --------------------------------------------------- */
+
+.mac-desktop {
+  position: fixed;
+  inset: var(--mac-menu-h) 0 0 0;
+}
+
+.mac-icons {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-items: center;
+}
+
+.mac-icon {
+  width: 116px;
+  min-height: 88px;
+  padding: 6px 2px 4px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: 0;
+  cursor: default;
+}
+
+.mac-icon-art { width: 40px; height: 40px; }
+
+.mac-icon-label {
+  font-family: var(--mac-chrome);
+  font-size: 16px;
+  line-height: 1.15;
+  padding: 2px 4px;
+  color: var(--mac-ink);
+  background: var(--mac-paper);
+  border: 1px solid transparent;
+  text-align: center;
+  /* Never split a filename mid word. PICKLEBALL_IQ breaking into PICKLEB and
+     ALL_IQ is the difference between a desktop and a mistake. The break
+     opportunities are placed deliberately in App.tsx, after an underscore or
+     a dot, which is where a Finder label would have broken anyway. */
+  word-break: normal;
+  overflow-wrap: normal;
+  hyphens: none;
+  max-width: 112px;
+}
+
+.mac-icon[data-active='true'] .mac-icon-label {
+  background: var(--mac-accent);
+  color: var(--mac-accent-ink);
+}
+
+.mac-icon[data-active='true'] .mac-icon-art { filter: brightness(0.8) saturate(1.4); }
+
+/* --- Window -------------------------------------------------------------- */
+
+.mac-window {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  background: var(--mac-face);
+  border: 1px solid var(--mac-line);
+  box-shadow: inset 1px 1px 0 var(--mac-hi), inset -1px -1px 0 var(--mac-lo),
+    2px 2px 0 rgba(0, 0, 0, 0.35);
+  max-width: calc(100vw - 16px);
+  max-height: calc(100vh - var(--mac-menu-h) - 16px);
+}
+
+.mac-titlebar {
+  height: var(--mac-title-h);
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 6px;
+  border-bottom: 1px solid var(--mac-line);
+  cursor: default;
+  touch-action: none;
+  /* The pinstripes. Horizontal 1px lines across the bar is what an active
+     Mac OS 8 title bar had, and it is the single detail that most says
+     classic Mac rather than generic retro. */
+  background-image: repeating-linear-gradient(
+    to bottom,
+    var(--mac-lo) 0 1px,
+    var(--mac-face) 1px 2px
+  );
+  background-size: 100% 12px;
+  background-position: 0 5px;
+  background-repeat: repeat-x;
+  background-color: var(--mac-face);
+}
+
+.mac-window[data-active='false'] .mac-titlebar { background-image: none; }
+.mac-window[data-active='false'] .mac-title { color: #8b8880; }
+.mac-window[data-active='false'] .mac-closebox { opacity: 0.35; }
+
+.mac-closebox {
+  flex: 0 0 auto;
+  width: 13px;
+  height: 13px;
+  padding: 0;
+  background: var(--mac-face);
+  border: 1px solid var(--mac-line);
+  box-shadow: inset 1px 1px 0 var(--mac-hi), inset -1px -1px 0 var(--mac-lo);
+  cursor: default;
+  position: relative;
+}
+
+/* The close box is 13px, which is period correct and far under any sane tap
+   target. So it gets an invisible 45px hit area around it rather than being
+   made bigger and wrong. */
+.mac-closebox::after {
+  content: '';
+  position: absolute;
+  inset: -16px;
+}
+
+.mac-closebox:active { background: var(--mac-lo); }
+
+.mac-title {
+  font-family: var(--mac-chrome);
+  font-size: 16px;
+  line-height: 1;
+  padding: 3px 8px 2px;
+  background: var(--mac-face);
+  color: var(--mac-ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin: 0 auto;
+  max-width: calc(100% - 60px);
+}
+
+.mac-window-body {
+  flex: 1 1 auto;
+  overflow: auto;
+  background: var(--mac-face);
+}
+
+/* Long form reading surface. Spec section 7: the chrome stays Mac, the content
+   inside becomes modern and editorial. */
+.mac-doc {
+  background: var(--mac-paper);
+  border: 1px solid var(--mac-lo);
+  box-shadow: inset 1px 1px 0 var(--mac-lo);
+  margin: 8px;
+  padding: 22px 26px 30px;
+  font-family: var(--mac-body);
+  font-size: 15px;
+  line-height: 1.62;
+  color: var(--mac-ink);
+}
+
+.mac-doc h1 {
+  font-size: 27px;
+  line-height: 1.15;
+  letter-spacing: -0.015em;
+  margin: 0 0 4px;
+}
+
+.mac-doc h2 {
+  font-family: var(--mac-chrome);
+  font-size: 16px;
+  line-height: 1;
+  letter-spacing: 0.04em;
+  color: var(--mac-ink-soft);
+  margin: 28px 0 10px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid #d5d2cb;
+}
+
+.mac-doc p { margin: 0 0 12px; }
+.mac-doc ul { margin: 0 0 12px; padding-left: 20px; }
+.mac-doc li { margin-bottom: 6px; }
+.mac-doc a { color: var(--mac-accent); text-underline-offset: 2px; }
+
+.mac-lede {
+  font-size: 17px;
+  line-height: 1.5;
+  color: var(--mac-ink);
+  margin: 0 0 18px;
+}
+
+/* Small system readouts: file sizes, dates, status. Bitmap type earns its
+   place here and nowhere near a paragraph. */
+.mac-meta {
+  font-family: var(--mac-chrome);
+  font-size: 16px;
+  line-height: 1.4;
+  color: var(--mac-ink-soft);
+}
+
+.mac-statusbar {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  height: 22px;
+  padding: 0 8px;
+  border-top: 1px solid var(--mac-lo);
+  background: var(--mac-face-dim);
+  font-family: var(--mac-chrome);
+  font-size: 16px;
+  line-height: 1;
+  color: var(--mac-ink-soft);
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.mac-tag {
+  display: inline-block;
+  font-family: var(--mac-chrome);
+  font-size: 16px;
+  line-height: 1;
+  padding: 4px 6px 3px;
+  border: 1px solid var(--mac-hot);
+  color: var(--mac-hot);
+  background: #f7ece8;
+}
+
+.mac-btn {
+  font-family: var(--mac-chrome);
+  font-size: 16px;
+  line-height: 1;
+  padding: 8px 14px;
+  min-height: 30px;
+  background: var(--mac-face);
+  color: var(--mac-ink);
+  border: 1px solid var(--mac-line);
+  box-shadow: inset 1px 1px 0 var(--mac-hi), inset -1px -1px 0 var(--mac-lo);
+  cursor: default;
+}
+
+.mac-btn:active {
+  box-shadow: inset 1px 1px 0 var(--mac-lo), inset -1px -1px 0 var(--mac-hi);
+  background: var(--mac-face-dim);
+}
+
+.mac-btn:disabled { color: #a6a49e; }
+
+/* --- Photo viewer -------------------------------------------------------- */
+
+.mac-sheet {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(124px, 1fr));
+  gap: 10px;
+  padding: 10px;
+}
+
+.mac-thumb {
+  padding: 5px 5px 4px;
+  background: var(--mac-face);
+  border: 1px solid transparent;
+  cursor: default;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  align-items: stretch;
+}
+
+.mac-thumb[data-active='true'] { background: var(--mac-accent); }
+.mac-thumb[data-active='true'] .mac-thumb-name { color: var(--mac-accent-ink); }
+
+.mac-thumb img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  display: block;
+  border: 1px solid var(--mac-line);
+  box-shadow: inset 1px 1px 0 var(--mac-lo);
+  background: var(--mac-face-dim);
+}
+
+.mac-thumb-name {
+  font-family: var(--mac-chrome);
+  font-size: 16px;
+  line-height: 1.2;
+  color: var(--mac-ink);
+  word-break: break-all;
+}
+
+.mac-viewer {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.mac-viewer-stage {
+  flex: 1 1 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
+  background: #4f4e56;
+  min-height: 200px;
+}
+
+.mac-viewer-stage img {
+  max-width: 100%;
+  max-height: 100%;
+  border: 1px solid var(--mac-line);
+  box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.4);
+}
+
+.mac-viewer-bar {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px;
+  background: var(--mac-face);
+  border-top: 1px solid var(--mac-lo);
+}
+
+/* --- Focus, motion, selection ------------------------------------------- */
+
+:focus-visible {
+  outline: 2px solid var(--mac-hot);
+  outline-offset: 1px;
+}
+
+::selection { background: var(--mac-accent); color: var(--mac-accent-ink); }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+.mac-visually-hidden {
+  position: absolute;
+  width: 1px; height: 1px;
+  margin: -1px; padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* --- Mobile -------------------------------------------------------------
+   Spec section 4, the load bearing rule: desktop simulates a computer, mobile
+   simulates the software. So on a phone the chrome survives and the desktop
+   metaphor does not. One window, full bleed, no drag, nothing to miss with a
+   thumb. This is not a shrunken desktop and must never become one.
+   ------------------------------------------------------------------------ */
+
+@media (max-width: 768px) {
+  /* A 23px menu bar is period correct and unusable with a thumb. The Go menu
+     is the fallback path to the work for anyone who does not want to explore
+     a desktop, so it is the last thing that gets to be fiddly. Everything in
+     the bar goes to 44px, which is the one rule here that beats authenticity. */
+  :root { --mac-menu-h: 46px; }   /* 46 minus the 1px rule leaves 45 of target */
+
+  .mac-menu-title { padding: 0 12px; }
+  .mac-menu-item { min-height: 44px; padding: 12px 16px; }
+  .mac-menu-drop { min-width: 220px; }
+
+  /* The desktop scrolls on a phone, because there is no desktop metaphor left
+     to preserve. It is a column: the intro card, then the things you can open. */
+  .mac-desktop {
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .mac-icons {
+    position: static;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 4px;
+    padding: 16px 10px;
+    align-items: start;
+  }
+
+  .mac-icon { width: 100%; min-height: 96px; }
+
+  .mac-window {
+    position: fixed !important;
+    inset: var(--mac-menu-h) 0 0 0 !important;
+    width: auto !important;
+    height: auto !important;
+    max-width: none;
+    max-height: none;
+    border-width: 0;
+    box-shadow: none;
+  }
+
+  /* Only the window on top exists on a phone. */
+  .mac-window[data-top='false'] { display: none; }
+
+  /* Except the intro, which stops being a window and becomes the top of the
+     page. Full bleed on a phone it would cover every icon, so a visitor's
+     first screen would be a bio with no visible way into the work. It keeps
+     its title bar, because the chrome is the identity and the chrome is what
+     survives the trip to mobile. */
+  .mac-window[data-kind='intro'] {
+    position: static !important;
+    inset: auto !important;
+    order: -1;
+    flex: 0 0 auto;
+    height: auto !important;
+    border-bottom: 1px solid var(--mac-line);
+  }
+
+  .mac-window[data-kind='intro'][data-top='false'] { display: flex; }
+
+  /* Routed windows are fixed and full bleed, so their body is the only thing
+     that scrolls. Making that visible would strand the bottom of every
+     project page. The intro is the exception, because it sizes to content. */
+  .mac-window[data-kind='intro'] .mac-window-body { overflow: visible; }
+
+  .mac-titlebar { height: 34px; }
+  .mac-closebox { width: 17px; height: 17px; }
+  .mac-doc { margin: 0; border: 0; padding: 18px 16px 40px; font-size: 16px; }
+  .mac-menubar-right { gap: 8px; padding: 0 8px; }
+  .mac-sheet { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* Anything narrower than a small phone drops the ambient readouts rather than
+   letting the menu bar wrap, which would break the whole illusion. */
+@media (max-width: 460px) {
+  .mac-menubar-right .mac-menubar-optional { display: none; }
+}
