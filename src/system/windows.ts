@@ -133,6 +133,10 @@ export function useWindowManager() {
   // window the URL currently points at.
   const [stack, setStack] = useState<OpenWindow[]>([])
   const [introOpen, setIntroOpen] = useState(true)
+  // Sizes live outside the window defs because a resize is per instance, not
+  // per kind. A classic Mac window had a grow box in the corner and it worked,
+  // so ours works too rather than being decoration that lies about itself.
+  const [sizes, setSizes] = useState<Record<string, { w: number; h: number }>>({})
   const [introPos, setIntroPos] = useState(() => spawnPosition(byId.get('intro') as WindowDef))
 
   const routeId = byRoute.get(location.pathname) ?? null
@@ -223,6 +227,18 @@ export function useWindowManager() {
     )
   }, [])
 
+  const resize = useCallback((id: string, w: number, h: number) => {
+    const def = byId.get(id)
+    if (!def) return
+    setSizes((prev) => ({
+      ...prev,
+      [id]: {
+        w: Math.max(280, Math.min(w, window.innerWidth - 24)),
+        h: Math.max(180, Math.min(h, window.innerHeight - MENU_BAR - 24)),
+      },
+    }))
+  }, [])
+
   const openWindows = useMemo(() => {
     const list = stack.map((w) => ({ ...w, def: byId.get(w.id) as WindowDef }))
     if (introOpen) {
@@ -249,5 +265,5 @@ export function useWindowManager() {
     return () => window.removeEventListener('keydown', onKey)
   }, [close])
 
-  return { openWindows, topId, open, close, focus, move }
+  return { openWindows, topId, open, close, focus, move, resize, sizes }
 }

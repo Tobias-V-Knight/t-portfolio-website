@@ -26,7 +26,7 @@ import { useEffect, useRef, useState } from 'react'
 const SESSION_KEY = 'tk-booted'
 const EPOCHS = 30
 const EPOCH_MS = 58
-const VISIBLE_EPOCHS = 7
+const VISIBLE_EPOCHS = typeof window !== 'undefined' && window.innerWidth <= 768 ? 3 : 7
 
 // Time multiplier, 1 in production. It exists because the sequence runs faster
 // than a screenshot round trip, so verifying it by eye means slowing it down.
@@ -34,7 +34,7 @@ const VISIBLE_EPOCHS = 7
 const SPEED = 1
 
 // T's actual stack. Not a generic list: these are the libraries in his repos.
-const IMPORTS = [
+const ALL_IMPORTS = [
   'import numpy as np',
   'import pandas as pd',
   'import matplotlib.pyplot as plt',
@@ -44,6 +44,13 @@ const IMPORTS = [
   'import torch.nn as nn',
   'from transformers import AutoModel, AutoTokenizer',
 ]
+
+// A phone screen at this scale fits about half of them, and a list that runs
+// off the glass looks broken rather than busy.
+const IMPORTS =
+  typeof window !== 'undefined' && window.innerWidth <= 768
+    ? ['import numpy as np', 'import pandas as pd', 'import torch', 'from transformers import AutoModel']
+    : ALL_IMPORTS
 
 function lossAt(epoch: number) {
   return 0.94 * Math.exp(-epoch / 6.5) + 0.036
@@ -171,7 +178,7 @@ export function Boot({ onDone }: { onDone: () => void }) {
                 <i style={{ width: `${(r.epoch / EPOCHS) * 100}%` }} />
               </span>
               <span className="mac-boot-num">loss {r.loss.toFixed(4)}</span>
-              <span className="mac-boot-num">acc {r.acc.toFixed(3)}</span>
+              <span className="mac-boot-num mac-boot-acc">acc {r.acc.toFixed(3)}</span>
               <span className="mac-boot-best">{r.best ? 'best' : ''}</span>
             </div>
           ))}

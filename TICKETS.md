@@ -41,6 +41,10 @@ validate the aesthetic, not to ship the portfolio. Placeholder copy throughout.
 | P1-18 | Boot sequence, ML training run, once per session, skippable | SHOW | review | Verified: renders, sets the session flag, and a keypress skips it while the timer still had minutes left |
 | P1-19 | First pass copy for all thirteen projects | SHOW | review | Structure from the real repos, every unknown left as a visible blank |
 | P1-20 | CSI promoted to flagship, Gravl demoted to a row | AFK | done | Gravl has no window, no founder title on the homepage, one row and a link |
+| P1-21 | Landing scene: real 3D iMac G3, boot log on its own screen | SHOW | review | three.js, procedural geometry, real transmission and a procedural room. Enter pushes the camera through the glass into the desktop |
+| P1-22 | The bezel stays around the desktop after entry | SHOW | review | CSS frame with the drive slot and power light. Everything inside is inset by it rather than clipped |
+| P1-23 | Mac OS 8 authenticity pass on the inside | SHOW | review | Apple menu, classic scrollbars, zoom box, working grow box |
+| P1-24 | Remove the SVG iMac from the desktop | AFK | done | Once you are through the glass you are inside the machine, so a computer on its own desktop reads as a duplicate |
 | P1-17 | Desktop icons move to the left to give the CRT the right side | AFK | done | No overlap at 1440px or 390px |
 
 ## Backlog
@@ -52,6 +56,8 @@ Things T has decided he wants but has deliberately parked.
 | B-01 | What plays on the iMac screen | ASK | T, 2026-08-23: a mix of old PickleTrack clips, product building, and the funnier parts of the MSBA program. All tech and building related. Placeholder NO SIGNAL card until then |
 | B-02 | Full case study windows for the projects that are only rows today | ASK | Blocked on Q-01. Each one needs a paragraph from T before it can become a window |
 | B-03 | CSI architecture section | ASK | See Q-06. The window exists, the architecture is a blank prompt |
+| B-06 | Susan Kare style icon set | ASK | The icons are the weakest remaining part of the illusion. The reference T sent has hand drawn 32x32 icons and ours are geometric |
+| B-07 | Sound: startup chime, window open, click | ASK | Spec section 13. Never autoplay, global mute, and it should reward exploration rather than punish it |
 | B-04 | Upgrade the iMac to a pre-rendered rotation sequence | ASK | Only if the SVG does not carry enough weight. Real 3D via Three.js was considered and rejected for bundle size, model licensing and mobile performance, all of which fight spec section 19 |
 | B-05 | Objects around the iMac as portals: CD for music, camera for photos | ASK | From T's concept note. Strong idea, deliberately deferred until the copy is real, because it multiplies the surface before there is anything behind it |
 

@@ -33,6 +33,12 @@
   --mac-menu-h: 24px;
   --mac-title-h: 22px;
 
+  /* The thickness of the machine you are looking through. Everything inside
+     the screen is inset by these, so the frame surrounds the interface rather
+     than sitting on top of it and clipping the menu bar. */
+  --mac-bezel: 13px;
+  --mac-bezel-bottom: 30px;
+
   --mac-chrome: 'Silkscreen', 'Courier New', monospace;
   --mac-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
 }
@@ -84,7 +90,7 @@ body {
 
 .mac-menubar {
   position: fixed;
-  inset: 0 0 auto 0;
+  inset: var(--mac-bezel) var(--mac-bezel) auto var(--mac-bezel);
   height: var(--mac-menu-h);
   z-index: 9000;
   display: flex;
@@ -99,6 +105,12 @@ body {
   position: relative;
   display: flex;
   align-items: center;
+}
+
+.mac-apple {
+  width: 14px;
+  height: 17px;
+  display: block;
 }
 
 .mac-menu-title {
@@ -182,7 +194,8 @@ body {
 
 .mac-desktop {
   position: fixed;
-  inset: var(--mac-menu-h) 0 0 0;
+  inset: calc(var(--mac-bezel) + var(--mac-menu-h)) var(--mac-bezel) var(--mac-bezel-bottom)
+    var(--mac-bezel);
 }
 
 .mac-icons {
@@ -321,6 +334,83 @@ body {
   flex: 1 1 auto;
   overflow: auto;
   background: var(--mac-face);
+}
+
+/* Classic Mac OS scrollbars. A platinum trough with a dithered fill and a
+   beveled thumb. This is one of the highest value details in the whole
+   interface: a modern thin overlay scrollbar inside period chrome is the
+   single loudest anachronism a visitor sees, because it is on screen the
+   entire time. Firefox gets the thin fallback below, which is the best it
+   allows without shipping a custom scroll implementation. */
+.mac-window-body::-webkit-scrollbar {
+  width: 15px;
+  height: 15px;
+}
+
+.mac-window-body::-webkit-scrollbar-track {
+  background-color: #cfccc5;
+  background-image: repeating-conic-gradient(#cfccc5 0% 25%, #bfbcb5 0% 50%);
+  background-size: 2px 2px;
+  border-left: 1px solid var(--mac-line);
+}
+
+.mac-window-body::-webkit-scrollbar-thumb {
+  background: var(--mac-face);
+  border: 1px solid var(--mac-line);
+  box-shadow: inset 1px 1px 0 var(--mac-hi), inset -1px -1px 0 var(--mac-lo);
+}
+
+.mac-window-body::-webkit-scrollbar-corner {
+  background: var(--mac-face);
+}
+
+
+/* The zoom box, top right of every window. Non functional on purpose: on a
+   desktop where windows are already the size of their content, a zoom that
+   does nothing visible is worse than a zoom that is clearly ornamental. */
+.mac-zoombox {
+  flex: 0 0 auto;
+  width: 13px;
+  height: 13px;
+  background: var(--mac-face);
+  border: 1px solid var(--mac-line);
+  box-shadow: inset 1px 1px 0 var(--mac-hi), inset -1px -1px 0 var(--mac-lo);
+  position: relative;
+}
+
+.mac-zoombox::after {
+  content: '';
+  position: absolute;
+  left: 1px;
+  top: 1px;
+  width: 6px;
+  height: 6px;
+  border: 1px solid var(--mac-line);
+  background: var(--mac-face);
+}
+
+.mac-window[data-active='false'] .mac-zoombox { opacity: 0.35; }
+
+/* The grow box. This one does work: drag it and the window resizes. */
+.mac-growbox {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 15px;
+  height: 15px;
+  cursor: nwse-resize;
+  touch-action: none;
+  background: var(--mac-face);
+  border-left: 1px solid var(--mac-line);
+  border-top: 1px solid var(--mac-line);
+  background-image: linear-gradient(
+    135deg,
+    transparent 0 34%,
+    var(--mac-lo) 34% 42%,
+    transparent 42% 58%,
+    var(--mac-lo) 58% 66%,
+    transparent 66%
+  );
 }
 
 /* Long form reading surface. Spec section 7: the chrome stays Mac, the content
@@ -499,26 +589,6 @@ body {
   border-top: 1px solid var(--mac-lo);
 }
 
-/* --- The iMac ------------------------------------------------------------ */
-
-/* Scenery. It sits behind every window, takes no clicks, and is the one thing
-   on the desktop that is an object rather than a control. */
-.mac-imac {
-  position: absolute;
-  right: 30px;
-  bottom: 6px;
-  width: 300px;
-  max-width: 30vw;
-  pointer-events: none;
-  user-select: none;
-  /* A soft shadow, not the hard 2px offset the windows use. The windows are
-     drawn UI, this is meant to be a physical object in the room. */
-  filter: drop-shadow(6px 8px 10px rgba(20, 22, 50, 0.34));
-  will-change: transform;
-}
-
-.mac-imac svg { width: 100%; height: auto; display: block; }
-
 /* --- WORK window: filter chips and the project list ---------------------- */
 
 .mac-chips {
@@ -607,6 +677,110 @@ body {
 
 .mac-workrow .mac-meta a { color: var(--mac-accent); }
 
+/* --- The bezel you are looking through ----------------------------------- */
+
+/* After the camera goes into the glass, the machine does not disappear: you
+   are inside it, looking out through its screen. This is that screen's
+   surround, and it is what makes the desktop feel like it is contained in an
+   object rather than being a web page wearing a costume.
+
+   Deliberately CSS rather than keeping the 3D scene alive. Holding a WebGL
+   context and a CSS3D layer open for the whole session, with the entire
+   desktop living inside a transformed element, would cost a permanent frame
+   budget and break text rendering, scrolling and hit testing. A frame drawn
+   in CSS costs nothing and reads the same. */
+.mac-bezel {
+  position: fixed;
+  inset: 0;
+  z-index: 9500;
+  pointer-events: none;
+  border: 13px solid #eae7e0;
+  border-bottom-width: 30px;
+  border-radius: 22px;
+  box-shadow:
+    inset 0 0 0 1px #b6b2ab,
+    inset 0 0 22px rgba(0, 0, 0, 0.3),
+    0 0 0 1px #8d8a84;
+}
+
+/* The chin furniture, so the bottom edge reads as a machine rather than as a
+   thick border: the slot loading drive in the middle, the power light off to
+   the right. Two pseudo elements, positioned directly, because stacking them
+   into one element's box shadows was fragile and put the light in the wrong
+   place. */
+.mac-bezel::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: 12px;
+  transform: translateX(-50%);
+  width: 150px;
+  height: 5px;
+  border-radius: 2.5px;
+  background: #c6c2bb;
+  box-shadow: inset 0 1px 0 #a9a59e;
+}
+
+.mac-bezel::before {
+  content: '';
+  position: absolute;
+  right: 26px;
+  bottom: 12px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #7fd88a;
+  box-shadow: 0 0 7px 2px rgba(127, 216, 138, 0.45);
+}
+
+@media (max-width: 768px) {
+  /* A phone has no screen real estate to give away to a frame. It keeps a
+     hairline so the object is still implied, and nothing more. */
+  :root {
+    --mac-bezel: 5px;
+    --mac-bezel-bottom: 12px;
+  }
+  .mac-bezel {
+    border-width: 5px;
+    border-bottom-width: 12px;
+    border-radius: 12px;
+  }
+  .mac-bezel::after,
+  .mac-bezel::before { display: none; }
+}
+
+/* --- Landing scene ------------------------------------------------------- */
+
+/* The desk the machine sits on. Warm and almost neutral, so the blue of the
+   shell is the only saturated thing in the frame. */
+.mac-landing {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  background: radial-gradient(120% 90% at 50% 42%, #6f6e79 0%, #4c4b55 62%, #33323b 100%);
+  overflow: hidden;
+  /* Holds until the camera is nearly inside the glass, then goes, so the
+     handover to the desktop happens at the moment it is already filling
+     the frame. --enter is written by the scene each frame. */
+  opacity: clamp(0, calc((1 - var(--enter, 0)) * 4), 1);
+}
+
+.mac-landing-canvas,
+.mac-landing-css {
+  position: absolute;
+  inset: 0;
+}
+
+/* The CSS3D layer must not eat clicks: the boot listens on the window, and
+   anything landing here instead would swallow the tap that continues. */
+.mac-landing-css { pointer-events: none; }
+
+.mac-screen {
+  background: #0e1116;
+  overflow: hidden;
+  position: relative;
+}
+
 /* --- Boot curtain -------------------------------------------------------- */
 
 .mac-boot {
@@ -626,6 +800,38 @@ body {
 }
 
 .mac-boot-inner { width: min(760px, 100%); }
+
+/* Inside the landing, the boot is not a full page curtain any more. It is the
+   contents of a 760 by 570 screen, so it fills its parent instead. */
+.mac-screen .mac-boot {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  padding: 26px 30px;
+  place-items: start;
+}
+
+.mac-screen .mac-boot-inner { width: 100%; }
+.mac-screen .mac-boot-title { font-size: 30px; margin-bottom: 16px; }
+.mac-screen .mac-boot-bar { width: 150px; }
+
+/* On a phone the whole machine shrinks to fit, which shrinks its screen with
+   it. The fix is to drop the screen's resolution rather than its size: the
+   DOM inside stays 760 pixels wide, so setting bigger type there makes the
+   text bigger relative to the glass. Period correct, as it happens. Fewer,
+   larger pixels is exactly what these monitors did. */
+@media (max-width: 768px) {
+  .mac-screen .mac-boot { padding: 34px 36px; }
+  .mac-screen .mac-boot-title { font-size: 52px; margin-bottom: 26px; }
+  .mac-screen .mac-boot-log { font-size: 27px; line-height: 1.6; }
+  .mac-screen .mac-boot-row { gap: 18px; line-height: 1.7; }
+  .mac-screen .mac-boot-bar { width: 150px; height: 18px; }
+  .mac-screen .mac-boot-acc,
+  .mac-screen .mac-boot-best { display: none; }
+  .mac-screen .mac-boot-prompt,
+  .mac-screen .mac-boot-skip { font-size: 27px; margin-top: 30px; }
+  .mac-screen .mac-boot-caret { width: 15px; height: 25px; }
+}
 
 /* The site's name, at a size that makes it obvious what you are entering.
    This is the one place on the site where bitmap type is set large, and it
@@ -800,15 +1006,6 @@ body {
   }
 
   .mac-icon { width: 100%; min-height: 96px; }
-
-  .mac-imac {
-    position: static;
-    order: 2;
-    width: 220px;
-    max-width: 62%;
-    margin: 4px auto 32px;
-    transform: none !important;
-  }
 
   .mac-chips { position: sticky; top: 0; z-index: 2; }
 

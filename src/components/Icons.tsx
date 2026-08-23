@@ -4,6 +4,27 @@
 
 type IconProps = { className?: string }
 
+// The six stripe Apple. It is the single most recognisable thing in the whole
+// interface, and its absence was most of why the menu bar did not read as a
+// Macintosh. Drawn rather than an image so it stays crisp at 16px.
+export function AppleLogo({ className }: IconProps) {
+  const stripes = ['#5cb85c', '#f4c430', '#f08a24', '#d4453c', '#8e4b9e', '#3d7fd1']
+  return (
+    <svg viewBox="0 0 14 17" className={className} xmlns="http://www.w3.org/2000/svg" aria-hidden>
+      <defs>
+        <clipPath id="apple-body">
+          <path d="M9.6 0.2c0.1 1-0.3 1.9-0.9 2.5c-0.6 0.7-1.5 1.2-2.4 1.1c-0.1-0.9 0.3-1.9 0.9-2.5C7.8 0.6 8.8 0.2 9.6 0.2z M13 12.4c-0.4 1-0.6 1.4-1.1 2.3c-0.7 1.2-1.7 2.6-2.9 2.6c-1.1 0-1.4-0.7-2.9-0.7c-1.5 0-1.8 0.7-2.9 0.7c-1.2 0-2.1-1.3-2.8-2.4C-1.5 11.7-1.7 7.2 0.6 5.4c0.8-0.7 1.9-1.1 2.8-1.1c1.2 0 1.9 0.7 2.9 0.7c0.9 0 1.5-0.7 2.9-0.7c0.8 0 1.7 0.3 2.4 0.9c-2.1 1.2-1.8 4.3 0.4 5.2z" />
+        </clipPath>
+      </defs>
+      <g clipPath="url(#apple-body)">
+        {stripes.map((c, i) => (
+          <rect key={c} x="-1" y={-1 + i * 3.1} width="16" height="3.2" fill={c} />
+        ))}
+      </g>
+    </svg>
+  )
+}
+
 const base = {
   viewBox: '0 0 32 32',
   xmlns: 'http://www.w3.org/2000/svg',

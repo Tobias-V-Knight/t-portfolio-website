@@ -11,6 +11,9 @@ interface WindowProps {
   onClose: () => void
   onFocus: () => void
   onMove: (x: number, y: number) => void
+  onResize: (w: number, h: number) => void
+  width: number
+  height: number
   status?: ReactNode
   children: ReactNode
 }
@@ -25,10 +28,14 @@ export function MacWindow({
   onClose,
   onFocus,
   onMove,
+  onResize,
+  width,
+  height,
   status,
   children,
 }: WindowProps) {
   const dragOffset = useRef<{ dx: number; dy: number } | null>(null)
+  const growFrom = useRef<{ x: number; y: number; w: number; h: number } | null>(null)
 
   // Pointer events rather than mouse events, so a trackpad, a mouse and a
   // stylus all behave the same. Dragging is desktop only: the mobile layout
@@ -60,13 +67,42 @@ export function MacWindow({
     }
   }, [])
 
+  // The grow box. Same pointer capture pattern as the title bar drag, and
+  // like the drag it is desktop only, because the mobile layout pins windows
+  // full bleed and a resize there would fight the CSS and lose.
+  const onGrowDown = useCallback(
+    (e: React.PointerEvent<HTMLDivElement>) => {
+      if (window.innerWidth <= 768) return
+      e.stopPropagation()
+      growFrom.current = { x: e.clientX, y: e.clientY, w: width, h: height }
+      e.currentTarget.setPointerCapture(e.pointerId)
+    },
+    [width, height],
+  )
+
+  const onGrowMove = useCallback(
+    (e: React.PointerEvent<HTMLDivElement>) => {
+      const from = growFrom.current
+      if (!from) return
+      onResize(from.w + (e.clientX - from.x), from.h + (e.clientY - from.y))
+    },
+    [onResize],
+  )
+
+  const endGrow = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
+    growFrom.current = null
+    if (e.currentTarget.hasPointerCapture(e.pointerId)) {
+      e.currentTarget.releasePointerCapture(e.pointerId)
+    }
+  }, [])
+
   return (
     <section
       className="mac-window"
       data-active={active}
       data-top={isTop}
       data-kind={def.kind}
-      style={{ left: x, top: y, width: def.width, height: def.height, zIndex }}
+      style={{ left: x, top: y, width, height, zIndex }}
       aria-label={def.title}
       onPointerDownCapture={onFocus}
     >
@@ -79,13 +115,24 @@ export function MacWindow({
       >
         <button className="mac-closebox" onClick={onClose} aria-label={`Close ${def.title}`} />
         <h2 className="mac-title">{def.title}</h2>
-        {/* Keeps the title optically centred against the close box. */}
-        <span aria-hidden style={{ width: 13, flex: '0 0 auto' }} />
+        {/* The zoom box. Present on every Mac OS 8 window, on the right, and
+            its absence was part of why the chrome read as approximate. */}
+        <span className="mac-zoombox" aria-hidden />
       </div>
 
       <div className="mac-window-body">{children}</div>
 
       {status ? <div className="mac-statusbar">{status}</div> : null}
+
+      <div
+        className="mac-growbox"
+        role="separator"
+        aria-label="Resize window"
+        onPointerDown={onGrowDown}
+        onPointerMove={onGrowMove}
+        onPointerUp={endGrow}
+        onPointerCancel={endGrow}
+      />
     </section>
   )
 }

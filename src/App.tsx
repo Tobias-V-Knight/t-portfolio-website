@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { Boot, shouldBoot } from './components/Boot'
+import { shouldBoot } from './components/Boot'
+import { Landing } from './components/Landing'
 import { MenuBar, type Menu } from './components/MenuBar'
 import { AppIcon, DiskIcon, DocIcon, FolderIcon, TrashIcon } from './components/Icons'
-import { Imac } from './components/Imac'
 import { MacWindow } from './components/Window'
 import { useWindowManager } from './system/windows'
 import { projects, windowProjects } from './data/content'
@@ -50,20 +50,21 @@ function useClock() {
 }
 
 export default function App() {
-  const { openWindows, topId, open, close, focus, move } = useWindowManager()
+  const { openWindows, topId, open, close, focus, move, resize, sizes } = useWindowManager()
   const clock = useClock()
-  // The desktop mounts underneath the boot curtain, not after it. If this
-  // component threw, the site would still be there behind it.
-  const [booting, setBooting] = useState(() => shouldBoot(window.location.pathname))
+  // The desktop mounts underneath the landing scene, not after it. If the
+  // WebGL context failed to create, the site is still there behind it.
+  const [landing, setLanding] = useState(() => shouldBoot(window.location.pathname))
   const [photoStatus, setPhotoStatus] = useState('')
   const [workStatus, setWorkStatus] = useState('')
 
   const menus: Menu[] = useMemo(
     () => [
       {
-        title: '◆',
+        title: 'APPLE',
         items: [
           { label: 'About This Macintosh', onSelect: () => open('intro') },
+          { label: 'Sherlock', separatorBefore: true },
           { label: 'Control Panels', separatorBefore: true },
           { label: 'Chooser' },
         ],
@@ -120,15 +121,14 @@ export default function App() {
 
   return (
     <>
-      {booting && <Boot onDone={() => setBooting(false)} />}
+      {landing && <Landing onEnter={() => setLanding(false)} />}
+
+      {/* You came in through the glass, so the glass is still around you. */}
+      {!landing && <div className="mac-bezel" aria-hidden />}
 
       <MenuBar menus={menus} clock={clock} />
 
       <main className="mac-desktop">
-        {/* Scenery, and the only object on the desktop that is not a control.
-            It sits behind every window and takes no pointer events. */}
-        <Imac />
-
         <div className="mac-icons">
           {desktopItems.map(({ id, label, Art }) => {
             const isOpen = openWindows.some((w) => w.id === id)
@@ -164,6 +164,9 @@ export default function App() {
               onClose={() => close(w.id)}
               onFocus={() => focus(w.id)}
               onMove={(x, y) => move(w.id, x, y)}
+              onResize={(width, height) => resize(w.id, width, height)}
+              width={sizes[w.id]?.w ?? w.def.width}
+              height={sizes[w.id]?.h ?? w.def.height}
               status={
                 w.def.kind === 'photos'
                   ? photoStatus

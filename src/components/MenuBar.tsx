@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { AppleLogo } from './Icons'
 
 export interface MenuAction {
   label: string
@@ -53,7 +54,14 @@ export function MenuBar({ menus, clock }: { menus: Menu[]; clock: string }) {
             onClick={() => setOpen(open === menu.title ? null : menu.title)}
             onMouseEnter={() => open && setOpen(menu.title)}
           >
-            {menu.title}
+            {menu.title === 'APPLE' ? (
+              <>
+                <AppleLogo className="mac-apple" />
+                <span className="mac-visually-hidden">Apple menu</span>
+              </>
+            ) : (
+              menu.title
+            )}
           </button>
 
           {open === menu.title && (
