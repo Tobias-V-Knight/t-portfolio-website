@@ -1,9 +1,17 @@
 // Every word of copy on this site lives here, so that replacing placeholder
 // text with real text never means hunting through components.
 //
-// PLACEHOLDER is a real flag, not a comment. Anything carrying it renders a
-// visible tag in the UI. Rule 9 in CLAUDE.md: never let invented specifics
-// pass as final copy.
+// Two conventions, both load bearing:
+//
+//   copyState: 'PLACEHOLDER'  renders a visible tag on the window. It means
+//              nobody has signed off on this text yet.
+//
+//   [ square brackets ]       inside any string render as a highlighted blank.
+//              They are questions aimed at T, and they are deliberately not
+//              filled in. CLAUDE.md rule 9: structure can be written from what
+//              the repos actually say, specifics cannot be invented. A made up
+//              number that survives to the live site is a number T gets asked
+//              about in an interview.
 
 export type Placeholder = 'PLACEHOLDER' | 'REAL'
 
@@ -15,10 +23,10 @@ export interface ProjectLink {
 // ---------------------------------------------------------------------------
 // Categories
 //
-// The filter chips in the WORK window. Borrowed from fabiodicec.ca, which T
-// pointed at on 2026-08-23. The point of them is that a recruiter arrives
-// looking for one specific thing, and a desktop full of undifferentiated
-// icons makes them hunt for it.
+// The filter chips in the WORK window, from the fabiodicec.ca reference T sent
+// on 2026-08-23. Tagging is deliberately tight: a project gets AI / ML only if
+// there is a model in it. Tagging generously made the chip return 10 of 13,
+// which is not a filter, it is a list with extra steps.
 // ---------------------------------------------------------------------------
 
 export type Category = 'product' | 'ai-ml' | 'data' | 'hardware' | 'tools'
@@ -31,9 +39,6 @@ export const categories: { id: Category; label: string }[] = [
   { id: 'tools', label: 'TOOLS' },
 ]
 
-// The twelve section project template from spec section 7. Sections are
-// optional on purpose: Gravl is deliberately missing architecture and stack,
-// and that omission is a constraint, not an oversight. See CLAUDE.md.
 export interface Project {
   slug: string
   title: string
@@ -45,8 +50,7 @@ export interface Project {
   categories: Category[]
   copyState: Placeholder
   // Whether this project opens a full case study window, or is only a row in
-  // the WORK list. Handoff section 6: three complete windows beat six thin
-  // ones, and a row in a list is not a thin window, it is a list.
+  // the WORK list.
   hasWindow: boolean
   problem?: string
   built?: string[]
@@ -62,34 +66,56 @@ export interface Project {
 }
 
 export const projects: Project[] = [
+  // -------------------------------------------------------------------------
+  // Flagship. T moved CSI ahead of Gravl on 2026-08-23: the site's job is
+  // getting hired, and a named client with an architecture he can draw serves
+  // that better than a startup that has to stay vague.
+  // -------------------------------------------------------------------------
   {
-    slug: 'gravl',
-    title: 'Gravl',
-    windowTitle: 'GRAVL.APP',
-    oneLiner: 'Pre bid intelligence for construction.',
-    role: 'Founder',
-    status: '2026 to now',
+    slug: 'csi-bid-intelligence',
+    title: 'CSI Bid Intelligence',
+    windowTitle: 'CSI.APP',
+    oneLiner:
+      'An AI agent platform that reads bid documents for a highway paving contractor and tells them what the job actually contains.',
+    role: 'Graduate ELP team, [ your specific role on it ]',
+    status: 'Delivered',
     year: '2026',
-    categories: ['product', 'ai-ml'],
+    categories: ['data', 'ai-ml'],
     copyState: 'PLACEHOLDER',
     hasWindow: true,
     problem:
-      'Contractors decide whether to bid on work using a fraction of what the documents actually say, because reading all of it costs more than the bid is worth. The decision that sets the margin gets the least information.',
+      'A paving contractor bids on highway work from document packages that run to hundreds of pages. Estimators cannot read all of it, so they read the parts experience says matter and accept the risk in the rest. The result is that the decision setting the margin on a multi million dollar job is made on a fraction of the available information, under time pressure, every time.',
     built: [
-      'A product that reads the bid package and tells a contractor what they are walking into before they commit.',
-      'Deployed with real contractors on real jobs.',
+      'A document ingestion pipeline that turns a bid package into structured, queryable content.',
+      'Agents that pull the bid items, the specifications and the risk language out of that content and put them somewhere an estimator can actually use.',
+      'A risk analysis layer that flags the clauses and conditions that historically cost money.',
+      '[ what did the contractor actually get handed at the end: a dashboard, a report, a spreadsheet? ]',
     ],
-    results: ['Placeholder. Replace with the outcome the customer will let you name.'],
-    links: [{ label: 'gravl-ai.com', href: 'https://gravl-ai.com' }],
+    architecture:
+      '[ Draw the path from a PDF landing in the system to an estimator reading an answer. Name the retrieval approach, the model, and where the structured output lands. Q-06 in TICKETS.md: keep this at the level of what was built, not how Gravl works. ]',
+    stack: ['Python', '[ retrieval and vector store ]', '[ model, and why that one ]', '[ how it was served ]'],
+    media: [
+      { caption: 'Bid item extraction', tone: 'screenshot' },
+      { caption: 'Document to answer path', tone: 'diagram' },
+    ],
+    results: [
+      '[ How much estimator time did this take out of a bid? ]',
+      '[ What did the contractor say, or do differently, after using it? ]',
+      '[ Any accuracy number you are willing to stand behind ]',
+    ],
+    lessons: [
+      '[ The interesting technical decision. What did you try that did not work, and what did you switch to? ]',
+      '[ The domain lesson. What did you learn about paving contracts that no model would have told you? ]',
+    ],
     constraint:
-      'OUTCOME ONLY. Never add architecture, pipeline stages, corpus size, unit or marginal compute cost, model details, the five work product method, the phase and gate table, or the pit and haul insight. All of it was deliberately removed from the company site over 2026-08-20 and 21. See CLAUDE.md.',
+      'T cleared this for the site on 2026-08-23, overriding the hold in the handoff, on the condition that it shows what was built and never the code. The architecture section stays a blank prompt until T rules on Q-06: CSI is adjacent enough to Gravl that a detailed system description may describe Gravl by proxy.',
   },
   {
     slug: 'pickleball-iq',
     title: 'Pickleball IQ',
     windowTitle: 'PICKLEBALL_IQ.APP',
     oneLiner: 'Coaching intelligence for pickleball, built from video nobody else was reading.',
-    role: 'Founder, and the person who wrote the pipeline',
+    role: 'Built the pipeline, the app and the analytics',
     status: 'Active, in use',
     year: '2025 to now',
     categories: ['product', 'ai-ml'],
@@ -112,73 +138,105 @@ export const projects: Project[] = [
       { caption: 'Coaching dashboard', tone: 'screenshot' },
     ],
     results: [
-      'Placeholder. Replace with the real number of matches processed.',
-      'Placeholder. Replace with what changed for the coaches actually using it.',
+      '[ How many matches have gone through it? ]',
+      '[ What changed for the coaches actually using it? ]',
     ],
     lessons: [
       'The hard part was never the model. It was deciding what counts as one rally, because every downstream number inherits that definition.',
       'Shipping the dashboard before the app was correct. Coaches will tolerate a rough interface if the data is real, and players will not.',
     ],
-    links: [{ label: 'Read more', href: '#' }],
-  },
-
-  // --- Rows in the WORK list. No window until T writes real copy for them. ---
-  // One liners are taken from T's own repo descriptions rather than invented.
-
-  {
-    slug: 'csi-bid-intelligence',
-    title: 'CSI Bid Intelligence',
-    windowTitle: 'CSI.APP',
-    oneLiner:
-      'Bidding intelligence and document risk analysis for a highway paving contractor.',
-    role: 'Graduate ELP team',
-    status: 'Delivered',
-    year: '2026',
-    categories: ['data', 'ai-ml'],
-    copyState: 'PLACEHOLDER',
-    hasWindow: false,
-    constraint:
-      'T cleared this for the site on 2026-08-23, overriding the hold in the handoff, on the condition that it shows what was built and the architecture but never the code. The architecture section is deliberately still empty: CSI is adjacent enough to Gravl that a detailed system description may reveal more about Gravl than the company site does. Do not write that section until T rules on it specifically.',
   },
   {
-    slug: 'roleradar',
-    title: 'RoleRadar',
-    windowTitle: 'ROLERADAR.APP',
-    oneLiner: 'Personalised job matcher and scanner. Drop in a target company URL, that simple.',
+    slug: 'pickletrack',
+    title: 'PickleTrack',
+    windowTitle: 'PICKLETRACK.APP',
+    oneLiner: 'Computer vision that tracks pickleball shot accuracy from ordinary match video.',
     role: 'Built it',
     status: 'Public',
-    year: '2026',
-    categories: ['ai-ml', 'tools'],
+    year: '2025',
+    categories: ['ai-ml'],
     copyState: 'PLACEHOLDER',
-    hasWindow: false,
-    links: [{ label: 'GitHub', href: 'https://github.com/Tobias-V-Knight/roleradar' }],
+    hasWindow: true,
+    problem:
+      'Shot accuracy is the number every player wants and nobody measures, because measuring it by hand means watching the same rally four times with a notepad. The data exists in every phone video ever shot from the fence, it is just locked in pixels.',
+    built: [
+      'Ball and player detection on match footage.',
+      'Court mapping that turns image coordinates into real positions on a real court, which is what makes a bounce location mean something.',
+      'A performance analytics layer over the tracked shots.',
+    ],
+    architecture:
+      'Detection runs frame by frame with YOLOv8. A homography maps the detected court corners onto a known court geometry, so every detection becomes a position in feet rather than pixels. Shot events come out of the position and velocity series, and the analytics run on those events.',
+    stack: ['Python', 'YOLOv8', 'OpenCV', '[ anything else worth naming ]'],
+    media: [{ caption: 'Tracked rally with court overlay', tone: 'screenshot' }],
+    results: [
+      '[ Detection accuracy, and on what footage ]',
+      '[ What it got wrong, and where it broke down ]',
+    ],
+    lessons: [
+      '[ Court mapping is usually the hard part. Was it here? ]',
+      'This became the groundwork for Pickleball IQ, which is the same problem approached as a product rather than as a model.',
+    ],
+    links: [{ label: 'GitHub', href: 'https://github.com/Tobias-V-Knight/pickletrackv2' }],
   },
   {
     slug: 'nlp-material-classifier',
     title: 'NLP Material Classifier',
     windowTitle: 'CLASSIFIER.APP',
     oneLiner:
-      'Sequence to sequence material classifier for construction suppliers and general contractors.',
+      'A sequence to sequence classifier that reads construction bid line items and says what material they are.',
     role: 'Built it',
     status: 'Private repo',
     year: '2026',
     categories: ['ai-ml'],
     copyState: 'PLACEHOLDER',
-    hasWindow: false,
+    hasWindow: true,
+    problem:
+      'Bid items in construction documents are written by humans in a hurry, so the same material appears a dozen different ways across a dozen contractors. Anything that wants to compare prices, estimate quantities or spot an unusual line first has to agree on what the line actually is, and that agreement does not exist in the source data.',
+    built: [
+      'An attention mechanism written from scratch, to understand the machinery rather than to import it.',
+      'A fine tuned DistilBERT classifier trained on real bid item text.',
+      'A comparison between the two, which is the actual point of doing both.',
+    ],
+    architecture:
+      'Everything runs locally on a Mac mini rather than in a hosted environment, which was a constraint worth accepting: it forced the model small enough to be practical and made the whole thing reproducible on one machine.',
+    stack: ['Python', 'PyTorch', 'DistilBERT', 'Trained locally on a Mac mini'],
+    results: [
+      '[ Accuracy from scratch versus fine tuned, and on how many classes ]',
+      '[ Where the from scratch version held up, and where it did not ]',
+    ],
+    lessons: [
+      '[ Writing attention by hand teaches something specific. What was it? ]',
+    ],
   },
   {
-    slug: 'pickletrack',
-    title: 'PickleTrack',
-    windowTitle: 'PICKLETRACK.APP',
-    oneLiner:
-      'Computer vision for pickleball shot accuracy. YOLOv8, court mapping, performance analytics.',
+    slug: 'roleradar',
+    title: 'RoleRadar',
+    windowTitle: 'ROLERADAR.APP',
+    oneLiner: 'Drop in a target company URL and it finds the roles worth your time. That simple.',
     role: 'Built it',
     status: 'Public',
-    year: '2025',
-    categories: ['ai-ml'],
+    year: '2026',
+    categories: ['ai-ml', 'tools'],
     copyState: 'PLACEHOLDER',
-    hasWindow: false,
-    links: [{ label: 'GitHub', href: 'https://github.com/Tobias-V-Knight/pickletrackv2' }],
+    hasWindow: true,
+    problem:
+      'Job boards optimise for volume, and a job search optimises for fit. Searching by keyword returns a hundred roles that share a word and none that share a shape, so the work of a search is mostly reading postings to reject them.',
+    built: [
+      'A scanner that takes a company URL and pulls its open roles.',
+      'A matching layer that scores those roles against a profile rather than against a keyword.',
+      'A multi agent setup where the scanning, the parsing and the judging are separate agents with separate jobs.',
+    ],
+    architecture:
+      'Built on AutoGen with Azure AI Foundry behind it. Splitting the work across agents rather than one long prompt was the design decision: a scanner that fails is a different failure from a judge that is wrong, and keeping them apart makes it obvious which one broke.',
+    stack: ['Python', 'AutoGen', 'Azure AI Foundry'],
+    results: [
+      '[ Did it actually surface roles you would have missed? ]',
+      '[ How many companies have you run it against? ]',
+    ],
+    lessons: [
+      '[ Multi agent setups are often slower and more fragile than one good prompt. Was that true here? ]',
+    ],
+    links: [{ label: 'GitHub', href: 'https://github.com/Tobias-V-Knight/roleradar' }],
   },
   {
     slug: '4mativ-anomaly-detection',
@@ -188,9 +246,16 @@ export const projects: Project[] = [
     role: 'Team project',
     status: 'Public',
     year: '2026',
-    categories: ['data', 'ai-ml'],
+    categories: ['data'],
     copyState: 'PLACEHOLDER',
-    hasWindow: false,
+    hasWindow: true,
+    problem:
+      '[ What was the operational problem, and who was feeling it? Anomaly detection is a method, not a problem, and the article needs the problem. ]',
+    built: ['[ What did you build and hand over? ]'],
+    architecture: '[ What detected the anomalies, and how were they surfaced? ]',
+    stack: ['[ language and libraries ]'],
+    results: ['[ What did it catch? ]'],
+    lessons: ['[ The interesting part ]'],
     links: [{ label: 'GitHub', href: 'https://github.com/Tobias-V-Knight/4mativ-anomaly-detection' }],
   },
   {
@@ -201,9 +266,16 @@ export const projects: Project[] = [
     role: 'Built it',
     status: 'Public',
     year: '2026',
-    categories: ['ai-ml', 'data'],
+    categories: ['ai-ml'],
     copyState: 'PLACEHOLDER',
-    hasWindow: false,
+    hasWindow: true,
+    problem:
+      '[ Every recommender demo looks the same. What made this one worth building: the dataset, the approach, or the question you were testing? ]',
+    built: ['[ Collaborative filtering, content based, or a hybrid? ]'],
+    architecture: '[ How were recommendations generated and served? ]',
+    stack: ['Python', '[ libraries ]'],
+    results: ['[ Evaluation metric and score ]'],
+    lessons: ['[ What surprised you ]'],
     links: [{ label: 'GitHub', href: 'https://github.com/Tobias-V-Knight/film-recommender' }],
   },
   {
@@ -214,9 +286,16 @@ export const projects: Project[] = [
     role: 'Built it',
     status: 'Public',
     year: '2026',
-    categories: ['ai-ml', 'data'],
+    categories: ['ai-ml'],
     copyState: 'PLACEHOLDER',
-    hasWindow: false,
+    hasWindow: true,
+    problem:
+      '[ Product recommendation with an ingredient constraint is a more interesting problem than film recommendation. Was that the angle? ]',
+    built: ['[ What did it recommend on: ingredients, reviews, skin type? ]'],
+    architecture: '[ How were recommendations generated? ]',
+    stack: ['Python', '[ libraries ]'],
+    results: ['[ Evaluation metric and score ]'],
+    lessons: ['[ What surprised you ]'],
     links: [{ label: 'GitHub', href: 'https://github.com/Tobias-V-Knight/skin-care-recommender' }],
   },
   {
@@ -229,7 +308,14 @@ export const projects: Project[] = [
     year: '2026',
     categories: ['ai-ml'],
     copyState: 'PLACEHOLDER',
-    hasWindow: false,
+    hasWindow: true,
+    problem:
+      'The canonical first computer vision problem, which makes it a fair test of technique rather than of novelty. Everyone has the same data, so the only variable is what you do with it.',
+    built: ['[ Trained from scratch, fine tuned a pretrained backbone, or both? ]'],
+    architecture: '[ Model architecture and augmentation strategy ]',
+    stack: ['Python', 'Jupyter', '[ framework ]'],
+    results: ['[ Leaderboard score and placement ]'],
+    lessons: ['[ What moved the score most ]'],
     links: [{ label: 'GitHub', href: 'https://github.com/Tobias-V-Knight/dogs-v-cats_kaggle_comp' }],
   },
   {
@@ -242,33 +328,89 @@ export const projects: Project[] = [
     year: '2026',
     categories: ['hardware'],
     copyState: 'PLACEHOLDER',
-    hasWindow: false,
+    hasWindow: true,
+    problem:
+      'Training a model on a laptop means the laptop is gone for the afternoon, and renting a GPU for every experiment means paying to find out an idea was bad. A machine that sits in the corner and takes jobs solves both, and it is cheaper than either over a year.',
+    built: [
+      '[ The hardware, and why that configuration ]',
+      '[ What runs on it: training jobs, services, storage, anything hosted ]',
+      '[ How you reach it from elsewhere ]',
+    ],
+    architecture: '[ Network, storage and service layout. This one deserves a diagram. ]',
+    stack: ['[ OS, container runtime, anything orchestrating it ]'],
+    media: [{ caption: 'The machine, in situ', tone: 'screenshot' }],
+    results: ['[ What it has actually run. The NLP classifier trained on it, what else? ]'],
+    lessons: ['[ What you would do differently on the next build ]'],
   },
   {
     slug: 'figviewer',
     title: 'figviewer',
     windowTitle: 'FIGVIEWER.APP',
-    oneLiner: 'Spyder style arrow key navigation for Matplotlib plots.',
+    oneLiner: 'Arrow key navigation for Matplotlib plots, the way Spyder does it.',
     role: 'Built it',
     status: 'Public',
     year: '2026',
     categories: ['tools'],
     copyState: 'PLACEHOLDER',
-    hasWindow: false,
+    hasWindow: true,
+    problem:
+      'Matplotlib opens every figure in its own window and gives you no way to step between them. Anyone who has generated forty plots in a loop has then closed forty windows one at a time. Spyder solved this years ago and nothing outside Spyder did.',
+    built: ['A viewer that collects the figures and lets you arrow through them.'],
+    stack: ['Python', 'Matplotlib'],
+    results: ['[ Do you still use it? That is the only metric a tool like this has. ]'],
+    lessons: [
+      'The smallest tools are the ones you actually keep, because they solve a problem you hit weekly rather than a problem you found interesting once.',
+    ],
     links: [{ label: 'GitHub', href: 'https://github.com/Tobias-V-Knight/figviewer' }],
   },
   {
     slug: 'this-site',
     title: 'This Website',
     windowTitle: 'THIS_SITE.APP',
-    oneLiner: 'The thing you are looking at. Classic Mac desktop, React, no backend.',
+    oneLiner: 'The thing you are looking at. A classic Macintosh desktop, no backend, no framework.',
     role: 'Built it',
     status: 'You are here',
     year: '2026',
     categories: ['tools'],
     copyState: 'PLACEHOLDER',
-    hasWindow: false,
+    hasWindow: true,
+    problem:
+      'A portfolio has about fifteen seconds to be worth reading, and every portfolio looks the same, so the fifteen seconds go to whoever is memorable rather than whoever is best. The risk in solving that with a gimmick is that the gimmick becomes the thing people remember instead of the work.',
+    built: [
+      'A window manager where the URL owns the active window, so every project has a real shareable address and the browser Back button closes the window on top.',
+      'A mobile layout that keeps the Macintosh chrome and drops the desktop metaphor entirely, because a desktop simulated on a phone is worse than no metaphor at all.',
+      'A boot sequence, a filtered project index, and a photo viewer, none of which are required to reach anything.',
+    ],
+    architecture:
+      'Static Vite and React with no backend. Every colour comes from one stylesheet, every word of copy comes from one data file, and the whole thing deploys to GitHub Pages as flat files.',
+    stack: ['Vite', 'React', 'TypeScript', 'React Router', 'No CSS framework, no component library'],
+    lessons: [
+      'Navigating to a window that is already open means two opposite things. Back onto it means close everything above it, clicking a buried one means raise it and leave the rest. Same URL, opposite intent, and only the navigation type tells them apart.',
+    ],
     links: [{ label: 'GitHub', href: 'https://github.com/Tobias-V-Knight/t-portfolio-website' }],
+  },
+  // -------------------------------------------------------------------------
+  // Gravl, deliberately last and deliberately without a window.
+  //
+  // T's call on 2026-08-23: the site's job is getting hired, and a prominent
+  // startup reads to a hiring manager as someone who will leave. It stays as
+  // one row so the 2026 timeline has no unexplained gap. Flip this the day the
+  // goal becomes raising money instead of getting hired.
+  // -------------------------------------------------------------------------
+  {
+    slug: 'gravl',
+    title: 'Gravl',
+    windowTitle: 'GRAVL.APP',
+    oneLiner: 'Pre bid intelligence for construction.',
+    role: '',
+    status: '2026 to now',
+    year: '2026',
+    categories: ['product'],
+    copyState: 'PLACEHOLDER',
+    hasWindow: false,
+    links: [{ label: 'gravl-ai.com', href: 'https://gravl-ai.com' }],
+    constraint:
+      'OUTCOME ONLY, and as of 2026-08-23 not even that: no window, no founder title, one row. Never add architecture, pipeline stages, corpus size, unit or marginal compute cost, model details, the five work product method, the phase and gate table, or the pit and haul insight. See CLAUDE.md.',
   },
 ]
 
@@ -276,15 +418,17 @@ export const windowProjects = projects.filter((p) => p.hasWindow)
 
 export const about = {
   name: 'TOBIAS KNIGHT',
-  positioning: 'technical founder / builder / applied AI',
-  location: 'MINNEAPOLIS, MN',
+  // Was 'technical founder / builder / applied AI'. The founder half came off
+  // on 2026-08-23 for the same reason Gravl lost its window.
+  positioning: 'builder / applied AI',
+  location: 'MINNEAPOLIS, MN / SOUTH SIDE',
   copyState: 'PLACEHOLDER' as Placeholder,
   lines: [
     'I build software, AI systems, and weird side projects.',
-    'Right now that mostly means Gravl, which is pre bid intelligence for construction contractors.',
-    'Before that, a pickleball coaching product, a home lab that got out of hand, and a graduate degree that keeps turning into an excuse to build things.',
+    'Most of it lands somewhere in the same place: take something a person currently reads by hand, and find out whether a machine can read it well enough to be trusted.',
+    'Right now that means bid documents in construction, video in pickleball, and a home lab that got out of hand.',
   ],
-  status: 'CURRENTLY: building Gravl',
+  status: 'CURRENTLY: TRAINING NLP ATTENTION BY HAND ON A MAC MINI',
 }
 
 export const contact: ProjectLink[] = [

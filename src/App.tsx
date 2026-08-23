@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
+import { Boot, shouldBoot } from './components/Boot'
 import { MenuBar, type Menu } from './components/MenuBar'
 import { AppIcon, DiskIcon, DocIcon, FolderIcon, TrashIcon } from './components/Icons'
-import { Crt } from './components/Crt'
+import { Imac } from './components/Imac'
 import { MacWindow } from './components/Window'
 import { useWindowManager } from './system/windows'
 import { projects, windowProjects } from './data/content'
@@ -16,7 +17,7 @@ import './styles/system.css'
 // nothing is the fastest way to make the desktop feel like set dressing.
 const desktopItems = [
   { id: 'work', label: 'WORK', Art: DiskIcon },
-  { id: 'project:gravl', label: 'GRAVL', Art: AppIcon },
+  { id: 'project:csi-bid-intelligence', label: 'CSI.APP', Art: AppIcon },
   { id: 'project:pickleball-iq', label: 'PICKLEBALL_IQ', Art: AppIcon },
   { id: 'photos', label: 'PHOTOS', Art: FolderIcon },
   { id: 'about', label: 'ABOUT_ME.TXT', Art: DocIcon },
@@ -51,6 +52,9 @@ function useClock() {
 export default function App() {
   const { openWindows, topId, open, close, focus, move } = useWindowManager()
   const clock = useClock()
+  // The desktop mounts underneath the boot curtain, not after it. If this
+  // component threw, the site would still be there behind it.
+  const [booting, setBooting] = useState(shouldBoot)
   const [photoStatus, setPhotoStatus] = useState('')
   const [workStatus, setWorkStatus] = useState('')
 
@@ -116,12 +120,14 @@ export default function App() {
 
   return (
     <>
+      {booting && <Boot onDone={() => setBooting(false)} />}
+
       <MenuBar menus={menus} clock={clock} />
 
       <main className="mac-desktop">
         {/* Scenery, and the only object on the desktop that is not a control.
             It sits behind every window and takes no pointer events. */}
-        <Crt />
+        <Imac />
 
         <div className="mac-icons">
           {desktopItems.map(({ id, label, Art }) => {

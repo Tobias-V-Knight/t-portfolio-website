@@ -37,7 +37,10 @@ validate the aesthetic, not to ship the portfolio. Placeholder copy throughout.
 | P1-13 | Accessibility: focus states, keyboard nav, alt text, reduced motion | AFK | done | Tab reaches every control, no motion when reduced |
 | P1-14 | Browser verification at 390px and desktop, console clean | AFK | done | Screenshots captured, zero console errors |
 | P1-15 | WORK window: category chips, every project as a row | SHOW | review | Chips filter, status bar counts, rows without a case study are not links |
-| P1-16 | CRT object on the desktop, drawn in SVG | SHOW | review | Sits behind windows, takes no clicks, moves to the bottom of the column on mobile |
+| P1-16 | iMac G3 on the desktop, Blueberry, drawn in SVG | SHOW | review | Sits behind windows, takes no clicks, moves to the bottom of the column on mobile. Replaced the CRT on T's call |
+| P1-18 | Boot sequence, ML training run, once per session, skippable | SHOW | review | Verified: renders, sets the session flag, and a keypress skips it while the timer still had minutes left |
+| P1-19 | First pass copy for all thirteen projects | SHOW | review | Structure from the real repos, every unknown left as a visible blank |
+| P1-20 | CSI promoted to flagship, Gravl demoted to a row | AFK | done | Gravl has no window, no founder title on the homepage, one row and a link |
 | P1-17 | Desktop icons move to the left to give the CRT the right side | AFK | done | No overlap at 1440px or 390px |
 
 ## Backlog
@@ -46,9 +49,11 @@ Things T has decided he wants but has deliberately parked.
 
 | ID | Item | Mode | Notes |
 |---|---|---|---|
-| B-01 | What plays on the CRT screen | ASK | T, 2026-08-23: a mix of old PickleTrack clips, product building, and the funnier parts of the MSBA program. All tech and building related. Placeholder NO SIGNAL card until then |
+| B-01 | What plays on the iMac screen | ASK | T, 2026-08-23: a mix of old PickleTrack clips, product building, and the funnier parts of the MSBA program. All tech and building related. Placeholder NO SIGNAL card until then |
 | B-02 | Full case study windows for the projects that are only rows today | ASK | Blocked on Q-01. Each one needs a paragraph from T before it can become a window |
-| B-03 | CSI architecture section | ASK | See Q-06. The row exists, the architecture is deliberately empty |
+| B-03 | CSI architecture section | ASK | See Q-06. The window exists, the architecture is a blank prompt |
+| B-04 | Upgrade the iMac to a pre-rendered rotation sequence | ASK | Only if the SVG does not carry enough weight. Real 3D via Three.js was considered and rejected for bundle size, model licensing and mobile performance, all of which fight spec section 19 |
+| B-05 | Objects around the iMac as portals: CD for music, camera for photos | ASK | From T's concept note. Strong idea, deliberately deferred until the copy is real, because it multiplies the surface before there is anything behind it |
 
 ## Blocked on T, not on code
 
@@ -60,6 +65,7 @@ Things T has decided he wants but has deliberately parked.
 | Q-04 | Real photos, and consent for any face that is not T's | Handoff rule 7. Placeholders are in place until then |
 | Q-05 | DNS cutover timing at Namecheap | P1-12 cannot finish without it |
 | Q-06 | How much CSI architecture can be published | T cleared CSI for the site on 2026-08-23, overriding the handoff hold, on the condition it shows what was built and not the code. Open question is narrower: CSI is bid intelligence for paving contractors and Gravl is pre bid intelligence for construction, so a detailed CSI architecture may describe Gravl's mechanism by proxy. The section stays empty until T rules |
+| Q-08 | Every blank in the copy | Thirteen project articles now exist with every unknown marked as a visible yellow slot. Each one is a question with a specific answer only T has |
 | Q-07 | The category taxonomy is too generous | AI / ML currently returns 10 of 13 projects, so the chip barely filters. Gravl, Pickleball IQ and CSI are tagged both product and AI / ML. T should decide whether a project gets one primary category or many |
 
 ## Log

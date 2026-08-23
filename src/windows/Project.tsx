@@ -1,5 +1,5 @@
 import type { Project } from '../data/content'
-import { PlaceholderTag } from './Panels'
+import { PlaceholderTag, withBlanks } from './Panels'
 
 // Spec section 7. The homepage is world-building, the project page is
 // communication, and this is where the site stops being strange. Mac chrome
@@ -14,18 +14,18 @@ export function ProjectPanel({ project }: { project: Project }) {
   return (
     <article className="mac-doc">
       <h1>{project.title}</h1>
-      <p className="mac-lede">{project.oneLiner}</p>
+      <p className="mac-lede">{withBlanks(project.oneLiner)}</p>
 
       <p className="mac-meta">
-        {project.role}
+        {withBlanks(project.role)}
         <br />
-        {project.status}
+        {withBlanks(project.status)}
       </p>
 
       {project.problem && (
         <>
           <h2>THE PROBLEM</h2>
-          <p>{project.problem}</p>
+          <p>{withBlanks(project.problem)}</p>
         </>
       )}
 
@@ -34,7 +34,7 @@ export function ProjectPanel({ project }: { project: Project }) {
           <h2>WHAT WAS BUILT</h2>
           <ul>
             {project.built.map((b) => (
-              <li key={b}>{b}</li>
+              <li key={b}>{withBlanks(b)}</li>
             ))}
           </ul>
         </>
@@ -43,14 +43,14 @@ export function ProjectPanel({ project }: { project: Project }) {
       {project.architecture && (
         <>
           <h2>ARCHITECTURE</h2>
-          <p>{project.architecture}</p>
+          <p>{withBlanks(project.architecture)}</p>
         </>
       )}
 
       {project.stack && (
         <>
           <h2>STACK</h2>
-          <p className="mac-meta">{project.stack.join('  ·  ')}</p>
+          <p className="mac-meta">{withBlanks(project.stack.join('  ·  '))}</p>
         </>
       )}
 
@@ -80,7 +80,7 @@ export function ProjectPanel({ project }: { project: Project }) {
           <h2>RESULTS</h2>
           <ul>
             {project.results.map((r) => (
-              <li key={r}>{r}</li>
+              <li key={r}>{withBlanks(r)}</li>
             ))}
           </ul>
         </>
@@ -91,7 +91,7 @@ export function ProjectPanel({ project }: { project: Project }) {
           <h2>WHAT I LEARNED</h2>
           <ul>
             {project.lessons.map((l) => (
-              <li key={l}>{l}</li>
+              <li key={l}>{withBlanks(l)}</li>
             ))}
           </ul>
         </>

@@ -6,6 +6,22 @@ export function PlaceholderTag() {
   return <p className="mac-tag">PLACEHOLDER COPY</p>
 }
 
+// Anything in [ square brackets ] in the copy is a question aimed at T, not
+// text meant for a visitor. Rendering it as a visible highlighted slot rather
+// than as ordinary prose is the whole safety mechanism: an unanswered blank is
+// impossible to mistake for finished copy, so none of them can quietly ship.
+export function withBlanks(text: string) {
+  return text.split(/(\[[^\]]*\])/g).map((part, i) =>
+    part.startsWith('[') && part.endsWith(']') ? (
+      <mark className="mac-blank" key={i}>
+        {part.slice(1, -1).trim()}
+      </mark>
+    ) : (
+      <span key={i}>{part}</span>
+    ),
+  )
+}
+
 export function IntroPanel() {
   return (
     <div className="mac-doc" style={{ display: 'grid', gap: 16 }}>

@@ -36,8 +36,8 @@ export const windowDefs: WindowDef[] = [
     title: 'WELCOME.TXT',
     kind: 'intro',
     route: null,
-    width: 460,
-    height: 330,
+    width: 470,
+    height: 400,
     spawn: { x: 0.08, y: 0.14 },
   },
   {

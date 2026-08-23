@@ -50,7 +50,8 @@ that gets consulted before a new file is ever created.
 | `components/Icons.tsx` | Desktop icons | Folder, document, application, disk and trash, drawn as crisp edged SVG rather than bitmaps |
 | `windows/Panels.tsx` | Small windows | The intro card, the about window, the trash Easter egg, and the placeholder tag component |
 | `windows/Work.tsx` | WORK window | Category filter chips and the full project list. Projects with a case study open a window, the rest are rows with a link |
-| `components/Crt.tsx` | The CRT | A beige tube monitor drawn in SVG, sitting on the desktop as scenery. Takes no clicks. Its screen is a placeholder, see B-01 in `TICKETS.md` |
+| `components/Imac.tsx` | The iMac G3 | A translucent Blueberry iMac drawn in SVG, sitting on the desktop as scenery with a few pixels of parallax. Takes no clicks. Its screen shows a deliberately crude little Macintosh desktop |
+| `components/Boot.tsx` | Boot sequence | An ML training run that plays once per session and skips on any key. Never blocks content: the desktop is already mounted underneath it |
 | `windows/Project.tsx` | Project window | The twelve section project template. Sections render only when the data has them, which is how Gravl stays outcome only |
 | `windows/Photos.tsx` | Photo viewer | Contact sheet, single image view, next and previous, and the byte formatter for the status bar |
 | `styles/system.css` | The entire visual language | Palette tokens, bevels, window chrome, menu bar, type scale, focus states, and the mobile layout. Every colour in the codebase comes from here |
