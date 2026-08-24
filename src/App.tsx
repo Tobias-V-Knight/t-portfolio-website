@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { shouldBoot } from './components/Boot'
-import { Landing } from './components/Landing'
+import { Boot, shouldBoot } from './components/Boot'
 import { MenuBar, type Menu } from './components/MenuBar'
 import { AppIcon, DiskIcon, DocIcon, FolderIcon, TrashIcon } from './components/Icons'
 import { MacWindow } from './components/Window'
@@ -52,9 +51,9 @@ function useClock() {
 export default function App() {
   const { openWindows, topId, open, close, focus, move, resize, sizes } = useWindowManager()
   const clock = useClock()
-  // The desktop mounts underneath the landing scene, not after it. If the
-  // WebGL context failed to create, the site is still there behind it.
-  const [landing, setLanding] = useState(() => shouldBoot(window.location.pathname))
+  // The desktop mounts underneath the boot curtain, not after it. If this
+  // component threw, the site would still be there behind it.
+  const [booting, setBooting] = useState(() => shouldBoot(window.location.pathname))
   const [photoStatus, setPhotoStatus] = useState('')
   const [workStatus, setWorkStatus] = useState('')
 
@@ -121,10 +120,10 @@ export default function App() {
 
   return (
     <>
-      {landing && <Landing onEnter={() => setLanding(false)} />}
+      {booting && <Boot onDone={() => setBooting(false)} />}
 
-      {/* You came in through the glass, so the glass is still around you. */}
-      {!landing && <div className="mac-bezel" aria-hidden />}
+      {/* The screen you are looking through. */}
+      {!booting && <div className="mac-bezel" aria-hidden />}
 
       <MenuBar menus={menus} clock={clock} />
 

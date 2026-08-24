@@ -41,8 +41,9 @@ validate the aesthetic, not to ship the portfolio. Placeholder copy throughout.
 | P1-18 | Boot sequence, ML training run, once per session, skippable | SHOW | review | Verified: renders, sets the session flag, and a keypress skips it while the timer still had minutes left |
 | P1-19 | First pass copy for all thirteen projects | SHOW | review | Structure from the real repos, every unknown left as a visible blank |
 | P1-20 | CSI promoted to flagship, Gravl demoted to a row | AFK | done | Gravl has no window, no founder title on the homepage, one row and a link |
-| P1-25 | Landing hero becomes a real photograph, live screen mapped with matrix3d | SHOW | review | Three procedural passes could not make an extruded silhouette look like a compound curved industrial form. A photograph does not have to be made to look real |
-| P1-21 | Landing scene: 3D iMac G3, superseded by P1-25 | SHOW | done | three.js, procedural geometry, real transmission and a procedural room. Enter pushes the camera through the glass into the desktop |
+| P1-26 | Revert the hero to the full screen terminal boot | AFK | done | T, 2026-08-24. The machine was solving a problem the terminal did not have, and it cost the log its legibility. Header is fixed and only the epochs scroll, so the import stack is still on screen when it settles |
+| P1-25 | Landing hero as a real photograph, reverted by P1-26 | SHOW | done | Recoverable from git if the desk scene ever comes back. The three quarters transparent PNG is in the session scratchpad |
+| P1-21 | Landing scene: 3D iMac G3, superseded twice | SHOW | done | three.js, procedural geometry, real transmission and a procedural room. Enter pushes the camera through the glass into the desktop |
 | P1-22 | The bezel stays around the desktop after entry | SHOW | review | CSS frame with the drive slot and power light. Everything inside is inset by it rather than clipped |
 | P1-23 | Mac OS 8 authenticity pass on the inside | SHOW | review | Apple menu, classic scrollbars, zoom box, working grow box |
 | P1-24 | Remove the SVG iMac from the desktop | AFK | done | Once you are through the glass you are inside the machine, so a computer on its own desktop reads as a duplicate |
@@ -59,7 +60,7 @@ Things T has decided he wants but has deliberately parked.
 | B-03 | CSI architecture section | ASK | See Q-06. The window exists, the architecture is a blank prompt |
 | B-06 | Susan Kare style icon set | ASK | The icons are the weakest remaining part of the illusion. The reference T sent has hand drawn 32x32 icons and ours are geometric |
 | B-07 | Sound: startup chime, window open, click | ASK | Spec section 13. Never autoplay, global mute, and it should reward exploration rather than punish it |
-| B-04 | A second hero photograph, or T's own iMac | ASK | The transparent three quarters PNG is downloaded and could drop onto any background. Shooting T's own machine would beat both |
+| B-04 | A physical object somewhere on the site | ASK | The iMac is out of the entrance, but the desk scene idea from T's concept note, with the CD and camera as portals, is still a good one for a later phase |
 | B-05 | Objects around the iMac as portals: CD for music, camera for photos | ASK | From T's concept note. Strong idea, deliberately deferred until the copy is real, because it multiplies the surface before there is anything behind it |
 
 ## Blocked on T, not on code

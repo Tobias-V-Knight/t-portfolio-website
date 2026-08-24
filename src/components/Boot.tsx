@@ -1,17 +1,21 @@
 import { useEffect, useRef, useState } from 'react'
 
-// The boot sequence, running on the iMac's own screen.
+// The boot sequence. Full screen, then the desktop.
 //
-// It is a single rolling buffer, not a page. That is the fix for the log being
-// clipped: a fixed block of text has to fit the glass, so either the type
-// shrinks until it cannot be read or the content gets cut off. A terminal
-// scrolls. The imports appear, scroll up and away as training starts, and the
-// screen only ever holds the last dozen lines. Nothing is ever cut off, and
-// the type can be large enough to read from across the room.
+// This is the third shape it has had and the one T kept. A photograph of an
+// iMac G3 with this log running inside its screen was built and then removed:
+// it was real, but the machine was solving a problem the terminal did not
+// have, and it cost the log most of its legibility to do it. The terminal on
+// its own says the same thing about the person, faster.
 //
-// The site name and the prompt live OUTSIDE the machine, in Landing, for the
-// same reason: they are the two things a visitor must be able to read, and the
-// screen is the smallest surface on the page.
+// Only the EPOCHS roll. The header stays put.
+//
+// Rolling everything was tried and it was wrong: thirty epochs pushed the
+// import list off the top, so by the time the screen settles, which is when
+// people actually read it, the stack was gone. The libraries are half the
+// point of this screen. So the header is fixed, the epoch log scrolls under
+// it in a fixed height window, and the final state holds everything worth
+// reading.
 //
 // Rules that still hold: it plays once per session, any key or tap continues,
 // it never runs under reduced motion, and it only plays on the homepage so a
@@ -23,9 +27,9 @@ const EPOCH_MS = 58
 
 const isSmallScreen = () => typeof window !== 'undefined' && window.innerWidth <= 768
 
-// How many lines the glass holds. A phone's screen is physically smaller, so
-// its type is larger and fewer lines fit.
-const MAX_LINES = isSmallScreen() ? 8 : 12
+// How many epoch rows are on screen at once. The header above them is always
+// fully visible, so this is the only thing that scrolls.
+const VISIBLE_EPOCHS = isSmallScreen() ? 5 : 9
 
 // Time multiplier, 1 in production. It exists because the sequence runs faster
 // than a screenshot round trip, so verifying it by eye means slowing it down.
@@ -49,12 +53,23 @@ function lossAt(epoch: number) {
   return 0.94 * Math.exp(-epoch / 6.5) + 0.036
 }
 
-type Line =
-  | { kind: 'text'; text: string; dim?: boolean }
-  | { kind: 'epoch'; epoch: number; loss: number; best: boolean }
+interface Line {
+  text: string
+  dim?: boolean
+}
 
-export function Boot({ onDone, onReady }: { onDone: () => void; onReady: () => void }) {
-  const [lines, setLines] = useState<Line[]>([])
+interface EpochRow {
+  epoch: number
+  loss: number
+  best: boolean
+}
+
+export function Boot({ onDone }: { onDone: () => void }) {
+  const [head, setHead] = useState<Line[]>([])
+  const [rows, setRows] = useState<EpochRow[]>([])
+  const [tail, setTail] = useState<Line[]>([])
+  const [ready, setReady] = useState(false)
+  const [done, setDone] = useState(false)
   const finished = useRef(false)
 
   const finish = useRef(() => {
@@ -66,7 +81,9 @@ export function Boot({ onDone, onReady }: { onDone: () => void; onReady: () => v
       // Private browsing throws on write. Losing the flag only means the boot
       // plays again, which is not worth failing over.
     }
-    onDone()
+    setDone(true)
+    // Long enough for the curtain to fade, short enough that nobody waits.
+    window.setTimeout(onDone, 280)
   })
 
   useEffect(() => {
@@ -81,18 +98,16 @@ export function Boot({ onDone, onReady }: { onDone: () => void; onReady: () => v
 
     const timers: number[] = []
     const push = (line: Line, at: number) => {
-      timers.push(
-        window.setTimeout(() => setLines((prev) => [...prev, line].slice(-MAX_LINES)), at * SPEED),
-      )
+      timers.push(window.setTimeout(() => setHead((prev) => [...prev, line]), at * SPEED))
     }
 
-    push({ kind: 'text', text: '$ python train.py', dim: true }, 0)
-    IMPORTS.forEach((imp, i) => push({ kind: 'text', text: imp }, 170 + i * 74))
+    push({ text: '$ python train.py', dim: true }, 0)
+    IMPORTS.forEach((imp, i) => push({ text: imp }, 170 + i * 74))
 
     const afterImports = 170 + IMPORTS.length * 74 + 80
-    push({ kind: 'text', text: 'loading weights ......... ok', dim: true }, afterImports)
-    push({ kind: 'text', text: 'mounting MACINTOSH_HD ... ok', dim: true }, afterImports + 140)
-    push({ kind: 'text', text: `training: ${EPOCHS} epochs`, dim: true }, afterImports + 270)
+    push({ text: 'loading weights ......... ok', dim: true }, afterImports)
+    push({ text: 'mounting MACINTOSH_HD ... ok', dim: true }, afterImports + 140)
+    push({ text: `training: ${EPOCHS} epochs, batch 32, lr 3e-4`, dim: true }, afterImports + 270)
 
     const start = afterImports + 380
     let best = Infinity
@@ -106,9 +121,7 @@ export function Boot({ onDone, onReady }: { onDone: () => void; onReady: () => v
             const loss = Math.max(0.004, lossAt(epoch) + noise + spike)
             const improved = loss < best
             if (improved) best = loss
-            setLines((prev) =>
-              [...prev, { kind: 'epoch' as const, epoch, loss, best: improved }].slice(-MAX_LINES),
-            )
+            setRows((prev) => [...prev, { epoch, loss, best: improved }].slice(-VISIBLE_EPOCHS))
           },
           (start + epoch * EPOCH_MS) * SPEED,
         ),
@@ -116,39 +129,70 @@ export function Boot({ onDone, onReady }: { onDone: () => void; onReady: () => v
     }
 
     const endAt = start + EPOCHS * EPOCH_MS + 240
-    push({ kind: 'text', text: 'converged. checkpoint saved.', dim: true }, endAt)
-    timers.push(window.setTimeout(onReady, endAt * SPEED))
+    timers.push(
+      window.setTimeout(
+        () => setTail([{ text: 'converged. checkpoint saved.', dim: true }]),
+        endAt * SPEED,
+      ),
+    )
+    timers.push(window.setTimeout(() => setReady(true), endAt * SPEED))
 
     return () => {
       window.removeEventListener('keydown', advance)
       window.removeEventListener('pointerdown', advance)
       timers.forEach(window.clearTimeout)
     }
-  }, [onReady])
+  }, [])
 
   return (
-    <div className="mac-boot" role="status" aria-live="polite">
-      <div className="mac-boot-log">
-        {lines.map((l, i) =>
-          l.kind === 'text' ? (
-            <div className="mac-boot-line" key={i} data-dim={l.dim}>
+    <div className="mac-boot" data-done={done} role="status" aria-live="polite">
+      <div className="mac-boot-inner">
+        <h1 className="mac-boot-title">TOBIASKNIGHT.DEV</h1>
+
+        <div className="mac-boot-log">
+          {head.map((l, i) => (
+            <div className="mac-boot-line" key={`h${i}`} data-dim={l.dim}>
               {l.text}
             </div>
-          ) : (
-            <div className="mac-boot-row" key={i}>
-              <span className="mac-boot-epoch">
-                {String(l.epoch).padStart(2, '0')}/{EPOCHS}
-              </span>
-              {/* A real bar that fills, not hash marks retyped every tick. */}
-              <span className="mac-boot-bar">
-                <i style={{ width: `${(l.epoch / EPOCHS) * 100}%` }} />
-              </span>
-              <span className="mac-boot-num">loss {l.loss.toFixed(4)}</span>
-              <span className="mac-boot-best">{l.best ? '*' : ''}</span>
+          ))}
+
+          {/* Fixed height, so the header above does not shuffle up and down
+              as rows arrive. A log that makes the whole page jump reads as a
+              bug rather than as a machine working. */}
+          {rows.length > 0 && (
+            <div className="mac-boot-rows">
+              {rows.map((r) => (
+                <div className="mac-boot-row" key={r.epoch}>
+                  <span className="mac-boot-epoch">
+                    {String(r.epoch).padStart(2, '0')}/{EPOCHS}
+                  </span>
+                  <span className="mac-boot-bar">
+                    <i style={{ width: `${(r.epoch / EPOCHS) * 100}%` }} />
+                  </span>
+                  <span className="mac-boot-num">loss {r.loss.toFixed(4)}</span>
+                  <span className="mac-boot-best">{r.best ? '*' : ''}</span>
+                </div>
+              ))}
             </div>
-          ),
+          )}
+
+          {tail.map((l, i) => (
+            <div className="mac-boot-line" key={`t${i}`} data-dim={l.dim}>
+              {l.text}
+            </div>
+          ))}
+
+          <span className="mac-boot-caret" aria-hidden />
+        </div>
+
+        {ready ? (
+          <p className="mac-boot-prompt">
+            &gt; PRESS ENTER TO CONTINUE
+            <span className="mac-boot-caret" aria-hidden />
+          </p>
+        ) : (
+          <p className="mac-boot-skip">[ press any key to skip ]</p>
         )}
-        <span className="mac-boot-caret" aria-hidden />
       </div>
     </div>
   )

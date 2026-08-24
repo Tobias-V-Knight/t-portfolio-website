@@ -749,169 +749,64 @@ body {
   .mac-bezel::before { display: none; }
 }
 
-/* --- Landing scene -------------------------------------------------------
+/* --- Boot curtain --------------------------------------------------------
 
-   A 1999 product photograph, on near white, with a live screen. The white is
-   deliberate rather than a compromise: it reads as a period Apple press shot,
-   it avoids masking a translucent object (which is exactly what masking
-   handles worst), and it makes the green terminal in the glass glow.
+   Full screen, dark, then the desktop. A training run rather than a Happy Mac.
+   It is the first thing anyone sees, so three rules govern it: it plays once
+   per session, any key or tap continues, and it only plays on the homepage so
+   a shared project link goes straight to the work. It also never blocks
+   content, because the desktop is mounted underneath it the whole time.
    ------------------------------------------------------------------------ */
 
-.mac-landing {
+.mac-boot {
   position: fixed;
   inset: 0;
   z-index: 10000;
-  background: #f2f1ee;
-  overflow: hidden;
+  background: #0e1116;
   display: grid;
   place-items: center;
-  transition: opacity 420ms ease;
+  padding: 28px;
+  transition: opacity 260ms ease;
 }
 
-.mac-landing[data-going='true'] { opacity: 0; }
-
-.mac-landing-stage {
-  position: relative;
-  /* Constrained by height as well as width, or the machine runs off the
-     bottom of a laptop screen. 1.107 is the photograph's aspect ratio. */
-  width: min(1240px, 94vw, 88vh * 1.107);
-  aspect-ratio: 4009 / 3621;
-  transform-origin: 61% 27.7%;
-  transition: transform 820ms cubic-bezier(0.5, 0, 0.75, 0.35);
-  will-change: transform;
-}
-
-/* Pushing into the screen. The origin is the centre of the glass, so the
-   photograph grows around the screen rather than away from it. */
-.mac-landing[data-going='true'] .mac-landing-stage {
-  transform: scale(3.4);
-}
-
-.mac-landing-photo {
-  width: 100%;
-  height: 100%;
-  display: block;
-  object-fit: contain;
-  user-select: none;
-  -webkit-user-drag: none;
-}
-
-/* The live screen, mapped onto the four corners of the real one. */
-.mac-photo-screen {
-  position: absolute;
-  left: 0;
-  top: 0;
-  transform-origin: 0 0;
-  background: #0b0f14;
-  overflow: hidden;
-  /* The photo's own screen is bright, so a hard edge here would read as a
-     sticker. A hair of inner shadow sits it back into the tube. */
-  box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.55);
-}
-
-.mac-landing-plate {
-  position: absolute;
-  left: clamp(24px, 5vw, 84px);
-  top: clamp(28px, 8vh, 80px);
-  z-index: 2;
+.mac-boot[data-done='true'] {
+  opacity: 0;
   pointer-events: none;
-  max-width: min(38vw, 560px);
 }
 
-.mac-landing-name {
-  margin: 0 0 10px;
+.mac-boot-inner { width: min(720px, 100%); }
+
+/* The site's name, at a size that makes it obvious what you are entering.
+   The one place on the site where bitmap type is set large, and it works here
+   because it is one word on a black screen rather than a paragraph. */
+.mac-boot-title {
+  margin: 0 0 22px;
   font-family: var(--mac-chrome);
-  font-size: clamp(18px, 2vw, 30px);
-  line-height: 1.1;
-  letter-spacing: 0.02em;
-  color: var(--mac-ink);
-  white-space: nowrap;
-}
-
-.mac-landing-sub {
-  margin: 0;
-  font-family: var(--mac-body);
-  font-size: clamp(13px, 1.15vw, 18px);
-  letter-spacing: 0.02em;
-  color: #6d6a64;
-}
-
-.mac-landing-prompt {
-  position: absolute;
-  left: 50%;
-  bottom: clamp(20px, 5vh, 54px);
-  transform: translateX(-50%);
-  z-index: 2;
-  margin: 0;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-family: var(--mac-chrome);
-  font-size: clamp(13px, 1.15vw, 17px);
+  font-size: clamp(20px, 3.4vw, 34px);
   line-height: 1;
-  white-space: nowrap;
-  color: #a5a29b;
-  transition: color 200ms ease;
-}
-
-.mac-landing-prompt[data-ready='true'] { color: var(--mac-ink); }
-
-.mac-landing-caret {
-  display: inline-block;
-  width: 9px;
-  height: 15px;
-  background: var(--mac-ink);
-  animation: mac-blink 1s steps(1) infinite;
-}
-
-@media (max-width: 768px) {
-  .mac-landing-stage { width: min(96vw, 70vh * 1.107); }
-
-  /* No room beside the machine on a phone, so the name goes above it. */
-  .mac-landing-plate {
-    top: clamp(20px, 5vh, 48px);
-    left: 50%;
-    transform: translateX(-50%);
-    text-align: center;
-    max-width: 88vw;
-  }
-  .mac-landing-name {
-    font-size: clamp(17px, 5.4vw, 30px);
-    white-space: normal;
-    word-break: break-word;
-  }
-}
-
-/* --- The screen, and what runs on it ------------------------------------- */
-
-/* The boot fills the glass exactly. It is no longer a full page curtain: the
-   landing scene is the page, and this is the contents of a 640 by 480 CRT. */
-.mac-boot {
-  position: absolute;
-  inset: 0;
-  padding: 24px 26px;
-  overflow: hidden;
-  /* Lines are appended and the oldest are dropped, so the log grows downward
-     from the bottom the way a terminal does rather than from the top. */
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
+  letter-spacing: 0.03em;
+  color: #d8ffdd;
+  word-break: break-word;
 }
 
 .mac-boot-log {
   font-family: var(--mac-chrome);
-  font-size: 24px;
-  line-height: 1.4;
+  font-size: 16px;
+  line-height: 1.75;
   color: #9ef0a8;
 }
 
-.mac-boot-line[data-dim='true'] { color: #55805f; }
+.mac-boot-line[data-dim='true'] { color: #4e7a58; }
+
+.mac-boot-rows {
+  min-height: calc(9 * 16px * 1.9);
+}
 
 .mac-boot-row {
   display: flex;
   align-items: center;
-  gap: 12px;
-  line-height: 1.4;
+  gap: 14px;
+  line-height: 1.9;
   white-space: nowrap;
 }
 
@@ -920,11 +815,11 @@ body {
 .mac-boot-best { color: #d8ffdd; width: 12px; }
 
 /* The training bar. An element that fills, so it reads as a measurement of
-   something rather than as typed characters. */
+   something rather than as typed characters redrawn every tick. */
 .mac-boot-bar {
   flex: 0 0 auto;
-  width: 118px;
-  height: 14px;
+  width: 190px;
+  height: 11px;
   border: 1px solid #2f5c39;
   background: #0a1b0f;
   padding: 1px;
@@ -938,30 +833,49 @@ body {
   transition: width 90ms linear;
 }
 
+.mac-boot-skip {
+  margin: 26px 0 0;
+  font-family: var(--mac-chrome);
+  font-size: 16px;
+  line-height: 1;
+  color: #3f5f48;
+}
+
+/* The prompt that waits for Enter. Brighter than everything above it, because
+   by then it is the only thing on screen the visitor has to act on. */
+.mac-boot-prompt {
+  margin: 26px 0 0;
+  font-family: var(--mac-chrome);
+  font-size: 16px;
+  line-height: 1;
+  color: #d8ffdd;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .mac-boot-caret {
   display: inline-block;
-  width: 12px;
-  height: 20px;
+  width: 9px;
+  height: 15px;
   background: #9ef0a8;
   animation: mac-blink 1s steps(1) infinite;
 }
+
+.mac-boot-prompt .mac-boot-caret { background: #d8ffdd; }
 
 @keyframes mac-blink {
   0%, 50% { opacity: 1; }
   50.01%, 100% { opacity: 0; }
 }
 
-/* On a phone the whole machine shrinks to fit, which shrinks its screen with
-   it. The fix is to drop the screen's resolution rather than its size: the DOM
-   inside stays 640 pixels wide, so larger type there is larger relative to the
-   glass. Period correct, as it happens. Fewer, larger pixels is exactly what
-   these monitors did. */
 @media (max-width: 768px) {
-  .mac-boot { padding: 30px 30px; }
-  .mac-boot-log { font-size: 34px; line-height: 1.36; }
-  .mac-boot-bar { width: 150px; height: 20px; }
-  .mac-boot-num { font-size: 34px; }
-  .mac-boot-caret { width: 16px; height: 28px; }
+  .mac-boot { padding: 18px; }
+  .mac-boot-title { font-size: 22px; margin-bottom: 16px; }
+  .mac-boot-row { gap: 8px; }
+  .mac-boot-bar { width: 84px; }
+  .mac-boot-rows { min-height: calc(5 * 16px * 1.9); }
+  .mac-boot-line { word-break: break-word; }
 }
 
 /* --- Unanswered copy blanks ---------------------------------------------- */
