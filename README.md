@@ -51,6 +51,7 @@ that gets consulted before a new file is ever created.
 | `windows/Panels.tsx` | Small windows | The intro card, the about window, the trash Easter egg, and the placeholder tag component |
 | `windows/Panels.tsx` also holds | Small windows | The intro card, about, contact, anime, Zippy, the trash Easter egg, the placeholder tag, and the blank renderer |
 | `windows/Work.tsx` | WORK window | Category filter chips and the full project list. Projects with a case study open a window, the rest are rows with a link |
+| `components/ZoomRect.tsx` | The zoom rectangle | The classic Mac open and close animation: an outlined rectangle stepping from an icon out to a window and back. Its effect is mount only, and the comment in it explains why that is load bearing rather than lazy |
 | `components/Boot.tsx` | Boot sequence | A full screen ML training run: the import stack, then epochs with a jittering loss, then a prompt that waits for Enter. Plays once per session, skips on any key, homepage only. Never blocks content, because the desktop is already mounted underneath it |
 | `windows/Project.tsx` | Project window | The twelve section project template. Sections render only when the data has them, which is how Gravl stays outcome only |
 | `windows/Photos.tsx` | Photo viewer | Contact sheet, single image view, next and previous, and the byte formatter for the status bar |
@@ -61,7 +62,7 @@ that gets consulted before a new file is ever created.
 | File | What it is | What it does |
 |---|---|---|
 | `wallpaper.jpg` | The desktop | T's own beach photograph. Cropped at 90.5 percent width, which removes the person on the towel at the right edge |
-| `home-bg.jpg` | Inside the HOME window | T's photograph of a 911 Targa, cropped to a landscape band. The panel of text sits on top of it and is capped in width so the car still reads |
+| `home-bg.jpg` | Inside the HOME window | T's photograph of a 911 Targa, cropped to a band that holds the car with no other vehicles in frame. The panel of text sits on it and is capped in width so the car still reads |
 | `t-profile.jpg` | Portrait | 640px square, cropped from T's photo. The other person in the original frame is outside the crop |
 | `zippy.png` | Zippy, large | 256px cutout with transparency, shown in the ZIPPY window |
 | `zippy-icon.png` | Zippy, icon size | 64px, used as an actual desktop icon rather than a drawing |

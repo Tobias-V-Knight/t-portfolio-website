@@ -162,6 +162,19 @@ function clamp(x: number, y: number, def: WindowDef) {
   }
 }
 
+// Where a window WILL be, computed before it renders.
+//
+// The zoom rectangle has to animate from an icon to a window, and it has to
+// start on the same frame as the click. Waiting for the window to mount and
+// measuring it means a frame of nothing, which is exactly the stutter the
+// animation exists to hide. Since position and size are both deterministic,
+// the destination can simply be calculated.
+export function plannedRect(def: WindowDef) {
+  const size = defSize(def)
+  const pos = spawnPosition(def)
+  return { x: pos.x, y: pos.y, w: size.w, h: size.h }
+}
+
 export function defSize(def: WindowDef): { w: number; h: number } {
   if (!def.sizeFrac || typeof window === 'undefined') return { w: def.width, h: def.height }
   const f = def.sizeFrac

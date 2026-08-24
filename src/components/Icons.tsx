@@ -87,6 +87,20 @@ export function DiskIcon({ className }: IconProps) {
 // different projects, which is the thing that makes a desktop read as a
 // template. These are still generic shapes, but they are the right shapes.
 
+// The house on the HOME window's title bar. Mac OS 8 put a small icon at the
+// left of a window's title, and its absence is one of those details that makes
+// chrome read as approximate rather than authentic.
+export function HomeIcon({ className }: IconProps) {
+  return (
+    <svg {...base} className={className}>
+      <path d="M16 4L2 15h5v13h18V15h5z" fill="#dedbd4" stroke="#000" strokeWidth="1.5" />
+      <path d="M9 16h14v11H9z" fill="#f4f2ed" />
+      <path d="M13 19h6v8h-6z" fill="#4a4a8c" stroke="#000" />
+      <path d="M22 6h4v5h-4z" fill="#c96a2a" stroke="#000" />
+    </svg>
+  )
+}
+
 export function PaddleIcon({ className }: IconProps) {
   return (
     <svg {...base} className={className}>

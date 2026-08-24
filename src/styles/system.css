@@ -33,12 +33,6 @@
   --mac-menu-h: 24px;
   --mac-title-h: 22px;
 
-  /* The thickness of the machine you are looking through. Everything inside
-     the screen is inset by these, so the frame surrounds the interface rather
-     than sitting on top of it and clipping the menu bar. */
-  --mac-bezel: 13px;
-  --mac-bezel-bottom: 30px;
-
   --mac-chrome: 'Silkscreen', 'Courier New', monospace;
   --mac-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
 }
@@ -88,7 +82,7 @@ body {
 
 .mac-menubar {
   position: fixed;
-  inset: var(--mac-bezel) var(--mac-bezel) auto var(--mac-bezel);
+  inset: 0 0 auto 0;
   height: var(--mac-menu-h);
   z-index: 9000;
   display: flex;
@@ -192,8 +186,7 @@ body {
 
 .mac-desktop {
   position: fixed;
-  inset: calc(var(--mac-bezel) + var(--mac-menu-h)) var(--mac-bezel) var(--mac-bezel-bottom)
-    var(--mac-bezel);
+  inset: var(--mac-menu-h) 0 0 0;
 }
 
 .mac-icons {
@@ -256,9 +249,19 @@ body {
 
 /* --- Window -------------------------------------------------------------- */
 
+/* The zoom rectangle. An outline over the desktop, never a filled shape, and
+   gone the instant it arrives. */
+.mac-zoomrect {
+  position: fixed;
+  z-index: 9400;
+  pointer-events: none;
+  border: 1px solid rgba(0, 0, 0, 0.85);
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.55);
+}
+
 @keyframes mac-window-in {
-  from { opacity: 0; transform: scale(0.94); }
-  to { opacity: 1; transform: scale(1); }
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 @keyframes mac-window-out {
@@ -268,7 +271,7 @@ body {
 
 .mac-window {
   position: absolute;
-  animation: mac-window-in 130ms ease-out both;
+  animation: mac-window-in 90ms ease-out both;
   transform-origin: 50% 40%;
   display: flex;
   flex-direction: column;
@@ -335,6 +338,20 @@ body {
 }
 
 .mac-closebox:active { background: var(--mac-lo); }
+
+/* Every Mac OS 8 window carried a small icon at the left of its title, and
+   its absence is one of the details that makes chrome read as approximate. */
+.mac-title-icon {
+  display: inline-flex;
+  vertical-align: -3px;
+  margin-right: 6px;
+}
+
+.mac-title-art {
+  width: 15px;
+  height: 15px;
+  display: block;
+}
 
 .mac-title {
   font-family: var(--mac-chrome);
@@ -696,78 +713,6 @@ body {
 }
 
 .mac-workrow .mac-meta a { color: var(--mac-accent); }
-
-/* --- The bezel you are looking through ----------------------------------- */
-
-/* After the camera goes into the glass, the machine does not disappear: you
-   are inside it, looking out through its screen. This is that screen's
-   surround, and it is what makes the desktop feel like it is contained in an
-   object rather than being a web page wearing a costume.
-
-   Deliberately CSS rather than keeping the 3D scene alive. Holding a WebGL
-   context and a CSS3D layer open for the whole session, with the entire
-   desktop living inside a transformed element, would cost a permanent frame
-   budget and break text rendering, scrolling and hit testing. A frame drawn
-   in CSS costs nothing and reads the same. */
-.mac-bezel {
-  position: fixed;
-  inset: 0;
-  z-index: 9500;
-  pointer-events: none;
-  border: 13px solid #eae7e0;
-  border-bottom-width: 30px;
-  border-radius: 22px;
-  box-shadow:
-    inset 0 0 0 1px #b6b2ab,
-    inset 0 0 22px rgba(0, 0, 0, 0.3),
-    0 0 0 1px #8d8a84;
-}
-
-/* The chin furniture, so the bottom edge reads as a machine rather than as a
-   thick border: the slot loading drive in the middle, the power light off to
-   the right. Two pseudo elements, positioned directly, because stacking them
-   into one element's box shadows was fragile and put the light in the wrong
-   place. */
-.mac-bezel::after {
-  content: '';
-  position: absolute;
-  left: 50%;
-  bottom: 12px;
-  transform: translateX(-50%);
-  width: 150px;
-  height: 5px;
-  border-radius: 2.5px;
-  background: #c6c2bb;
-  box-shadow: inset 0 1px 0 #a9a59e;
-}
-
-.mac-bezel::before {
-  content: '';
-  position: absolute;
-  right: 26px;
-  bottom: 12px;
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: #7fd88a;
-  box-shadow: 0 0 7px 2px rgba(127, 216, 138, 0.45);
-}
-
-@media (max-width: 768px) {
-  /* A phone has no screen real estate to give away to a frame. It keeps a
-     hairline so the object is still implied, and nothing more. */
-  :root {
-    --mac-bezel: 5px;
-    --mac-bezel-bottom: 12px;
-  }
-  .mac-bezel {
-    border-width: 5px;
-    border-bottom-width: 12px;
-    border-radius: 12px;
-  }
-  .mac-bezel::after,
-  .mac-bezel::before { display: none; }
-}
 
 /* --- Boot curtain --------------------------------------------------------
 

@@ -15,6 +15,8 @@ interface WindowProps {
   onResize: (w: number, h: number) => void
   width: number
   height: number
+  // The little icon at the left of the title, as every Mac OS 8 window had.
+  icon?: ReactNode
   status?: ReactNode
   children: ReactNode
 }
@@ -33,6 +35,7 @@ export function MacWindow({
   onResize,
   width,
   height,
+  icon,
   status,
   children,
 }: WindowProps) {
@@ -117,7 +120,10 @@ export function MacWindow({
         onPointerCancel={endDrag}
       >
         <button className="mac-closebox" onClick={onClose} aria-label={`Close ${def.title}`} />
-        <h2 className="mac-title">{def.title}</h2>
+        <h2 className="mac-title">
+          {icon && <span className="mac-title-icon">{icon}</span>}
+          {def.title}
+        </h2>
         {/* The zoom box. Present on every Mac OS 8 window, on the right, and
             its absence was part of why the chrome read as approximate. */}
         <span className="mac-zoombox" aria-hidden />

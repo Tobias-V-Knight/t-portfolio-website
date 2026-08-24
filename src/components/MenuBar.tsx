@@ -89,8 +89,6 @@ export function MenuBar({ menus, clock }: { menus: Menu[]; clock: string }) {
       ))}
 
       <div className="mac-menubar-right">
-        <span className="mac-menubar-optional">SYSTEM ONLINE</span>
-        <span className="mac-menubar-optional">MINNEAPOLIS, MN</span>
         <span>{clock}</span>
       </div>
     </nav>

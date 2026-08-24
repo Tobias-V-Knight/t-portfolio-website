@@ -41,6 +41,10 @@ validate the aesthetic, not to ship the portfolio. Placeholder copy throughout.
 | P1-18 | Boot sequence, ML training run, once per session, skippable | SHOW | review | Verified: renders, sets the session flag, and a keypress skips it while the timer still had minutes left |
 | P1-19 | First pass copy for all thirteen projects | SHOW | review | Structure from the real repos, every unknown left as a visible blank |
 | P1-20 | CSI promoted to flagship, Gravl demoted to a row | AFK | done | Gravl has no window, no founder title on the homepage, one row and a link |
+| P1-36 | Classic Mac zoom rectangle on open and close | SHOW | review | Steps rather than eases, because the original redrew discrete rectangles. Verified in flight: starts at the icon, arrives at the window |
+| P1-37 | Screen frame removed, menu bar is the only chrome | AFK | done | The desktop runs edge to edge now |
+| P1-38 | Menu bar shows date and time only | AFK | done | SYSTEM ONLINE and the location were decoration, not information |
+| P1-39 | Every window carries its icon in the title bar | SHOW | review | Same icon as the desktop, which is what makes an icon feel like the file |
 | P1-33 | Boot becomes two stages: train.py in an editor, then the run | SHOW | review | Enter runs the file, Enter again enters the site. The import list stops being green wall and becomes a thing you read |
 | P1-34 | HOME sized as a fraction of the viewport, Porsche background | SHOW | review | 66 by 72 percent, capped at 1040x740, so it is large on a laptop and not lost on a 27 inch display |
 | P1-35 | Window open and close animation, one window per file | SHOW | review | Verified: three clicks on an icon produce one window, and a closing window stays mounted for its animation before it goes |

@@ -1,10 +1,11 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Boot, shouldBoot } from './components/Boot'
 import { MenuBar, type Menu } from './components/MenuBar'
 import {
   DiskIcon,
   DocIcon,
   FolderIcon,
+  HomeIcon,
   ImgIcon,
   MailIcon,
   PaddleIcon,
@@ -13,7 +14,8 @@ import {
   TvIcon,
 } from './components/Icons'
 import { MacWindow } from './components/Window'
-import { defSize, useWindowManager } from './system/windows'
+import { defFor, defSize, plannedRect, useWindowManager } from './system/windows'
+import { ZoomRect, type Rect } from './components/ZoomRect'
 import { projects, windowProjects } from './data/content'
 import {
   AboutPanel,
@@ -63,16 +65,42 @@ function breakableLabel(label: string) {
   ))
 }
 
+// Every window carries the same icon in its title bar that it has on the
+// desktop, which is what makes an icon feel like the file rather than like a
+// button that happens to open something.
+function titleIconFor(id: string, kind: string) {
+  const byId: Record<string, () => React.JSX.Element> = {
+    intro: () => <HomeIcon className="mac-title-art" />,
+    work: () => <DiskIcon className="mac-title-art" />,
+    photos: () => <FolderIcon className="mac-title-art" />,
+    about: () => <DocIcon className="mac-title-art" />,
+    contact: () => <MailIcon className="mac-title-art" />,
+    anime: () => <TvIcon className="mac-title-art" />,
+    trash: () => <TrashIcon className="mac-title-art" />,
+    zippy: () => <ZippyIcon className="mac-title-art" />,
+    'project:csi-bid-intelligence': () => <RoadIcon className="mac-title-art" />,
+    'project:pickleball-iq': () => <PaddleIcon className="mac-title-art" />,
+  }
+  const exact = byId[id]
+  if (exact) return exact()
+  if (kind === 'project') return <DocIcon className="mac-title-art" />
+  return <DocIcon className="mac-title-art" />
+}
+
 function useClock() {
   const [now, setNow] = useState(() => new Date())
   useEffect(() => {
     const t = setInterval(() => setNow(new Date()), 30_000)
     return () => clearInterval(t)
   }, [])
-  return now
+  const date = now
+    .toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })
+    .toUpperCase()
+  const time = now
     .toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })
     .replace(' ', '')
     .toUpperCase()
+  return `${date}  ${time}`
 }
 
 export default function App() {
@@ -82,6 +110,9 @@ export default function App() {
   // The desktop mounts underneath the boot curtain, not after it. If this
   // component threw, the site would still be there behind it.
   const [booting, setBooting] = useState(() => shouldBoot(window.location.pathname))
+  // The zoom rectangle currently flying between an icon and a window.
+  const [zoom, setZoom] = useState<{ from: Rect; to: Rect; key: number } | null>(null)
+  const zoomKey = useRef(0)
   const [photoStatus, setPhotoStatus] = useState('')
   const [workStatus, setWorkStatus] = useState('')
 
@@ -146,6 +177,51 @@ export default function App() {
     [open, close, topId],
   )
 
+  // The desktop icon for a window, so the rectangle has somewhere to fly from
+  // and back to. Falls back to the centre of the screen for anything opened
+  // from a menu or a deep link, where there is no icon on screen to zoom from.
+  const iconRect = useCallback((id: string): Rect => {
+    const label = desktopItems.find((d) => d.id === id)?.label
+    const el = label
+      ? (document.querySelector(`button[aria-label="Open ${label}"]`) as HTMLElement | null)
+      : null
+    if (el) {
+      const r = el.getBoundingClientRect()
+      return { x: r.x, y: r.y, w: r.width, h: r.height }
+    }
+    return { x: window.innerWidth / 2 - 30, y: window.innerHeight / 2 - 20, w: 60, h: 40 }
+  }, [])
+
+  const openZoomed = useCallback(
+    (id: string) => {
+      const def = defFor(id)
+      const already = openWindows.some((w) => w.id === id)
+      if (def && !already) {
+        zoomKey.current += 1
+        setZoom({ from: iconRect(id), to: plannedRect(def), key: zoomKey.current })
+      }
+      open(id)
+    },
+    [open, openWindows, iconRect],
+  )
+
+  const closeZoomed = useCallback(
+    (id: string) => {
+      const win = openWindows.find((w) => w.id === id)
+      if (win) {
+        const size = sizes[id] ?? defSize(win.def)
+        zoomKey.current += 1
+        setZoom({
+          from: { x: win.x, y: win.y, w: size.w, h: size.h },
+          to: iconRect(id),
+          key: zoomKey.current,
+        })
+      }
+      close(id)
+    },
+    [close, openWindows, sizes, iconRect],
+  )
+
   const handlePhotoStatus = useCallback((s: string) => setPhotoStatus(s), [])
   const handleWorkStatus = useCallback((s: string) => setWorkStatus(s), [])
 
@@ -153,10 +229,16 @@ export default function App() {
     <>
       {booting && <Boot onDone={() => setBooting(false)} />}
 
-      {/* The screen you are looking through. */}
-      {!booting && <div className="mac-bezel" aria-hidden />}
-
       <MenuBar menus={menus} clock={clock} />
+
+      {zoom && (
+        <ZoomRect
+          key={zoom.key}
+          from={zoom.from}
+          to={zoom.to}
+          onDone={() => setZoom(null)}
+        />
+      )}
 
       <main className="mac-desktop">
         <div className="mac-icons">
@@ -167,7 +249,7 @@ export default function App() {
                 className="mac-icon"
                 key={id}
                 data-active={isOpen}
-                onClick={() => open(id)}
+                onClick={() => openZoomed(id)}
                 aria-label={`Open ${label}`}
               >
                 <Art className="mac-icon-art" />
@@ -192,12 +274,13 @@ export default function App() {
               isTop={isTop}
               closing={closing === w.id}
               zIndex={100 + i}
-              onClose={() => close(w.id)}
+              onClose={() => closeZoomed(w.id)}
               onFocus={() => focus(w.id)}
               onMove={(x, y) => move(w.id, x, y)}
               onResize={(width, height) => resize(w.id, width, height)}
               width={sizes[w.id]?.w ?? defSize(w.def).w}
               height={sizes[w.id]?.h ?? defSize(w.def).h}
+              icon={titleIconFor(w.id, w.def.kind)}
               status={
                 w.def.kind === 'photos'
                   ? photoStatus
@@ -208,7 +291,7 @@ export default function App() {
                     : undefined
               }
             >
-              {w.def.kind === 'intro' && <IntroPanel onOpen={open} />}
+              {w.def.kind === 'intro' && <IntroPanel onOpen={openZoomed} />}
               {w.def.kind === 'text' && <AboutPanel />}
               {w.def.kind === 'trash' && <TrashPanel />}
               {w.def.kind === 'anime' && <AnimePanel />}
@@ -217,7 +300,7 @@ export default function App() {
               {w.def.kind === 'photos' && <PhotosPanel onStatus={handlePhotoStatus} />}
               {w.def.kind === 'work' && (
                 <WorkPanel
-                  onOpenProject={(slug) => open(`project:${slug}`)}
+                  onOpenProject={(slug) => openZoomed(`project:${slug}`)}
                   onStatus={handleWorkStatus}
                 />
               )}
