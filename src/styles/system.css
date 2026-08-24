@@ -897,14 +897,97 @@ body {
   border-radius: 2px;
 }
 
+/* --- HOME ----------------------------------------------------------------
+
+   A photograph filling the window with a translucent panel of text on it, per
+   the charliedean.com reference. The panel is deliberately not fully opaque:
+   letting the sunset through is the whole reason the photo is there, and a
+   solid card would just be the old welcome window with a border around it.
+   ------------------------------------------------------------------------ */
+
+.mac-home {
+  min-height: 100%;
+  background-size: cover;
+  background-position: center 46%;
+  display: flex;
+  align-items: center;
+  padding: 22px;
+}
+
+.mac-home-panel {
+  width: 100%;
+  padding: 20px 22px 22px;
+  background: rgba(244, 242, 237, 0.9);
+  border: 1px solid var(--mac-line);
+  box-shadow: inset 1px 1px 0 rgba(255, 255, 255, 0.8), 2px 2px 0 rgba(0, 0, 0, 0.28);
+  backdrop-filter: blur(2px);
+}
+
+.mac-home-head {
+  display: flex;
+  gap: 18px;
+  align-items: flex-start;
+  margin-bottom: 16px;
+}
+
+.mac-home-name {
+  font-family: var(--mac-chrome);
+  font-size: 26px;
+  line-height: 1;
+  margin: 4px 0 12px;
+}
+
+.mac-home-sub {
+  font-family: var(--mac-body);
+  font-size: 18px;
+  line-height: 1.4;
+  margin: 0 0 10px;
+  color: var(--mac-ink);
+}
+
+.mac-home-line {
+  font-family: var(--mac-body);
+  font-size: 16px;
+  line-height: 1.55;
+  margin: 0 0 18px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(0, 0, 0, 0.14);
+}
+
+.mac-home-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+/* A button for a file that does not exist yet reads as broken, so it says so
+   instead of pretending. */
+.mac-btn[data-blank='true'] {
+  color: #a4842a;
+  border-style: dashed;
+  border-color: #c9a227;
+  background: #fff8e4;
+  box-shadow: none;
+  cursor: default;
+}
+
+@media (max-width: 768px) {
+  .mac-home { padding: 0; }
+  .mac-home-panel { border-width: 0; box-shadow: none; }
+  .mac-home-head { gap: 14px; }
+  .mac-home-name { font-size: 20px; }
+  .mac-home-actions .mac-btn { flex: 1 1 44%; justify-content: center; text-align: center; }
+}
+
 /* --- Portrait, Zippy, and the new windows -------------------------------- */
 
 .mac-portrait {
-  width: 92px;
-  height: 110px;
+  width: 132px;
+  height: 148px;
   flex: 0 0 auto;
   object-fit: cover;
-  object-position: 50% 32%;
+  object-position: 62% 30%;
   border: 1px solid var(--mac-line);
   box-shadow: inset 1px 1px 0 var(--mac-lo), 2px 2px 0 rgba(0, 0, 0, 0.18);
   background: var(--mac-face-dim);

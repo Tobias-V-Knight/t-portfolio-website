@@ -206,7 +206,7 @@ export default function App() {
                     : undefined
               }
             >
-              {w.def.kind === 'intro' && <IntroPanel />}
+              {w.def.kind === 'intro' && <IntroPanel onOpen={open} />}
               {w.def.kind === 'text' && <AboutPanel />}
               {w.def.kind === 'trash' && <TrashPanel />}
               {w.def.kind === 'anime' && <AnimePanel />}

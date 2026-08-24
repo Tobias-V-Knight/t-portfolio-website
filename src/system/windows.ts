@@ -44,12 +44,12 @@ export interface WindowDef {
 export const windowDefs: WindowDef[] = [
   {
     id: 'intro',
-    title: 'WELCOME.TXT',
+    title: 'HOME',
     kind: 'intro',
     center: true,
     route: null,
-    width: 470,
-    height: 400,
+    width: 780,
+    height: 530,
     spawn: { x: 0.08, y: 0.14 },
   },
   {

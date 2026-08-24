@@ -22,30 +22,63 @@ export function withBlanks(text: string) {
   )
 }
 
-export function IntroPanel() {
+// HOME.
+//
+// The layout T pointed at on charliedean.com: a photograph filling the window,
+// a translucent panel of text sitting on it, and a row of buttons underneath.
+// The photo is his own, from the same roll as the desktop, with the person on
+// the towel cropped out.
+//
+// It is the first window a visitor sees, so the four buttons are the whole
+// site in one row: the work, the background behind it, how to reach him, and
+// the document a recruiter came for.
+export function IntroPanel({ onOpen }: { onOpen: (id: string) => void }) {
+  const buttons: { label: string; id?: string; blank?: boolean }[] = [
+    { label: 'PORTFOLIO', id: 'work' },
+    { label: 'BACKGROUND', id: 'about' },
+    { label: 'CONTACT', id: 'contact' },
+    { label: 'CV', blank: !about.resume.present },
+  ]
+
   return (
-    <div className="mac-doc" style={{ display: 'grid', gap: 16 }}>
-      <div style={{ display: 'flex', gap: 16, alignItems: 'flex-start' }}>
-        <img
-          className="mac-portrait"
-          src={`${import.meta.env.BASE_URL}t-profile.jpg`}
-          alt="Tobias Knight"
-        />
+    <div
+      className="mac-home"
+      style={{ backgroundImage: `url(${import.meta.env.BASE_URL}home-bg.jpg)` }}
+    >
+      <div className="mac-home-panel">
+        <div className="mac-home-head">
+          <img
+            className="mac-portrait"
+            src={`${import.meta.env.BASE_URL}t-profile.jpg`}
+            alt="Tobias Knight"
+          />
 
-        <div>
-          <h1 style={{ fontFamily: 'var(--mac-chrome)', fontSize: 22, margin: '2px 0 10px' }}>
-            {about.name}
-          </h1>
-          <p className="mac-lede" style={{ marginBottom: 10 }}>
-            {about.positioning}
-          </p>
-          <p className="mac-meta">{about.location}</p>
-          <p className="mac-meta">{about.status}</p>
+          <div>
+            <h1 className="mac-home-name">{about.name}</h1>
+            <p className="mac-home-sub">{about.positioning}</p>
+            <p className="mac-meta">{about.location}</p>
+            <p className="mac-meta">{about.status}</p>
+          </div>
         </div>
-      </div>
 
-      <p style={{ margin: 0 }}>{about.lines[0]}</p>
-      {about.copyState === 'PLACEHOLDER' && <PlaceholderTag />}
+        <p className="mac-home-line">{about.lines[0]}</p>
+
+        <div className="mac-home-actions">
+          {buttons.map((b) =>
+            b.blank ? (
+              <span className="mac-btn" key={b.label} data-blank="true" title="Add public/resume.pdf">
+                {b.label}
+              </span>
+            ) : (
+              <button className="mac-btn" key={b.label} onClick={() => b.id && onOpen(b.id)}>
+                {b.label}
+              </button>
+            ),
+          )}
+        </div>
+
+        {about.copyState === 'PLACEHOLDER' && <PlaceholderTag />}
+      </div>
     </div>
   )
 }

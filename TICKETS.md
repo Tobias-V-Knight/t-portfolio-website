@@ -41,6 +41,8 @@ validate the aesthetic, not to ship the portfolio. Placeholder copy throughout.
 | P1-18 | Boot sequence, ML training run, once per session, skippable | SHOW | review | Verified: renders, sets the session flag, and a keypress skips it while the timer still had minutes left |
 | P1-19 | First pass copy for all thirteen projects | SHOW | review | Structure from the real repos, every unknown left as a visible blank |
 | P1-20 | CSI promoted to flagship, Gravl demoted to a row | AFK | done | Gravl has no window, no founder title on the homepage, one row and a link |
+| P1-31 | WELCOME becomes HOME: bigger, photo background, four buttons | SHOW | review | The charliedean.com layout T pointed at. PORTFOLIO, BACKGROUND, CONTACT and CV, which is the whole site in one row |
+| P1-32 | Person cropped out of the wallpaper, portrait enlarged | AFK | done | Wallpaper cut at 90.5 percent width. Portrait is wider and larger, keeping the blurred person in frame per T |
 | P1-27 | Wallpaper, portrait, Zippy, and per project icons | SHOW | review | T's own beach photo as the desktop, his portrait in the welcome window, Zippy as a cutout icon, and a different object for every icon rather than two identical diamonds |
 | P1-28 | ANIME and CONTACT windows, welcome window opens centred | SHOW | review | Contact is links only, no form: a static site cannot send mail without a third party |
 | P1-29 | About rebuilt: endurance, professional background, education, resume slot | SHOW | review | Resume renders as an unanswered blank until `public/resume.pdf` exists |
@@ -80,6 +82,7 @@ Things T has decided he wants but has deliberately parked.
 | Q-04 | Real photos, and consent for any face that is not T's | Handoff rule 7. Placeholders are in place until then |
 | Q-05 | DNS cutover timing at Namecheap | P1-12 cannot finish without it |
 | Q-06 | How much CSI architecture can be published | T cleared CSI for the site on 2026-08-23, overriding the handoff hold, on the condition it shows what was built and not the code. Open question is narrower: CSI is bid intelligence for paving contractors and Gravl is pre bid intelligence for construction, so a detailed CSI architecture may describe Gravl's mechanism by proxy. The section stays empty until T rules |
+| Q-12 | The fifth home button | T listed "contact, portfolio, background, csv, cv". Four are built. "csv" is either a mis-dictation of CV or a fifth thing nobody has identified yet |
 | Q-09 | The ten anime | Ten empty slots are sitting in the ANIME window waiting for T. Nobody else can fill these |
 | Q-10 | Employer names | T said "AC Surety Delivery Associates" in one breath. Currently two entries, AC Surety and Delivery Associates, because it is not clear whether that is one employer or two. Titles and dates are blank |
 | Q-11 | LinkedIn URL | The contact window has a dashed placeholder where the link goes |
