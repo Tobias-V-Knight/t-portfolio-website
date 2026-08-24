@@ -41,6 +41,9 @@ validate the aesthetic, not to ship the portfolio. Placeholder copy throughout.
 | P1-18 | Boot sequence, ML training run, once per session, skippable | SHOW | review | Verified: renders, sets the session flag, and a keypress skips it while the timer still had minutes left |
 | P1-19 | First pass copy for all thirteen projects | SHOW | review | Structure from the real repos, every unknown left as a visible blank |
 | P1-20 | CSI promoted to flagship, Gravl demoted to a row | AFK | done | Gravl has no window, no founder title on the homepage, one row and a link |
+| P1-33 | Boot becomes two stages: train.py in an editor, then the run | SHOW | review | Enter runs the file, Enter again enters the site. The import list stops being green wall and becomes a thing you read |
+| P1-34 | HOME sized as a fraction of the viewport, Porsche background | SHOW | review | 66 by 72 percent, capped at 1040x740, so it is large on a laptop and not lost on a 27 inch display |
+| P1-35 | Window open and close animation, one window per file | SHOW | review | Verified: three clicks on an icon produce one window, and a closing window stays mounted for its animation before it goes |
 | P1-31 | WELCOME becomes HOME: bigger, photo background, four buttons | SHOW | review | The charliedean.com layout T pointed at. PORTFOLIO, BACKGROUND, CONTACT and CV, which is the whole site in one row |
 | P1-32 | Person cropped out of the wallpaper, portrait enlarged | AFK | done | Wallpaper cut at 90.5 percent width. Portrait is wider and larger, keeping the blurred person in frame per T |
 | P1-27 | Wallpaper, portrait, Zippy, and per project icons | SHOW | review | T's own beach photo as the desktop, his portrait in the welcome window, Zippy as a cutout icon, and a different object for every icon rather than two identical diamonds |

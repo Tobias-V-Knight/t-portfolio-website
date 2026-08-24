@@ -256,8 +256,20 @@ body {
 
 /* --- Window -------------------------------------------------------------- */
 
+@keyframes mac-window-in {
+  from { opacity: 0; transform: scale(0.94); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes mac-window-out {
+  from { opacity: 1; transform: scale(1); }
+  to { opacity: 0; transform: scale(0.93); }
+}
+
 .mac-window {
   position: absolute;
+  animation: mac-window-in 130ms ease-out both;
+  transform-origin: 50% 40%;
   display: flex;
   flex-direction: column;
   background: var(--mac-face);
@@ -290,6 +302,11 @@ body {
   background-position: 0 5px;
   background-repeat: repeat-x;
   background-color: var(--mac-face);
+}
+
+.mac-window[data-closing='true'] {
+  animation: mac-window-out 150ms ease-in both;
+  pointer-events: none;
 }
 
 .mac-window[data-active='false'] .mac-titlebar { background-image: none; }
@@ -777,7 +794,59 @@ body {
   pointer-events: none;
 }
 
-.mac-boot-inner { width: min(720px, 100%); }
+.mac-boot-inner { width: min(760px, 100%); }
+
+/* --- train.py, in an editor ----------------------------------------------
+
+   Stage one of the boot. Deliberately NOT the green terminal: the import list
+   and the training log used to be the same wall of green, so the stack read
+   as decoration scrolling past. An editor pane makes the libraries a thing
+   you read, and pressing Enter to run the file is then a beat rather than a
+   wait.
+   ------------------------------------------------------------------------ */
+
+.mac-editor {
+  border: 1px solid #232a33;
+  background: #11151a;
+}
+
+.mac-editor-bar {
+  font-family: var(--mac-chrome);
+  font-size: 16px;
+  line-height: 1;
+  padding: 10px 12px;
+  color: #7f8c9b;
+  background: #171d24;
+  border-bottom: 1px solid #232a33;
+}
+
+.mac-editor-body {
+  padding: 12px 0;
+  font-family: 'Courier New', ui-monospace, monospace;
+  font-size: 15px;
+  line-height: 1.65;
+}
+
+.mac-editor-line {
+  display: flex;
+  gap: 14px;
+  padding: 0 14px;
+  white-space: pre;
+}
+
+.mac-editor-num {
+  flex: 0 0 auto;
+  width: 22px;
+  text-align: right;
+  color: #48545f;
+  user-select: none;
+}
+
+.mac-editor-line code { color: #d6dee7; }
+
+.mac-py-comment { color: #6a9955; }
+.mac-py-kw { color: #c586c0; }
+.mac-py-mod { color: #9cdcfe; }
 
 /* The site's name, at a size that makes it obvious what you are entering.
    The one place on the site where bitmap type is set large, and it works here
@@ -847,15 +916,18 @@ body {
 /* The prompt that waits for Enter. Brighter than everything above it, because
    by then it is the only thing on screen the visitor has to act on. */
 .mac-boot-prompt {
-  margin: 26px 0 0;
+  margin: 22px 0 0;
   font-family: var(--mac-chrome);
   font-size: 16px;
   line-height: 1;
-  color: #d8ffdd;
+  color: #47705180;
   display: flex;
   align-items: center;
   gap: 8px;
+  transition: color 200ms ease;
 }
+
+.mac-boot-prompt[data-ready='true'] { color: #d8ffdd; }
 
 .mac-boot-caret {
   display: inline-block;
@@ -873,8 +945,11 @@ body {
 }
 
 @media (max-width: 768px) {
-  .mac-boot { padding: 18px; }
-  .mac-boot-title { font-size: 22px; margin-bottom: 16px; }
+  .mac-boot { padding: 14px; }
+  .mac-boot-title { font-size: 22px; margin-bottom: 14px; }
+  .mac-editor-body { font-size: 12px; line-height: 1.6; }
+  .mac-editor-line { gap: 8px; padding: 0 8px; white-space: pre-wrap; }
+  .mac-editor-num { width: 16px; }
   .mac-boot-row { gap: 8px; }
   .mac-boot-bar { width: 84px; }
   .mac-boot-rows { min-height: calc(5 * 16px * 1.9); }
@@ -908,14 +983,16 @@ body {
 .mac-home {
   min-height: 100%;
   background-size: cover;
-  background-position: center 46%;
+  background-position: center 52%;
   display: flex;
   align-items: center;
-  padding: 22px;
+  padding: 26px;
 }
 
 .mac-home-panel {
   width: 100%;
+  max-width: 760px;
+  margin: 0 auto;
   padding: 20px 22px 22px;
   background: rgba(244, 242, 237, 0.9);
   border: 1px solid var(--mac-line);
@@ -974,7 +1051,7 @@ body {
 
 @media (max-width: 768px) {
   .mac-home { padding: 0; }
-  .mac-home-panel { border-width: 0; box-shadow: none; }
+  .mac-home-panel { border-width: 0; box-shadow: none; max-width: none; }
   .mac-home-head { gap: 14px; }
   .mac-home-name { font-size: 20px; }
   .mac-home-actions .mac-btn { flex: 1 1 44%; justify-content: center; text-align: center; }
@@ -1086,6 +1163,8 @@ body {
 ::selection { background: var(--mac-accent); color: var(--mac-accent-ink); }
 
 @media (prefers-reduced-motion: reduce) {
+  .mac-window, .mac-window[data-closing='true'] { animation: none; }
+
   *, *::before, *::after {
     animation-duration: 0.001ms !important;
     transition-duration: 0.001ms !important;

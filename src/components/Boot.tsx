@@ -1,49 +1,46 @@
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
-// The boot sequence. Full screen, then the desktop.
+// The boot sequence, in three stages.
 //
-// This is the third shape it has had and the one T kept. A photograph of an
-// iMac G3 with this log running inside its screen was built and then removed:
-// it was real, but the machine was solving a problem the terminal did not
-// have, and it cost the log most of its legibility to do it. The terminal on
-// its own says the same thing about the person, faster.
+//   1. SOURCE   train.py in an editor, imports appearing line by line.
+//   2. RUN      Enter runs it. Terminal output, thirty epochs, a loss that
+//               jitters the way a real one does.
+//   3. DESKTOP  Enter again and you are in.
 //
-// Only the EPOCHS roll. The header stays put.
+// The two stage split is T's, and it is better than what it replaced: the
+// import list and the training log were the same green wall of text, so the
+// libraries read as decoration. Showing the file first, in an editor, means
+// the stack is a thing you read rather than a thing that scrolls past, and
+// pressing Enter to run it is a beat rather than a wait.
 //
-// Rolling everything was tried and it was wrong: thirty epochs pushed the
-// import list off the top, so by the time the screen settles, which is when
-// people actually read it, the stack was gone. The libraries are half the
-// point of this screen. So the header is fixed, the epoch log scrolls under
-// it in a fixed height window, and the final state holds everything worth
-// reading.
-//
-// Rules that still hold: it plays once per session, any key or tap continues,
-// it never runs under reduced motion, and it only plays on the homepage so a
-// shared deep link goes straight to the work.
+// Rules that survive every rewrite: it plays once per session, any key
+// advances, it only plays on the homepage so a shared project link goes
+// straight to the work, it never runs under reduced motion, and it never
+// blocks content because the desktop is mounted underneath the whole time.
 
 const SESSION_KEY = 'tk-booted'
 const EPOCHS = 30
-const EPOCH_MS = 58
-
+const EPOCH_MS = 52
 const isSmallScreen = () => typeof window !== 'undefined' && window.innerWidth <= 768
-
-// How many epoch rows are on screen at once. The header above them is always
-// fully visible, so this is the only thing that scrolls.
 const VISIBLE_EPOCHS = isSmallScreen() ? 5 : 9
 
-// Time multiplier, 1 in production. It exists because the sequence runs faster
-// than a screenshot round trip, so verifying it by eye means slowing it down.
-// Never commit anything but 1.
+// Time multiplier, 1 in production. The sequence runs faster than a
+// screenshot round trip, so verifying it by eye means slowing it down.
 const SPEED = 1
 
-// T's actual stack, taken from his repos rather than made up. All of them get
-// shown now: they scroll away rather than competing for space.
-const IMPORTS = [
+// train.py. T's actual stack, from his repos, laid out the way he writes it:
+// standard library, then data, then sklearn, then the deep learning half.
+const SOURCE = [
+  '# ---------- IMPORTS ----------',
+  'import os',
   'import numpy as np',
   'import pandas as pd',
   'import matplotlib.pyplot as plt',
   'import seaborn as sns',
+  '',
   'from sklearn.model_selection import train_test_split',
+  'from sklearn.metrics import log_loss',
+  '',
   'import torch',
   'import torch.nn as nn',
   'from transformers import AutoModel, AutoTokenizer',
@@ -53,26 +50,71 @@ function lossAt(epoch: number) {
   return 0.94 * Math.exp(-epoch / 6.5) + 0.036
 }
 
-interface Line {
-  text: string
-  dim?: boolean
-}
-
 interface EpochRow {
   epoch: number
   loss: number
   best: boolean
 }
 
+// A very small Python tokenizer. It only has to handle import statements and
+// comments, which is all this file contains, so it is thirty lines rather
+// than a highlighting library.
+function highlight(line: string, key: number) {
+  if (line.trim().startsWith('#')) {
+    return (
+      <span key={key} className="mac-py-comment">
+        {line}
+      </span>
+    )
+  }
+  const parts = line.split(/(\s+)/)
+  return (
+    <span key={key}>
+      {parts.map((part, i) => {
+        if (/^(import|from|as)$/.test(part)) {
+          return (
+            <span key={i} className="mac-py-kw">
+              {part}
+            </span>
+          )
+        }
+        if (/^[a-zA-Z_][\w.]*$/.test(part)) {
+          return (
+            <span key={i} className="mac-py-mod">
+              {part}
+            </span>
+          )
+        }
+        return <span key={i}>{part}</span>
+      })}
+    </span>
+  )
+}
+
+type Stage = 'source' | 'run'
+
 export function Boot({ onDone }: { onDone: () => void }) {
-  const [head, setHead] = useState<Line[]>([])
+  const [stage, setStage] = useState<Stage>('source')
+  const [shownLines, setShownLines] = useState(0)
   const [rows, setRows] = useState<EpochRow[]>([])
-  const [tail, setTail] = useState<Line[]>([])
-  const [ready, setReady] = useState(false)
+  const [runHead, setRunHead] = useState<string[]>([])
+  const [runDone, setRunDone] = useState(false)
   const [done, setDone] = useState(false)
+
+  const stageRef = useRef(stage)
+  const shownRef = useRef(0)
+  const runDoneRef = useRef(false)
   const finished = useRef(false)
 
-  const finish = useRef(() => {
+  useEffect(() => {
+    stageRef.current = stage
+    shownRef.current = shownLines
+    runDoneRef.current = runDone
+  }, [stage, shownLines, runDone])
+
+  const sourceReady = shownLines >= SOURCE.length
+
+  const exit = useCallback(() => {
     if (finished.current) return
     finished.current = true
     try {
@@ -82,34 +124,67 @@ export function Boot({ onDone }: { onDone: () => void }) {
       // plays again, which is not worth failing over.
     }
     setDone(true)
-    // Long enough for the curtain to fade, short enough that nobody waits.
     window.setTimeout(onDone, 280)
-  })
+  }, [onDone])
+
+  // One handler for every key, and what it does depends on where you are.
+  // Mid animation it completes the current stage instantly rather than being
+  // ignored, which is the difference between a skip that works and a skip
+  // that feels broken.
+  const advance = useCallback(() => {
+    if (stageRef.current === 'source') {
+      if (shownRef.current < SOURCE.length) {
+        setShownLines(SOURCE.length)
+        return
+      }
+      setStage('run')
+      return
+    }
+    if (!runDoneRef.current) {
+      setRows(
+        Array.from({ length: VISIBLE_EPOCHS }, (_, i) => {
+          const epoch = EPOCHS - VISIBLE_EPOCHS + 1 + i
+          return { epoch, loss: lossAt(epoch), best: false }
+        }),
+      )
+      setRunHead(RUN_HEAD)
+      setRunDone(true)
+      return
+    }
+    exit()
+  }, [exit])
 
   useEffect(() => {
-    // Before training finishes a keypress skips, after it finishes the same
-    // keypress means go. One handler, because they are the same intent.
-    const advance = (e: Event) => {
+    const onKey = (e: Event) => {
       e.preventDefault()
-      finish.current()
+      advance()
     }
-    window.addEventListener('keydown', advance)
-    window.addEventListener('pointerdown', advance)
+    window.addEventListener('keydown', onKey)
+    window.addEventListener('pointerdown', onKey)
+    return () => {
+      window.removeEventListener('keydown', onKey)
+      window.removeEventListener('pointerdown', onKey)
+    }
+  }, [advance])
 
+  // Stage 1: the file types itself in.
+  useEffect(() => {
+    if (stage !== 'source') return
+    const timers = SOURCE.map((_, i) =>
+      window.setTimeout(() => setShownLines((n) => Math.max(n, i + 1)), (140 + i * 78) * SPEED),
+    )
+    return () => timers.forEach(window.clearTimeout)
+  }, [stage])
+
+  // Stage 2: it runs.
+  useEffect(() => {
+    if (stage !== 'run') return
     const timers: number[] = []
-    const push = (line: Line, at: number) => {
-      timers.push(window.setTimeout(() => setHead((prev) => [...prev, line]), at * SPEED))
-    }
+    RUN_HEAD.forEach((line, i) => {
+      timers.push(window.setTimeout(() => setRunHead((prev) => [...prev, line]), (120 + i * 150) * SPEED))
+    })
 
-    push({ text: '$ python train.py', dim: true }, 0)
-    IMPORTS.forEach((imp, i) => push({ text: imp }, 170 + i * 74))
-
-    const afterImports = 170 + IMPORTS.length * 74 + 80
-    push({ text: 'loading weights ......... ok', dim: true }, afterImports)
-    push({ text: 'mounting MACINTOSH_HD ... ok', dim: true }, afterImports + 140)
-    push({ text: `training: ${EPOCHS} epochs, batch 32, lr 3e-4`, dim: true }, afterImports + 270)
-
-    const start = afterImports + 380
+    const start = 120 + RUN_HEAD.length * 150 + 120
     let best = Infinity
     for (let epoch = 1; epoch <= EPOCHS; epoch++) {
       timers.push(
@@ -127,80 +202,85 @@ export function Boot({ onDone }: { onDone: () => void }) {
         ),
       )
     }
-
-    const endAt = start + EPOCHS * EPOCH_MS + 240
     timers.push(
-      window.setTimeout(
-        () => setTail([{ text: 'converged. checkpoint saved.', dim: true }]),
-        endAt * SPEED,
-      ),
+      window.setTimeout(() => setRunDone(true), (start + EPOCHS * EPOCH_MS + 220) * SPEED),
     )
-    timers.push(window.setTimeout(() => setReady(true), endAt * SPEED))
-
-    return () => {
-      window.removeEventListener('keydown', advance)
-      window.removeEventListener('pointerdown', advance)
-      timers.forEach(window.clearTimeout)
-    }
-  }, [])
+    return () => timers.forEach(window.clearTimeout)
+  }, [stage])
 
   return (
-    <div className="mac-boot" data-done={done} role="status" aria-live="polite">
+    <div className="mac-boot" data-done={done} data-stage={stage} role="status" aria-live="polite">
       <div className="mac-boot-inner">
         <h1 className="mac-boot-title">TOBIASKNIGHT.DEV</h1>
 
-        <div className="mac-boot-log">
-          {head.map((l, i) => (
-            <div className="mac-boot-line" key={`h${i}`} data-dim={l.dim}>
-              {l.text}
+        {stage === 'source' ? (
+          <>
+            <div className="mac-editor">
+              <div className="mac-editor-bar">train.py</div>
+              <div className="mac-editor-body">
+                {SOURCE.slice(0, shownLines).map((line, i) => (
+                  <div className="mac-editor-line" key={i}>
+                    <span className="mac-editor-num">{i + 1}</span>
+                    <code>{line ? highlight(line, i) : ' '}</code>
+                  </div>
+                ))}
+              </div>
             </div>
-          ))}
 
-          {/* Fixed height, so the header above does not shuffle up and down
-              as rows arrive. A log that makes the whole page jump reads as a
-              bug rather than as a machine working. */}
-          {rows.length > 0 && (
-            <div className="mac-boot-rows">
-              {rows.map((r) => (
-                <div className="mac-boot-row" key={r.epoch}>
-                  <span className="mac-boot-epoch">
-                    {String(r.epoch).padStart(2, '0')}/{EPOCHS}
-                  </span>
-                  <span className="mac-boot-bar">
-                    <i style={{ width: `${(r.epoch / EPOCHS) * 100}%` }} />
-                  </span>
-                  <span className="mac-boot-num">loss {r.loss.toFixed(4)}</span>
-                  <span className="mac-boot-best">{r.best ? '*' : ''}</span>
+            <p className="mac-boot-prompt" data-ready={sourceReady}>
+              &gt; {sourceReady ? 'PRESS ENTER TO RUN' : 'loading imports'}
+              <span className="mac-boot-caret" aria-hidden />
+            </p>
+          </>
+        ) : (
+          <>
+            <div className="mac-boot-log">
+              {runHead.map((l, i) => (
+                <div className="mac-boot-line" key={i} data-dim={i > 0}>
+                  {l}
                 </div>
               ))}
+
+              {rows.length > 0 && (
+                <div className="mac-boot-rows">
+                  {rows.map((r) => (
+                    <div className="mac-boot-row" key={r.epoch}>
+                      <span className="mac-boot-epoch">
+                        {String(r.epoch).padStart(2, '0')}/{EPOCHS}
+                      </span>
+                      <span className="mac-boot-bar">
+                        <i style={{ width: `${(r.epoch / EPOCHS) * 100}%` }} />
+                      </span>
+                      <span className="mac-boot-num">loss {r.loss.toFixed(4)}</span>
+                      <span className="mac-boot-best">{r.best ? '*' : ''}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {runDone && <div className="mac-boot-line" data-dim>converged. checkpoint saved.</div>}
+              <span className="mac-boot-caret" aria-hidden />
             </div>
-          )}
 
-          {tail.map((l, i) => (
-            <div className="mac-boot-line" key={`t${i}`} data-dim={l.dim}>
-              {l.text}
-            </div>
-          ))}
-
-          <span className="mac-boot-caret" aria-hidden />
-        </div>
-
-        {ready ? (
-          <p className="mac-boot-prompt">
-            &gt; PRESS ENTER TO CONTINUE
-            <span className="mac-boot-caret" aria-hidden />
-          </p>
-        ) : (
-          <p className="mac-boot-skip">[ press any key to skip ]</p>
+            <p className="mac-boot-prompt" data-ready={runDone}>
+              &gt; {runDone ? 'PRESS ENTER TO CONTINUE' : 'running'}
+              <span className="mac-boot-caret" aria-hidden />
+            </p>
+          </>
         )}
       </div>
     </div>
   )
 }
 
-// Whether the landing should be drawn at all. Checked before it mounts, so a
-// returning visitor, a deep link, or anyone who asked for reduced motion never
-// renders it.
+const RUN_HEAD = [
+  '$ python train.py',
+  'loading weights ......... ok',
+  'mounting MACINTOSH_HD ... ok',
+  `training: ${EPOCHS} epochs, batch 32, lr 3e-4`,
+]
+
+// Whether the boot should be drawn at all.
 export function shouldBoot(pathname: string) {
   if (typeof window === 'undefined') return false
   if (pathname !== '/') return false

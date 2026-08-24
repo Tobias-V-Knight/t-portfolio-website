@@ -13,7 +13,7 @@ import {
   TvIcon,
 } from './components/Icons'
 import { MacWindow } from './components/Window'
-import { useWindowManager } from './system/windows'
+import { defSize, useWindowManager } from './system/windows'
 import { projects, windowProjects } from './data/content'
 import {
   AboutPanel,
@@ -76,7 +76,8 @@ function useClock() {
 }
 
 export default function App() {
-  const { openWindows, topId, open, close, focus, move, resize, sizes } = useWindowManager()
+  const { openWindows, topId, open, close, focus, move, resize, sizes, closing } =
+    useWindowManager()
   const clock = useClock()
   // The desktop mounts underneath the boot curtain, not after it. If this
   // component threw, the site would still be there behind it.
@@ -189,13 +190,14 @@ export default function App() {
               y={w.y}
               active={isTop}
               isTop={isTop}
+              closing={closing === w.id}
               zIndex={100 + i}
               onClose={() => close(w.id)}
               onFocus={() => focus(w.id)}
               onMove={(x, y) => move(w.id, x, y)}
               onResize={(width, height) => resize(w.id, width, height)}
-              width={sizes[w.id]?.w ?? w.def.width}
-              height={sizes[w.id]?.h ?? w.def.height}
+              width={sizes[w.id]?.w ?? defSize(w.def).w}
+              height={sizes[w.id]?.h ?? defSize(w.def).h}
               status={
                 w.def.kind === 'photos'
                   ? photoStatus

@@ -30,6 +30,10 @@ export interface WindowDef {
   kind: WindowKind
   // Ignore spawn and open in the middle of the screen instead.
   center?: boolean
+  // Size as a fraction of the viewport rather than fixed pixels. HOME uses
+  // this because it is the composition rather than a note: a window that is
+  // 780px on every screen is large on a laptop and lost on a 27 inch display.
+  sizeFrac?: { w: number; h: number; maxW: number; maxH: number; minW: number; minH: number }
   // null means the window is not routed. Only the intro window is, because it
   // opens on load and closing it should not put an entry in history.
   route: string | null
@@ -48,8 +52,9 @@ export const windowDefs: WindowDef[] = [
     kind: 'intro',
     center: true,
     route: null,
-    width: 780,
-    height: 530,
+    width: 900,
+    height: 620,
+    sizeFrac: { w: 0.66, h: 0.72, maxW: 1040, maxH: 740, minW: 320, minH: 420 },
     spawn: { x: 0.08, y: 0.14 },
   },
   {
@@ -157,13 +162,23 @@ function clamp(x: number, y: number, def: WindowDef) {
   }
 }
 
+export function defSize(def: WindowDef): { w: number; h: number } {
+  if (!def.sizeFrac || typeof window === 'undefined') return { w: def.width, h: def.height }
+  const f = def.sizeFrac
+  return {
+    w: Math.round(Math.min(f.maxW, Math.max(f.minW, window.innerWidth * f.w))),
+    h: Math.round(Math.min(f.maxH, Math.max(f.minH, window.innerHeight * f.h))),
+  }
+}
+
 function spawnPosition(def: WindowDef): { x: number; y: number } {
   const vw = typeof window === 'undefined' ? 1280 : window.innerWidth
   const vh = typeof window === 'undefined' ? 800 : window.innerHeight
   if (def.center) {
+    const size = defSize(def)
     return clamp(
-      Math.round((vw - def.width) / 2),
-      Math.round((vh - MENU_BAR - def.height) / 2) + MENU_BAR,
+      Math.round((vw - size.w) / 2),
+      Math.round((vh - MENU_BAR - size.h) / 2) + MENU_BAR,
       def,
     )
   }
@@ -183,6 +198,11 @@ export function useWindowManager() {
   // per kind. A classic Mac window had a grow box in the corner and it worked,
   // so ours works too rather than being decoration that lies about itself.
   const [sizes, setSizes] = useState<Record<string, { w: number; h: number }>>({})
+  // The window that is currently playing its close animation. It stays
+  // mounted for the length of the animation and only then actually closes,
+  // because a window that vanishes the instant you click the box reads as a
+  // crash rather than as a close.
+  const [closing, setClosing] = useState<string | null>(null)
   const [introPos, setIntroPos] = useState(() => spawnPosition(byId.get('intro') as WindowDef))
 
   const routeId = byRoute.get(location.pathname) ?? null
@@ -229,23 +249,37 @@ export function useWindowManager() {
 
   const close = useCallback(
     (id: string) => {
-      if (id === 'intro') {
-        setIntroOpen(false)
-        return
-      }
+      const reduced =
+        typeof window !== 'undefined' &&
+        window.matchMedia('(prefers-reduced-motion: reduce)').matches
+      const CLOSE_MS = reduced ? 0 : 150
+
       // Going back is what closes a window, so that the Back button and the
-      // close box are the same action and can never disagree.
-      const idx = stack.findIndex((w) => w.id === id)
-      if (idx < 0) return
-      const stepsBack = stack.length - idx
-      // Someone who followed a link straight to /projects/pickleball-iq has no
-      // history behind them. Going back would walk them off the site, which is
-      // the worst possible response to clicking a close box.
-      const historyIdx = (window.history.state as { idx?: number } | null)?.idx ?? 0
-      if (historyIdx - stepsBack < 0) navigate('/', { replace: true })
-      else navigate(-stepsBack)
+      // close box are the same action and can never disagree. Someone who
+      // followed a link straight to /projects/pickleball-iq has no history
+      // behind them, and going back would walk them off the site, which is the
+      // worst possible response to clicking a close box.
+      const finish = () => {
+        setClosing(null)
+        if (id === 'intro') {
+          setIntroOpen(false)
+          return
+        }
+        const idx = stack.findIndex((w) => w.id === id)
+        if (idx < 0) return
+        const stepsBack = stack.length - idx
+        const historyIdx = (window.history.state as { idx?: number } | null)?.idx ?? 0
+        if (historyIdx - stepsBack < 0) navigate('/', { replace: true })
+        else navigate(-stepsBack)
+      }
+
+      if (CLOSE_MS === 0) return finish()
+      if (closing) return
+      setClosing(id)
+      window.setTimeout(finish, CLOSE_MS)
+      return
     },
-    [navigate, stack],
+    [navigate, stack, closing],
   )
 
   const focus = useCallback(
@@ -311,5 +345,5 @@ export function useWindowManager() {
     return () => window.removeEventListener('keydown', onKey)
   }, [close])
 
-  return { openWindows, topId, open, close, focus, move, resize, sizes }
+  return { openWindows, topId, open, close, focus, move, resize, sizes, closing }
 }

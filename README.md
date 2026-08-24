@@ -61,7 +61,7 @@ that gets consulted before a new file is ever created.
 | File | What it is | What it does |
 |---|---|---|
 | `wallpaper.jpg` | The desktop | T's own beach photograph. Cropped at 90.5 percent width, which removes the person on the towel at the right edge |
-| `home-bg.jpg` | Inside the HOME window | A landscape band from the same photograph: horizon, sunset, first stretch of sand. The panel of text sits on top of it |
+| `home-bg.jpg` | Inside the HOME window | T's photograph of a 911 Targa, cropped to a landscape band. The panel of text sits on top of it and is capped in width so the car still reads |
 | `t-profile.jpg` | Portrait | 640px square, cropped from T's photo. The other person in the original frame is outside the crop |
 | `zippy.png` | Zippy, large | 256px cutout with transparency, shown in the ZIPPY window |
 | `zippy-icon.png` | Zippy, icon size | 64px, used as an actual desktop icon rather than a drawing |

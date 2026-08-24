@@ -7,6 +7,7 @@ interface WindowProps {
   y: number
   active: boolean
   isTop: boolean
+  closing: boolean
   zIndex: number
   onClose: () => void
   onFocus: () => void
@@ -24,6 +25,7 @@ export function MacWindow({
   y,
   active,
   isTop,
+  closing,
   zIndex,
   onClose,
   onFocus,
@@ -102,6 +104,7 @@ export function MacWindow({
       data-active={active}
       data-top={isTop}
       data-kind={def.kind}
+      data-closing={closing}
       style={{ left: x, top: y, width, height, zIndex }}
       aria-label={def.title}
       onPointerDownCapture={onFocus}
