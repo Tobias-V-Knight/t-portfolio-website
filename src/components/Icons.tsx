@@ -4,6 +4,13 @@
 
 type IconProps = { className?: string }
 
+// An icon that is a real image rather than a drawing. Zippy is a photograph
+// with a cutout, which is exactly the 90s shareware icon move: most Mac
+// desktops had at least one icon that was obviously somebody's dog.
+export function ImgIcon({ className, src, alt }: IconProps & { src: string; alt: string }) {
+  return <img className={className} src={src} alt={alt} />
+}
+
 // The six stripe Apple. It is the single most recognisable thing in the whole
 // interface, and its absence was most of why the menu bar did not read as a
 // Macintosh. Drawn rather than an image so it stays crisp at 16px.
@@ -71,6 +78,60 @@ export function DiskIcon({ className }: IconProps) {
       <path d="M3 10h26v4H3z" fill="#f4f2ed" />
       <path d="M20 17h7v4h-7z" fill="#4a4a8c" stroke="#000" />
       <path d="M5 18h11M5 21h8" stroke="#6c6a64" />
+    </svg>
+  )
+}
+
+// Project specific icons. Charlie Dean's desktop is memorable because every
+// icon is a different object; ours had two identical diamonds for two very
+// different projects, which is the thing that makes a desktop read as a
+// template. These are still generic shapes, but they are the right shapes.
+
+export function PaddleIcon({ className }: IconProps) {
+  return (
+    <svg {...base} className={className}>
+      <path d="M6 3h20v22H6z" fill="#dedbd4" stroke="#000" />
+      <path d="M7 4h18v3H7z" fill="#4a4a8c" />
+      <path d="M13 9h8v10a4 4 0 0 1-8 0z" fill="#c96a2a" stroke="#000" />
+      <path d="M15 19h4v6h-4z" fill="#8a5a2a" stroke="#000" />
+      <circle cx="10" cy="13" r="3" fill="#e8d24a" stroke="#000" />
+      <path d="M9 12h1M11 12h1M10 14h1" stroke="#000" strokeWidth="0.8" />
+    </svg>
+  )
+}
+
+export function RoadIcon({ className }: IconProps) {
+  return (
+    <svg {...base} className={className}>
+      <path d="M4 3h24v26H4z" fill="#dedbd4" stroke="#000" />
+      <path d="M5 4h22v3H5z" fill="#4a4a8c" />
+      <path d="M10 9h12l4 19H6z" fill="#5a5a5f" stroke="#000" />
+      <path d="M15.4 11h1.6l.4 4h-2.4z M14.9 17h2.4l.4 4h-3.2z M14.3 23h3.6l.4 4h-4.4z" fill="#f4f2ed" />
+    </svg>
+  )
+}
+
+export function TvIcon({ className }: IconProps) {
+  return (
+    <svg {...base} className={className}>
+      <path d="M3 8h26v18H3z" fill="#dedbd4" stroke="#000" />
+      <path d="M6 11h20v12H6z" fill="#2b3a52" stroke="#000" />
+      <path d="M8 13h6v3H8z" fill="#e8687a" />
+      <path d="M16 13h8v1.5h-8z M16 16h6v1.5h-6z" fill="#9fc7e8" />
+      <path d="M8 19h16v2H8z" fill="#4a4a8c" />
+      <path d="M11 8l5-5M21 8l-5-5" stroke="#000" />
+      <circle cx="6.5" cy="28.5" r="1.5" fill="#6c6a64" />
+      <circle cx="25.5" cy="28.5" r="1.5" fill="#6c6a64" />
+    </svg>
+  )
+}
+
+export function MailIcon({ className }: IconProps) {
+  return (
+    <svg {...base} className={className}>
+      <path d="M3 7h26v18H3z" fill="#f7f6f2" stroke="#000" />
+      <path d="M3 7l13 10L29 7" fill="none" stroke="#000" />
+      <path d="M3 25l9-8M29 25l-9-8" fill="none" stroke="#6c6a64" />
     </svg>
   )
 }

@@ -41,6 +41,10 @@ validate the aesthetic, not to ship the portfolio. Placeholder copy throughout.
 | P1-18 | Boot sequence, ML training run, once per session, skippable | SHOW | review | Verified: renders, sets the session flag, and a keypress skips it while the timer still had minutes left |
 | P1-19 | First pass copy for all thirteen projects | SHOW | review | Structure from the real repos, every unknown left as a visible blank |
 | P1-20 | CSI promoted to flagship, Gravl demoted to a row | AFK | done | Gravl has no window, no founder title on the homepage, one row and a link |
+| P1-27 | Wallpaper, portrait, Zippy, and per project icons | SHOW | review | T's own beach photo as the desktop, his portrait in the welcome window, Zippy as a cutout icon, and a different object for every icon rather than two identical diamonds |
+| P1-28 | ANIME and CONTACT windows, welcome window opens centred | SHOW | review | Contact is links only, no form: a static site cannot send mail without a third party |
+| P1-29 | About rebuilt: endurance, professional background, education, resume slot | SHOW | review | Resume renders as an unanswered blank until `public/resume.pdf` exists |
+| P1-30 | MAKE 28TH SAFE! added as an in progress project | SHOW | review | Official referred to by role only, per T on 2026-08-24 |
 | P1-26 | Revert the hero to the full screen terminal boot | AFK | done | T, 2026-08-24. The machine was solving a problem the terminal did not have, and it cost the log its legibility. Header is fixed and only the epochs scroll, so the import stack is still on screen when it settles |
 | P1-25 | Landing hero as a real photograph, reverted by P1-26 | SHOW | done | Recoverable from git if the desk scene ever comes back. The three quarters transparent PNG is in the session scratchpad |
 | P1-21 | Landing scene: 3D iMac G3, superseded twice | SHOW | done | three.js, procedural geometry, real transmission and a procedural room. Enter pushes the camera through the glass into the desktop |
@@ -58,6 +62,9 @@ Things T has decided he wants but has deliberately parked.
 | B-01 | What plays on the iMac screen | ASK | T, 2026-08-23: a mix of old PickleTrack clips, product building, and the funnier parts of the MSBA program. All tech and building related. Placeholder NO SIGNAL card until then |
 | B-02 | Full case study windows for the projects that are only rows today | ASK | Blocked on Q-01. Each one needs a paragraph from T before it can become a window |
 | B-03 | CSI architecture section | ASK | See Q-06. The window exists, the architecture is a blank prompt |
+| B-08 | MSBA section: every course, an overview, and T's favourite concepts | ASK | The degree was hard and deserves more than a line on a resume. **Blocked on B-09**: it cannot be written from memory, it has to come from the materials |
+| B-09 | Archive every MSBA lecture before university access is revoked | ASK | **This one has a real deadline.** Recordings, slides, notes, syllabi and feedback, per lecture rather than per course. Handoff note and a paste-able prompt for a fresh session live at `00_summer 2026/2026-08-24_tk-msba-archive-handoff_v1.md` in iCloud |
+| B-10 | Real PBIQ and CSI app icons | ASK | The icons are hand drawn shapes standing in for the real products. If PBIQ has an app icon, drop the PNG in and it becomes the desktop icon, which is the Charlie Dean move T pointed at |
 | B-06 | Susan Kare style icon set | ASK | The icons are the weakest remaining part of the illusion. The reference T sent has hand drawn 32x32 icons and ours are geometric |
 | B-07 | Sound: startup chime, window open, click | ASK | Spec section 13. Never autoplay, global mute, and it should reward exploration rather than punish it |
 | B-04 | A physical object somewhere on the site | ASK | The iMac is out of the entrance, but the desk scene idea from T's concept note, with the CD and camera as portals, is still a good one for a later phase |
@@ -73,6 +80,9 @@ Things T has decided he wants but has deliberately parked.
 | Q-04 | Real photos, and consent for any face that is not T's | Handoff rule 7. Placeholders are in place until then |
 | Q-05 | DNS cutover timing at Namecheap | P1-12 cannot finish without it |
 | Q-06 | How much CSI architecture can be published | T cleared CSI for the site on 2026-08-23, overriding the handoff hold, on the condition it shows what was built and not the code. Open question is narrower: CSI is bid intelligence for paving contractors and Gravl is pre bid intelligence for construction, so a detailed CSI architecture may describe Gravl's mechanism by proxy. The section stays empty until T rules |
+| Q-09 | The ten anime | Ten empty slots are sitting in the ANIME window waiting for T. Nobody else can fill these |
+| Q-10 | Employer names | T said "AC Surety Delivery Associates" in one breath. Currently two entries, AC Surety and Delivery Associates, because it is not clear whether that is one employer or two. Titles and dates are blank |
+| Q-11 | LinkedIn URL | The contact window has a dashed placeholder where the link goes |
 | Q-08 | Every blank in the copy | Thirteen project articles now exist with every unknown marked as a visible yellow slot. Each one is a question with a specific answer only T has |
 | Q-07 | The category taxonomy is too generous | AI / ML currently returns 10 of 13 projects, so the chip barely filters. Gravl, Pickleball IQ and CSI are tagged both product and AI / ML. T should decide whether a project gets one primary category or many |
 

@@ -1,11 +1,28 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Boot, shouldBoot } from './components/Boot'
 import { MenuBar, type Menu } from './components/MenuBar'
-import { AppIcon, DiskIcon, DocIcon, FolderIcon, TrashIcon } from './components/Icons'
+import {
+  DiskIcon,
+  DocIcon,
+  FolderIcon,
+  ImgIcon,
+  MailIcon,
+  PaddleIcon,
+  RoadIcon,
+  TrashIcon,
+  TvIcon,
+} from './components/Icons'
 import { MacWindow } from './components/Window'
 import { useWindowManager } from './system/windows'
 import { projects, windowProjects } from './data/content'
-import { AboutPanel, IntroPanel, TrashPanel } from './windows/Panels'
+import {
+  AboutPanel,
+  AnimePanel,
+  ContactPanel,
+  IntroPanel,
+  TrashPanel,
+  ZippyPanel,
+} from './windows/Panels'
 import { ProjectPanel } from './windows/Project'
 import { PhotosPanel } from './windows/Photos'
 import { WorkPanel } from './windows/Work'
@@ -14,12 +31,22 @@ import './styles/system.css'
 // Five desktop objects, which is the middle of the four to six the spec asks
 // for in phase 1. Every one of them opens something real. An icon that does
 // nothing is the fastest way to make the desktop feel like set dressing.
+const ZippyIcon = ({ className }: { className?: string }) => (
+  <ImgIcon className={className} src={`${import.meta.env.BASE_URL}zippy-icon.png`} alt="" />
+)
+
+// Two identical diamonds for two very different projects was the thing that
+// made this read as a template. Every icon is now a different object, which is
+// most of why a classic Mac desktop is memorable at all.
 const desktopItems = [
   { id: 'work', label: 'WORK', Art: DiskIcon },
-  { id: 'project:csi-bid-intelligence', label: 'CSI.APP', Art: AppIcon },
-  { id: 'project:pickleball-iq', label: 'PICKLEBALL_IQ', Art: AppIcon },
+  { id: 'project:csi-bid-intelligence', label: 'CSI.APP', Art: RoadIcon },
+  { id: 'project:pickleball-iq', label: 'PICKLEBALL_IQ', Art: PaddleIcon },
   { id: 'photos', label: 'PHOTOS', Art: FolderIcon },
+  { id: 'anime', label: 'ANIME', Art: TvIcon },
+  { id: 'zippy', label: 'ZIPPY', Art: ZippyIcon },
   { id: 'about', label: 'ABOUT_ME.TXT', Art: DocIcon },
+  { id: 'contact', label: 'CONTACT', Art: MailIcon },
   { id: 'trash', label: 'TRASH', Art: TrashIcon },
 ]
 
@@ -100,7 +127,10 @@ export default function App() {
             onSelect: () => open(`project:${p.slug}`),
           })),
           { label: 'Photos', onSelect: () => open('photos'), separatorBefore: true },
-          { label: 'About', onSelect: () => open('about') },
+          { label: 'Anime', onSelect: () => open('anime') },
+          { label: 'Zippy', onSelect: () => open('zippy') },
+          { label: 'About', onSelect: () => open('about'), separatorBefore: true },
+          { label: 'Contact', onSelect: () => open('contact') },
         ],
       },
       {
@@ -179,6 +209,9 @@ export default function App() {
               {w.def.kind === 'intro' && <IntroPanel />}
               {w.def.kind === 'text' && <AboutPanel />}
               {w.def.kind === 'trash' && <TrashPanel />}
+              {w.def.kind === 'anime' && <AnimePanel />}
+              {w.def.kind === 'contact' && <ContactPanel />}
+              {w.def.kind === 'zippy' && <ZippyPanel />}
               {w.def.kind === 'photos' && <PhotosPanel onStatus={handlePhotoStatus} />}
               {w.def.kind === 'work' && (
                 <WorkPanel

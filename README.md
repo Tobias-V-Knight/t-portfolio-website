@@ -49,6 +49,7 @@ that gets consulted before a new file is ever created.
 | `components/MenuBar.tsx` | Menu bar | The menus, including the Go menu, which is the fast path to the work for anyone who does not want to explore |
 | `components/Icons.tsx` | Desktop icons | Folder, document, application, disk and trash, drawn as crisp edged SVG rather than bitmaps |
 | `windows/Panels.tsx` | Small windows | The intro card, the about window, the trash Easter egg, and the placeholder tag component |
+| `windows/Panels.tsx` also holds | Small windows | The intro card, about, contact, anime, Zippy, the trash Easter egg, the placeholder tag, and the blank renderer |
 | `windows/Work.tsx` | WORK window | Category filter chips and the full project list. Projects with a case study open a window, the rest are rows with a link |
 | `components/Boot.tsx` | Boot sequence | A full screen ML training run: the import stack, then epochs with a jittering loss, then a prompt that waits for Enter. Plays once per session, skips on any key, homepage only. Never blocks content, because the desktop is already mounted underneath it |
 | `windows/Project.tsx` | Project window | The twelve section project template. Sections render only when the data has them, which is how Gravl stays outcome only |
@@ -59,6 +60,10 @@ that gets consulted before a new file is ever created.
 
 | File | What it is | What it does |
 |---|---|---|
+| `wallpaper.jpg` | The desktop | T's own beach photograph, 1650px, used as the desktop background |
+| `t-profile.jpg` | Portrait | 640px square, cropped from T's photo. The other person in the original frame is outside the crop |
+| `zippy.png` | Zippy, large | 256px cutout with transparency, shown in the ZIPPY window |
+| `zippy-icon.png` | Zippy, icon size | 64px, used as an actual desktop icon rather than a drawing |
 | `og.png` | Link preview card | 1200x630. The actual front door, because almost every visitor sees this on LinkedIn before they see the site |
 | `favicon.svg` | Favicon | A small beige computer |
 | `photos/*.JPG` | Placeholder photographs | Eight generated stand ins at mixed resolutions and compression levels. Replaced the day real photos land |

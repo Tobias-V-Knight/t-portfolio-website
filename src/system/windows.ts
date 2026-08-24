@@ -13,12 +13,23 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useLocation, useNavigate, useNavigationType } from 'react-router-dom'
 import { windowProjects } from '../data/content'
 
-export type WindowKind = 'intro' | 'project' | 'photos' | 'text' | 'trash' | 'work'
+export type WindowKind =
+  | 'intro'
+  | 'project'
+  | 'photos'
+  | 'text'
+  | 'trash'
+  | 'work'
+  | 'anime'
+  | 'contact'
+  | 'zippy'
 
 export interface WindowDef {
   id: string
   title: string
   kind: WindowKind
+  // Ignore spawn and open in the middle of the screen instead.
+  center?: boolean
   // null means the window is not routed. Only the intro window is, because it
   // opens on load and closing it should not put an entry in history.
   route: string | null
@@ -35,6 +46,7 @@ export const windowDefs: WindowDef[] = [
     id: 'intro',
     title: 'WELCOME.TXT',
     kind: 'intro',
+    center: true,
     route: null,
     width: 470,
     height: 400,
@@ -45,9 +57,9 @@ export const windowDefs: WindowDef[] = [
     title: 'ABOUT_ME.TXT',
     kind: 'text',
     route: '/about',
-    width: 460,
-    height: 360,
-    spawn: { x: 0.3, y: 0.2 },
+    width: 500,
+    height: 520,
+    spawn: { x: 0.26, y: 0.12 },
   },
   {
     id: 'work',
@@ -66,6 +78,33 @@ export const windowDefs: WindowDef[] = [
     width: 620,
     height: 460,
     spawn: { x: 0.24, y: 0.1 },
+  },
+  {
+    id: 'zippy',
+    title: 'ZIPPY',
+    kind: 'zippy',
+    route: '/zippy',
+    width: 360,
+    height: 400,
+    spawn: { x: 0.52, y: 0.2 },
+  },
+  {
+    id: 'contact',
+    title: 'CONTACT',
+    kind: 'contact',
+    route: '/contact',
+    width: 400,
+    height: 300,
+    spawn: { x: 0.36, y: 0.26 },
+  },
+  {
+    id: 'anime',
+    title: 'ANIME',
+    kind: 'anime',
+    route: '/anime',
+    width: 420,
+    height: 420,
+    spawn: { x: 0.44, y: 0.16 },
   },
   {
     id: 'trash',
@@ -121,6 +160,13 @@ function clamp(x: number, y: number, def: WindowDef) {
 function spawnPosition(def: WindowDef): { x: number; y: number } {
   const vw = typeof window === 'undefined' ? 1280 : window.innerWidth
   const vh = typeof window === 'undefined' ? 800 : window.innerHeight
+  if (def.center) {
+    return clamp(
+      Math.round((vw - def.width) / 2),
+      Math.round((vh - MENU_BAR - def.height) / 2) + MENU_BAR,
+      def,
+    )
+  }
   return clamp(Math.round(vw * def.spawn.x), Math.round(vh * def.spawn.y), def)
 }
 

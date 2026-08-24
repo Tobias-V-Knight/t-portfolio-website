@@ -1,4 +1,4 @@
-import { about, contact } from '../data/content'
+import { about, anime, animeCopyState, contact, type Role } from '../data/content'
 
 // Placeholder copy is allowed. Passing placeholder copy off as final is not,
 // so anything still carrying the flag says so on screen. CLAUDE.md rule 9.
@@ -26,19 +26,11 @@ export function IntroPanel() {
   return (
     <div className="mac-doc" style={{ display: 'grid', gap: 16 }}>
       <div style={{ display: 'flex', gap: 16, alignItems: 'flex-start' }}>
-        <div
-          className="mac-sunken"
-          style={{
-            width: 86,
-            height: 104,
-            flex: '0 0 auto',
-            display: 'grid',
-            placeItems: 'center',
-          }}
-          aria-hidden
-        >
-          <span className="mac-meta">IMG</span>
-        </div>
+        <img
+          className="mac-portrait"
+          src={`${import.meta.env.BASE_URL}t-profile.jpg`}
+          alt="Tobias Knight"
+        />
 
         <div>
           <h1 style={{ fontFamily: 'var(--mac-chrome)', fontSize: 22, margin: '2px 0 10px' }}>
@@ -58,6 +50,21 @@ export function IntroPanel() {
   )
 }
 
+function RoleList({ rows }: { rows: Role[] }) {
+  return (
+    <ul className="mac-rolelist">
+      {rows.map((r) => (
+        <li key={r.org}>
+          <span className="mac-role-org">{r.org}</span>
+          <span className="mac-meta">
+            {withBlanks(r.role)} · {withBlanks(r.when)}
+          </span>
+        </li>
+      ))}
+    </ul>
+  )
+}
+
 export function AboutPanel() {
   return (
     <div className="mac-doc">
@@ -67,11 +74,39 @@ export function AboutPanel() {
         <p key={line}>{line}</p>
       ))}
 
+      {/* Endurance sport goes above the professional history on purpose. It is
+          the thing that explains the most about how he works and the thing a
+          resume has no room for, which makes it the reason this window exists
+          rather than a link to a PDF. */}
+      <h2>OUTSIDE WORK</h2>
+      <ul>
+        {about.endurance.map((e) => (
+          <li key={e}>{e}</li>
+        ))}
+      </ul>
+
+      <h2>PROFESSIONAL BACKGROUND</h2>
+      <RoleList rows={about.experience} />
+
+      <h2>EDUCATION</h2>
+      <RoleList rows={about.education} />
+
+      <h2>RESUME</h2>
+      {about.resume.present ? (
+        <p>
+          <a href={`${import.meta.env.BASE_URL}${about.resume.file}`} download>
+            RESUME.PDF
+          </a>
+        </p>
+      ) : (
+        <p>{withBlanks(`[ drop resume.pdf into public/ and flip present to true ]`)}</p>
+      )}
+
       <h2>CONTACT</h2>
       <ul>
         {contact.map((c) => (
           <li key={c.label}>
-            <a href={c.href}>{c.label}</a>
+            {c.href.startsWith('[') ? withBlanks(c.href) : <a href={c.href}>{c.label}</a>}
           </li>
         ))}
       </ul>
@@ -81,7 +116,78 @@ export function AboutPanel() {
         Built with Vite and React. Silkscreen and Inter. No backend, no
         framework, no analytics.
       </p>
+
       {about.copyState === 'PLACEHOLDER' && <PlaceholderTag />}
+    </div>
+  )
+}
+
+// Fabio Di Cecca's contact window, which T pointed at, minus the form. A form
+// on a static site cannot send anything without a third party, and these three
+// buttons already cover every way anyone actually gets in touch.
+export function ContactPanel() {
+  return (
+    <div className="mac-doc">
+      <p className="mac-meta" style={{ marginBottom: 16 }}>
+        Get in touch:
+      </p>
+      <div className="mac-contact-links">
+        {contact.map((c) =>
+          c.href.startsWith('[') ? (
+            <span className="mac-contact-link" key={c.label} data-blank="true">
+              &gt; {withBlanks(c.href)}
+            </span>
+          ) : (
+            <a
+              className="mac-contact-link"
+              key={c.label}
+              href={c.href}
+              target={c.href.startsWith('mailto') ? undefined : '_blank'}
+              rel="noreferrer"
+            >
+              &gt; {c.label}
+            </a>
+          ),
+        )}
+      </div>
+    </div>
+  )
+}
+
+// No professional purpose whatsoever, which is the point. A site that is only
+// a portfolio tells you what someone can do; the odd corner that is just a
+// list of things they like is what makes it theirs.
+// Every desktop in 1999 had one icon that was somebody's dog.
+export function ZippyPanel() {
+  return (
+    <div className="mac-doc" style={{ textAlign: 'center' }}>
+      <img
+        className="mac-zippy-photo"
+        src={`${import.meta.env.BASE_URL}zippy.png`}
+        alt="Zippy, a grey and white dog with one blue eye"
+      />
+      <h1 style={{ fontSize: 22, marginTop: 12 }}>ZIPPY</h1>
+      <p className="mac-meta">Good dog. No further comment.</p>
+    </div>
+  )
+}
+
+export function AnimePanel() {
+  return (
+    <div className="mac-doc">
+      <h1 style={{ fontSize: 22 }}>TOP TEN</h1>
+      <p className="mac-meta" style={{ marginBottom: 18 }}>
+        No particular order. Arguments accepted by email.
+      </p>
+      <ol className="mac-ranked">
+        {anime.map((a, i) => (
+          <li key={i}>
+            <span className="mac-rank">{String(i + 1).padStart(2, '0')}</span>
+            {withBlanks(a)}
+          </li>
+        ))}
+      </ol>
+      {animeCopyState === 'PLACEHOLDER' && <PlaceholderTag />}
     </div>
   )
 }

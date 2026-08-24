@@ -51,14 +51,12 @@ body {
   margin: 0;
   font-family: var(--mac-body);
   color: var(--mac-ink);
-  /* The dither. A checkerboard of two greys, which is what an old desktop
-     pattern actually was, rather than a gradient pretending to be one. */
   background-color: var(--mac-desk-a);
-  background-image: repeating-conic-gradient(
-    var(--mac-desk-a) 0% 25%,
-    var(--mac-desk-b) 0% 50%
-  );
-  background-size: 4px 4px;
+  background-image: url('/wallpaper.jpg');
+  background-size: cover;
+  background-position: center 62%;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
   overflow: hidden;
   -webkit-font-smoothing: antialiased;
 }
@@ -200,6 +198,11 @@ body {
 
 .mac-icons {
   position: absolute;
+  /* Nine icons will not fit one column on a laptop, so the column wraps into
+     a second one rather than running off the bottom of the screen. */
+  flex-wrap: wrap;
+  max-height: calc(100% - 24px);
+  align-content: flex-start;
   top: 18px;
   /* Left, not right. The CRT owns the right side now, and left is where a
      real Mac put the disk and the folders anyway. */
@@ -892,6 +895,102 @@ body {
   font-size: 14px;
   line-height: 1.9;
   border-radius: 2px;
+}
+
+/* --- Portrait, Zippy, and the new windows -------------------------------- */
+
+.mac-portrait {
+  width: 92px;
+  height: 110px;
+  flex: 0 0 auto;
+  object-fit: cover;
+  object-position: 50% 32%;
+  border: 1px solid var(--mac-line);
+  box-shadow: inset 1px 1px 0 var(--mac-lo), 2px 2px 0 rgba(0, 0, 0, 0.18);
+  background: var(--mac-face-dim);
+}
+
+.mac-zippy-photo {
+  width: 100%;
+  max-width: 260px;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+}
+
+/* Fabio's contact buttons: inverted blocks, one per line, no form. */
+.mac-contact-links {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.mac-contact-link {
+  font-family: var(--mac-chrome);
+  font-size: 16px;
+  line-height: 1;
+  padding: 10px 14px;
+  min-height: 40px;
+  display: inline-flex;
+  align-items: center;
+  background: var(--mac-ink);
+  color: var(--mac-paper);
+  text-decoration: none;
+  border: 1px solid var(--mac-line);
+}
+
+.mac-contact-link:hover { background: var(--mac-accent); }
+
+.mac-contact-link[data-blank='true'] {
+  background: none;
+  color: var(--mac-ink);
+  border-style: dashed;
+}
+
+/* Employer and school rows: the name reads, the detail recedes. */
+.mac-rolelist {
+  list-style: none;
+  margin: 0 0 12px;
+  padding: 0;
+}
+
+.mac-rolelist li {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 0 0 10px;
+  margin: 0 0 10px;
+  border-bottom: 1px solid #e0ddd6;
+}
+
+.mac-rolelist li:last-child { border-bottom: 0; }
+
+.mac-role-org {
+  font-family: var(--mac-body);
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.mac-ranked {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.mac-ranked li {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  padding: 7px 0;
+  border-bottom: 1px solid #e0ddd6;
+}
+
+.mac-rank {
+  font-family: var(--mac-chrome);
+  font-size: 16px;
+  color: var(--mac-ink-soft);
+  flex: 0 0 auto;
 }
 
 /* --- Focus, motion, selection ------------------------------------------- */

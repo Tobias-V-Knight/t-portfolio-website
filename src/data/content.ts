@@ -389,6 +389,41 @@ export const projects: Project[] = [
     ],
     links: [{ label: 'GitHub', href: 'https://github.com/Tobias-V-Knight/t-portfolio-website' }],
   },
+  {
+    slug: 'make-28th-safe',
+    title: 'MAKE 28TH SAFE!',
+    windowTitle: 'MAKE_28TH_SAFE.APP',
+    oneLiner:
+      'Measuring how fast cars actually take my street, so the case for a crosswalk is evidence instead of complaints.',
+    role: 'Neighbour with a camera',
+    status: 'In progress',
+    year: '2026',
+    categories: ['data', 'tools'],
+    copyState: 'PLACEHOLDER',
+    hasWindow: true,
+    problem:
+      'The intersection of 15th and 28th has no crosswalk and a lot of traffic moving faster than it should. Everyone on the street knows it. Nobody can prove it, and "the neighbours think it is dangerous" is the weakest possible thing to bring to a city that has to prioritise between a hundred streets making the same claim.',
+    built: [
+      'A camera setup that records vehicles passing the intersection.',
+      'Speed estimation from the footage, so every pass has a number attached to it.',
+      'A public site that shows the distribution of speeds and the times of day it gets worst.',
+      'A neighbourhood survey, so the measured data has lived experience next to it.',
+    ],
+    architecture:
+      '[ How does a frame become a speed? Two line crossings and a timestamp, or something learned? Worth writing up, because it is the part that decides whether anyone believes the numbers. ]',
+    stack: ['[ camera and mount ]', 'Python', '[ detection and tracking ]', '[ how the site is served ]'],
+    results: [
+      '[ How many vehicles measured so far, and over how many days ]',
+      '[ The number that matters: what share are over the limit, and how far over ]',
+      '[ What the city said when it was shared with them ]',
+    ],
+    lessons: [
+      '[ The interesting part: what turned out to be harder than expected? ]',
+      'The point was never the model. It was turning a thing everyone already knew into a thing a city representative can act on.',
+    ],
+    constraint:
+      'Shared with a city council representative by role only. T confirmed on 2026-08-24 that the official is not to be named on the public site: this is an advocacy page about a named intersection, and the person on the other side of it did not choose to be part of it.',
+  },
   // -------------------------------------------------------------------------
   // Gravl, deliberately last and deliberately without a window.
   //
@@ -416,6 +451,12 @@ export const projects: Project[] = [
 
 export const windowProjects = projects.filter((p) => p.hasWindow)
 
+export interface Role {
+  org: string
+  role: string
+  when: string
+}
+
 export const about = {
   name: 'TOBIAS KNIGHT',
   // Was 'technical founder / builder / applied AI'. The founder half came off
@@ -429,13 +470,55 @@ export const about = {
     'Right now that means bid documents in construction, video in pickleball, and a home lab that got out of hand.',
   ],
   status: 'CURRENTLY: TRAINING NLP ATTENTION BY HAND ON A MAC MINI',
+
+  // Endurance sport, which is the thing about T that explains the most about
+  // how he works and appears nowhere on a resume.
+  endurance: [
+    'Twin Cities Marathon, 26.2',
+    'Triple Bypass, Colorado',
+    'Ironman 70.3, Madison',
+  ],
+
+  experience: [
+    { org: 'Formative Technologies', role: '[ title ]', when: '[ dates ]' },
+    // T said "AC Surety Delivery Associates" in one breath. Left as two
+    // entries because it is not clear whether that is one employer or two.
+    { org: 'AC Surety', role: '[ title ]', when: '[ dates ]' },
+    { org: 'Delivery Associates', role: '[ title ]', when: '[ dates ]' },
+  ] as Role[],
+
+  education: [
+    {
+      org: 'University of Minnesota, Carlson',
+      role: 'MS Business Analytics',
+      when: 'Aug 2026',
+    },
+    { org: 'University of St. Thomas', role: '[ degree ]', when: '[ years ]' },
+  ] as Role[],
+
+  // Points at a file that is not in public/ yet. The window renders it as an
+  // unanswered blank rather than a broken download until it is.
+  resume: { file: 'resume.pdf', present: false },
 }
 
+// A fun one, and the only part of the site with no professional purpose at
+// all. Ten slots, because a top ten is a stronger statement than a long list.
+export const animeCopyState: Placeholder = 'PLACEHOLDER'
+export const anime: string[] = Array.from(
+  { length: 10 },
+  (_, i) => `[ favourite anime ${String(i + 1).padStart(2, '0')} ]`,
+)
+
 export const contact: ProjectLink[] = [
-  { label: 'Email', href: 'mailto:tobias.v.knight@gmail.com' },
-  { label: 'LinkedIn', href: '#' },
-  { label: 'GitHub', href: 'https://github.com/Tobias-V-Knight' },
+  { label: 'hi@tobiasknight.dev', href: 'mailto:hi@tobiasknight.dev' },
+  { label: 'github', href: 'https://github.com/Tobias-V-Knight' },
+  { label: 'linkedin', href: '[ your LinkedIn URL ]' },
 ]
+
+// Deliberately links and no form. This is a static site with no backend, so a
+// form cannot send mail on its own: it would need a third party, which adds a
+// dependency and a spam surface without adding a single way to reach T that
+// these three buttons do not already cover.
 
 // Photos are files discovered on a computer, so the metadata carries as much
 // of the character as the image does. Sizes and dates are part of the design.
