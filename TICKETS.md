@@ -62,6 +62,44 @@ validate the aesthetic, not to ship the portfolio. Placeholder copy throughout.
 | P1-24 | Remove the SVG iMac from the desktop | AFK | done | Once you are through the glass you are inside the machine, so a computer on its own desktop reads as a duplicate |
 | P1-17 | Desktop icons move to the left to give the CRT the right side | AFK | done | No overlap at 1440px or 390px |
 
+## Pass 2 — 2026-08-24 queue
+
+New work from the 2026-08-24 session. Fresh `P2-` ids so they don't collide with the backlog above;
+cross-refs noted where an existing ticket already covers part of it.
+
+**Bugs (SHOW)**
+| ID | Item | Detail |
+|---|---|---|
+| P2-01 | HOME + LUFFY title bars miss the pinstripe lines | Other windows show the classic title-bar pinstripes; HOME and LUFFY.MOV don't. Make consistent. |
+| P2-02 | Close All button | Closing windows is fiddly; add a single "close all" control. T likes it. |
+| P2-03 | Remove the Photos window | Take Photos off for now (window + icon). `public/photos/` can wait. |
+| P2-04 | Responsive/resize bug | Narrow the viewport → right-column icons overflow and vanish; shrink a window tiny → LUFFY video takes the full screen. Needs a real responsive fix. |
+| P2-05 | Boot: faster typing + Enter-only | Speed up the char typing; on keyboard only **Enter** advances. Mobile advance is a separate design problem. |
+
+**Enhancements (SHOW / ASK)**
+| ID | Item | Detail |
+|---|---|---|
+| P2-06 | MSBA stack tags | Render each course's stack as tag/hashtag/code blocks (like the placeholder blocks), not prose. Feeds B-08. |
+| P2-07 | Multi-clip LUFFY loop | `public/ice.mp4` ready (B&W via player). Loop should cycle luffy + ice + future clips. Distinct from B-01 (iMac screen). |
+| P2-08 | Typography/article pass toward Charlie Dean | The three Cs: fonts, centred right-sized photos, consistent system. |
+| P2-09 | Explore the Mac OS 9 Figma UI kit | Authentic chrome/icons. Advances B-06 (Susan Kare icons). Link in HANDOFF.md. |
+| P2-10 | Mac Mini AFK setup | tmux + `claude -p`. **T hooks up the machine manually**; agent proposes commands, never auto-installs. See `~/dev/MAC_MINI_HANDOFF.md`. |
+
+**Agents to build (ASK to launch)** — pattern: review + run the code, pull the stack, **screenshot the real UI from localhost into a labelled folder**, then talk.
+| ID | Item | Detail |
+|---|---|---|
+| P2-11 | Material classifier extractor (marquee) | `~/dev/nlp-material-classifier`: lessons, full accuracy table (keyword / TF-IDF / attention-scratch / LoRA-Qwen / deployed CSI model), eval-harness (V2) story, generate the real chart images. |
+| P2-12 | Resume + About extractor | `04_career/00_Resume and Cover Letter/` + `pbiq.ai` → clean LinkedIn-style About + HOME skills/current-stack/key-projects snapshot. Not verbatim. |
+| P2-13 | MSBA extractor | Walk the MSBA folder, list every class, rough outline + key topics per course. Feeds B-08; see B-09 (archive deadline). |
+| P2-14 | Per-project reviewers + screenshot agent | PB IQ, RoleRadar, 4mativ, Gravl, CSI.APP: run locally, screenshot the real UI. Feeds B-10 (real icons). Some (iOS) can't run headless. |
+
+**Open decisions (ASK)**
+| ID | Item | Detail |
+|---|---|---|
+| Q-13 | Resume download gate | Capture name+email: form service (Formspree/Tally) vs small backend vs Google Form. |
+| Q-14 | Portfolio cleanup | Confirm: remove PickleTrack, dogs-vs-cats, fig-viewer, this-website; keep 4mativ; add Gravl. |
+| Q-15 | PB IQ link + photos | `https://www.pbiq.ai/` in; extract photos; one-liner "a pickleball app for players and coaches to …". See Q-10, B-10. |
+
 ## Backlog
 
 Things T has decided he wants but has deliberately parked.

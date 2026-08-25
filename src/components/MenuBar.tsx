@@ -10,7 +10,10 @@ export interface MenuAction {
 
 export interface Menu {
   title: string
-  items: MenuAction[]
+  // A menu either drops down a list of items, or is a direct nav action (no
+  // items, just onSelect on the title) like Charlie Dean's Portfolio/About/Contact.
+  items?: MenuAction[]
+  onSelect?: () => void
 }
 
 // Handoff section 4: a recruiter has to reach the work in about fifteen
@@ -49,10 +52,17 @@ export function MenuBar({ menus, clock }: { menus: Menu[]; clock: string }) {
         <div className="mac-menu" key={menu.title} data-open={open === menu.title}>
           <button
             className="mac-menu-title"
-            aria-haspopup="true"
-            aria-expanded={open === menu.title}
-            onClick={() => setOpen(open === menu.title ? null : menu.title)}
-            onMouseEnter={() => open && setOpen(menu.title)}
+            aria-haspopup={menu.items ? 'true' : undefined}
+            aria-expanded={menu.items ? open === menu.title : undefined}
+            onClick={() => {
+              if (menu.items) {
+                setOpen(open === menu.title ? null : menu.title)
+              } else {
+                setOpen(null)
+                menu.onSelect?.()
+              }
+            }}
+            onMouseEnter={() => open && menu.items && setOpen(menu.title)}
           >
             {menu.title === 'APPLE' ? (
               <>
@@ -64,7 +74,7 @@ export function MenuBar({ menus, clock }: { menus: Menu[]; clock: string }) {
             )}
           </button>
 
-          {open === menu.title && (
+          {open === menu.title && menu.items && (
             <div className="mac-menu-drop" role="menu">
               {menu.items.map((item, i) => (
                 <div key={item.label + i}>

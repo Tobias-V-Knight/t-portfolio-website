@@ -5,3 +5,6 @@ dist
 .vscode
 .idea
 .playwright-mcp
+
+# raw source media (converted copies live in public/)
+assets_src/

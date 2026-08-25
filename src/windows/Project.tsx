@@ -60,12 +60,21 @@ export function ProjectPanel({ project }: { project: Project }) {
           <div style={{ display: 'grid', gap: 10 }}>
             {project.media.map((m) => (
               <figure key={m.caption} style={{ margin: 0 }}>
-                <div
-                  className="mac-sunken"
-                  style={{ height: m.tone === 'diagram' ? 132 : 168, display: 'grid', placeItems: 'center' }}
-                >
-                  <span className="mac-meta">{m.tone === 'diagram' ? 'DIAGRAM' : 'SCREENSHOT'}</span>
-                </div>
+                {m.src ? (
+                  <img
+                    className="mac-sunken"
+                    src={`${import.meta.env.BASE_URL}${m.src}`}
+                    alt={m.caption}
+                    style={{ display: 'block', width: '100%', height: 'auto' }}
+                  />
+                ) : (
+                  <div
+                    className="mac-sunken"
+                    style={{ height: m.tone === 'diagram' ? 132 : 168, display: 'grid', placeItems: 'center' }}
+                  >
+                    <span className="mac-meta">{m.tone === 'diagram' ? 'DIAGRAM' : 'SCREENSHOT'}</span>
+                  </div>
+                )}
                 <figcaption className="mac-meta" style={{ marginTop: 6 }}>
                   {m.caption}
                 </figcaption>

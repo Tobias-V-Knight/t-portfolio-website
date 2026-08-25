@@ -1,17 +1,15 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 
-// The boot sequence, in three stages.
+// The boot sequence, on one page.
 //
-//   1. SOURCE   train.py in an editor, imports appearing line by line.
-//   2. RUN      Enter runs it. Terminal output, thirty epochs, a loss that
-//               jitters the way a real one does.
-//   3. DESKTOP  Enter again and you are in.
+//   train.py's imports TYPE THEMSELVES OUT character by character, the way you
+//   would write the file. Then it runs itself: thirty epochs, a loss that
+//   jitters the way a real one does. One Enter at the end and you are in.
 //
-// The two stage split is T's, and it is better than what it replaced: the
-// import list and the training log were the same green wall of text, so the
-// libraries read as decoration. Showing the file first, in an editor, means
-// the stack is a thing you read rather than a thing that scrolls past, and
-// pressing Enter to run it is a beat rather than a wait.
+// The imports are the clean data + TensorFlow stack. The typing is the point:
+// it reads as someone writing code, not a wall of text that appears. The run
+// starts on its own once the file is typed; the training output prints (output
+// is printed, not typed), so the two halves read differently on purpose.
 //
 // Rules that survive every rewrite: it plays once per session, any key
 // advances, it only plays on the homepage so a shared project link goes
@@ -22,29 +20,34 @@ const SESSION_KEY = 'tk-booted'
 const EPOCHS = 30
 const EPOCH_MS = 52
 const isSmallScreen = () => typeof window !== 'undefined' && window.innerWidth <= 768
-const VISIBLE_EPOCHS = isSmallScreen() ? 5 : 9
+const VISIBLE_EPOCHS = isSmallScreen() ? 4 : 6
 
 // Time multiplier, 1 in production. The sequence runs faster than a
 // screenshot round trip, so verifying it by eye means slowing it down.
 const SPEED = 1
 
-// train.py. T's actual stack, from his repos, laid out the way he writes it:
-// standard library, then data, then sklearn, then the deep learning half.
+// Milliseconds per typed character, and the pause before the run kicks off.
+const TYPE_MS = 13
+const RUN_DELAY_MS = 480
+
+// train.py's imports: stdlib, data, sklearn, then the TensorFlow/Keras half
+// (transfer learning on ResNet50 + callbacks). Blank strings are group breaks.
 const SOURCE = [
-  '# ---------- IMPORTS ----------',
   'import os',
   'import numpy as np',
   'import pandas as pd',
   'import matplotlib.pyplot as plt',
-  'import seaborn as sns',
   '',
   'from sklearn.model_selection import train_test_split',
   'from sklearn.metrics import log_loss',
   '',
-  'import torch',
-  'import torch.nn as nn',
-  'from transformers import AutoModel, AutoTokenizer',
+  'import tensorflow as tf',
+  'from tensorflow import keras',
+  'from tensorflow.keras import layers',
+  'from tensorflow.keras.applications.resnet50 import ResNet50, preprocess_input',
+  'from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateau, ModelCheckpoint',
 ]
+const SOURCE_TEXT = SOURCE.join('\n')
 
 function lossAt(epoch: number) {
   return 0.94 * Math.exp(-epoch / 6.5) + 0.036
@@ -91,28 +94,26 @@ function highlight(line: string, key: number) {
   )
 }
 
-type Stage = 'source' | 'run'
-
 export function Boot({ onDone }: { onDone: () => void }) {
-  const [stage, setStage] = useState<Stage>('source')
-  const [shownLines, setShownLines] = useState(0)
+  const [typed, setTyped] = useState(0)
+  const [runStarted, setRunStarted] = useState(false)
   const [rows, setRows] = useState<EpochRow[]>([])
   const [runHead, setRunHead] = useState<string[]>([])
   const [runDone, setRunDone] = useState(false)
   const [done, setDone] = useState(false)
 
-  const stageRef = useRef(stage)
-  const shownRef = useRef(0)
+  const typedRef = useRef(0)
+  const runStartedRef = useRef(false)
   const runDoneRef = useRef(false)
   const finished = useRef(false)
 
   useEffect(() => {
-    stageRef.current = stage
-    shownRef.current = shownLines
+    typedRef.current = typed
+    runStartedRef.current = runStarted
     runDoneRef.current = runDone
-  }, [stage, shownLines, runDone])
+  }, [typed, runStarted, runDone])
 
-  const sourceReady = shownLines >= SOURCE.length
+  const sourceReady = typed >= SOURCE_TEXT.length
 
   const exit = useCallback(() => {
     if (finished.current) return
@@ -127,27 +128,26 @@ export function Boot({ onDone }: { onDone: () => void }) {
     window.setTimeout(onDone, 280)
   }, [onDone])
 
-  // One handler for every key, and what it does depends on where you are.
-  // Mid animation it completes the current stage instantly rather than being
-  // ignored, which is the difference between a skip that works and a skip
-  // that feels broken.
+  // One handler for every key. Mid animation it completes the current beat
+  // instantly rather than being ignored: finish typing, then finish the run,
+  // then leave. A skip that works instead of one that feels broken.
   const advance = useCallback(() => {
-    if (stageRef.current === 'source') {
-      if (shownRef.current < SOURCE.length) {
-        setShownLines(SOURCE.length)
-        return
-      }
-      setStage('run')
+    if (typedRef.current < SOURCE_TEXT.length) {
+      setTyped(SOURCE_TEXT.length)
+      return
+    }
+    if (!runStartedRef.current) {
+      setRunStarted(true)
       return
     }
     if (!runDoneRef.current) {
+      setRunHead(RUN_HEAD)
       setRows(
         Array.from({ length: VISIBLE_EPOCHS }, (_, i) => {
           const epoch = EPOCHS - VISIBLE_EPOCHS + 1 + i
           return { epoch, loss: lossAt(epoch), best: false }
         }),
       )
-      setRunHead(RUN_HEAD)
       setRunDone(true)
       return
     }
@@ -167,21 +167,32 @@ export function Boot({ onDone }: { onDone: () => void }) {
     }
   }, [advance])
 
-  // Stage 1: the file types itself in.
+  // The file types itself out, one character at a time.
   useEffect(() => {
-    if (stage !== 'source') return
-    const timers = SOURCE.map((_, i) =>
-      window.setTimeout(() => setShownLines((n) => Math.max(n, i + 1)), (140 + i * 78) * SPEED),
-    )
-    return () => timers.forEach(window.clearTimeout)
-  }, [stage])
+    const id = window.setInterval(() => {
+      setTyped((n) => Math.min(n + 1, SOURCE_TEXT.length))
+    }, TYPE_MS * SPEED)
+    return () => window.clearInterval(id)
+  }, [])
 
-  // Stage 2: it runs.
+  // Once the file is typed, the run starts on its own after a short beat.
   useEffect(() => {
-    if (stage !== 'run') return
+    if (!sourceReady) return
+    const t = window.setTimeout(() => setRunStarted(true), RUN_DELAY_MS * SPEED)
+    return () => window.clearTimeout(t)
+  }, [sourceReady])
+
+  // It runs: the head lines, then thirty epochs with a jittering loss.
+  useEffect(() => {
+    if (!runStarted) return
     const timers: number[] = []
     RUN_HEAD.forEach((line, i) => {
-      timers.push(window.setTimeout(() => setRunHead((prev) => [...prev, line]), (120 + i * 150) * SPEED))
+      timers.push(
+        window.setTimeout(() => {
+          if (runDoneRef.current) return
+          setRunHead((prev) => (prev.length > i ? prev : [...prev, line]))
+        }, (120 + i * 150) * SPEED),
+      )
     })
 
     const start = 120 + RUN_HEAD.length * 150 + 120
@@ -190,6 +201,7 @@ export function Boot({ onDone }: { onDone: () => void }) {
       timers.push(
         window.setTimeout(
           () => {
+            if (runDoneRef.current) return
             // Jitter, plus a rarer larger spike. Loss genuinely does back up.
             const noise = (Math.random() - 0.46) * 0.055
             const spike = Math.random() < 0.12 ? Math.random() * 0.07 : 0
@@ -206,37 +218,30 @@ export function Boot({ onDone }: { onDone: () => void }) {
       window.setTimeout(() => setRunDone(true), (start + EPOCHS * EPOCH_MS + 220) * SPEED),
     )
     return () => timers.forEach(window.clearTimeout)
-  }, [stage])
+  }, [runStarted])
+
+  const sourceLines = SOURCE_TEXT.slice(0, typed).split('\n')
 
   return (
-    <div className="mac-boot" data-done={done} data-stage={stage} role="status" aria-live="polite">
+    <div className="mac-boot" data-done={done} role="status" aria-live="polite">
       <div className="mac-boot-inner">
         <h1 className="mac-boot-title">TOBIASKNIGHT.DEV</h1>
 
-        {stage === 'source' ? (
-          <>
-            <div className="mac-editor">
-              <div className="mac-editor-bar">train.py</div>
-              <div className="mac-editor-body">
-                {SOURCE.slice(0, shownLines).map((line, i) => (
-                  <div className="mac-editor-line" key={i}>
-                    <span className="mac-editor-num">{i + 1}</span>
-                    <code>{line ? highlight(line, i) : ' '}</code>
-                  </div>
-                ))}
-              </div>
+        <div className="mac-boot-log">
+          {sourceLines.map((line, i) => (
+            <div className="mac-boot-line" key={`src-${i}`}>
+              {line ? highlight(line, i) : <>&nbsp;</>}
+              {!sourceReady && i === sourceLines.length - 1 && (
+                <span className="mac-boot-caret" aria-hidden />
+              )}
             </div>
+          ))}
 
-            <p className="mac-boot-prompt" data-ready={sourceReady}>
-              &gt; {sourceReady ? 'PRESS ENTER TO RUN' : 'loading imports'}
-              <span className="mac-boot-caret" aria-hidden />
-            </p>
-          </>
-        ) : (
-          <>
-            <div className="mac-boot-log">
+          {runStarted && (
+            <>
+              <div className="mac-boot-line">&nbsp;</div>
               {runHead.map((l, i) => (
-                <div className="mac-boot-line" key={i} data-dim={i > 0}>
+                <div className="mac-boot-line" key={`head-${i}`} data-dim={i > 0}>
                   {l}
                 </div>
               ))}
@@ -259,15 +264,14 @@ export function Boot({ onDone }: { onDone: () => void }) {
               )}
 
               {runDone && <div className="mac-boot-line" data-dim>converged. checkpoint saved.</div>}
-              <span className="mac-boot-caret" aria-hidden />
-            </div>
+            </>
+          )}
+        </div>
 
-            <p className="mac-boot-prompt" data-ready={runDone}>
-              &gt; {runDone ? 'PRESS ENTER TO CONTINUE' : 'running'}
-              <span className="mac-boot-caret" aria-hidden />
-            </p>
-          </>
-        )}
+        <p className="mac-boot-prompt" data-ready={runDone}>
+          &gt; {runDone ? 'PRESS ENTER TO CONTINUE' : sourceReady ? 'running' : 'typing'}
+          {runStarted && <span className="mac-boot-caret" aria-hidden />}
+        </p>
       </div>
     </div>
   )

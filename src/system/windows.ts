@@ -23,6 +23,8 @@ export type WindowKind =
   | 'anime'
   | 'contact'
   | 'zippy'
+  | 'video'
+  | 'msba'
 
 export interface WindowDef {
   id: string
@@ -52,10 +54,13 @@ export const windowDefs: WindowDef[] = [
     kind: 'intro',
     center: true,
     route: null,
-    width: 900,
-    height: 620,
-    sizeFrac: { w: 0.66, h: 0.72, maxW: 1040, maxH: 740, minW: 320, minH: 420 },
-    spawn: { x: 0.08, y: 0.14 },
+    // Moderate and centered, with real margin above and below rather than
+    // filling the screen. The background-position (in .mac-home) is what shows
+    // the houses over the street, so the window no longer has to be huge.
+    width: 940,
+    height: 720,
+    sizeFrac: { w: 0.58, h: 0.78, maxW: 1080, maxH: 800, minW: 320, minH: 460 },
+    spawn: { x: 0.1, y: 0.1 },
   },
   {
     id: 'about',
@@ -68,12 +73,22 @@ export const windowDefs: WindowDef[] = [
   },
   {
     id: 'work',
-    title: 'WORK',
+    title: 'PORTFOLIO',
     kind: 'work',
     route: '/work',
-    width: 640,
-    height: 500,
-    spawn: { x: 0.16, y: 0.1 },
+    width: 720,
+    height: 520,
+    sizeFrac: { w: 0.52, h: 0.72, maxW: 920, maxH: 740, minW: 480, minH: 400 },
+    spawn: { x: 0.14, y: 0.1 },
+  },
+  {
+    id: 'msba',
+    title: 'MSBA_HIGHLIGHTS',
+    kind: 'msba',
+    route: '/msba',
+    width: 560,
+    height: 560,
+    spawn: { x: 0.3, y: 0.1 },
   },
   {
     id: 'photos',
@@ -120,6 +135,17 @@ export const windowDefs: WindowDef[] = [
     height: 240,
     spawn: { x: 0.42, y: 0.34 },
   },
+  {
+    // Non-routed like the intro: it opens on load (a movie already playing in
+    // the corner) and closing it should not touch the URL or history.
+    id: 'luffy',
+    title: 'LUFFY.MOV',
+    kind: 'video',
+    route: null,
+    width: 260,
+    height: 286,
+    spawn: { x: 0.75, y: 0.58 },
+  },
   // Only projects with a full case study get a window. Everything else is a
   // row in the WORK list, which is not the same thing as a thin window.
   ...windowProjects.map((p, i) => ({
@@ -128,9 +154,12 @@ export const windowDefs: WindowDef[] = [
     kind: 'project' as const,
     route: `/projects/${p.slug}`,
     payload: p.slug,
-    width: 640,
-    height: 520,
-    spawn: { x: 0.2 + i * 0.04, y: 0.08 + i * 0.05 },
+    // Case-study windows open large, taking a real portion of the screen the
+    // way Charlie Dean's project pages do, not a thin note.
+    width: 900,
+    height: 720,
+    sizeFrac: { w: 0.64, h: 0.84, maxW: 1120, maxH: 880, minW: 420, minH: 480 },
+    spawn: { x: 0.16 + i * 0.03, y: 0.07 + i * 0.04 },
   })),
 ]
 
@@ -217,6 +246,10 @@ export function useWindowManager() {
   // crash rather than as a close.
   const [closing, setClosing] = useState<string | null>(null)
   const [introPos, setIntroPos] = useState(() => spawnPosition(byId.get('intro') as WindowDef))
+  // Luffy is a second non-routed window that also opens on load: a movie already
+  // playing in the corner. Managed like the intro (own open + position state).
+  const [luffyOpen, setLuffyOpen] = useState(true)
+  const [luffyPos, setLuffyPos] = useState(() => spawnPosition(byId.get('luffy') as WindowDef))
 
   const routeId = byRoute.get(location.pathname) ?? null
 
@@ -251,7 +284,8 @@ export function useWindowManager() {
       const def = byId.get(id)
       if (!def) return
       if (!def.route) {
-        setIntroOpen(true)
+        if (id === 'luffy') setLuffyOpen(true)
+        else setIntroOpen(true)
         return
       }
       if (location.pathname === def.route) return
@@ -274,6 +308,10 @@ export function useWindowManager() {
       // worst possible response to clicking a close box.
       const finish = () => {
         setClosing(null)
+        if (id === 'luffy') {
+          setLuffyOpen(false)
+          return
+        }
         if (id === 'intro') {
           setIntroOpen(false)
           return
@@ -297,7 +335,7 @@ export function useWindowManager() {
 
   const focus = useCallback(
     (id: string) => {
-      if (id === 'intro') return
+      if (id === 'intro' || id === 'luffy') return
       const def = byId.get(id)
       if (def?.route && location.pathname !== def.route) navigate(def.route)
     },
@@ -308,6 +346,11 @@ export function useWindowManager() {
     if (id === 'intro') {
       const def = byId.get('intro') as WindowDef
       setIntroPos(clamp(x, y, def))
+      return
+    }
+    if (id === 'luffy') {
+      const def = byId.get('luffy') as WindowDef
+      setLuffyPos(clamp(x, y, def))
       return
     }
     setStack((prev) =>
@@ -334,13 +377,17 @@ export function useWindowManager() {
 
   const openWindows = useMemo(() => {
     const list = stack.map((w) => ({ ...w, def: byId.get(w.id) as WindowDef }))
+    const luffyWin = luffyOpen
+      ? [{ id: 'luffy', ...luffyPos, def: byId.get('luffy') as WindowDef }]
+      : []
     if (introOpen) {
       // The intro window sits underneath anything routed. It is scenery on
       // first load, and it should never fight a project window for attention.
-      return [{ id: 'intro', ...introPos, def: byId.get('intro') as WindowDef }, ...list]
+      // Luffy floats just above it, still under any routed window.
+      return [{ id: 'intro', ...introPos, def: byId.get('intro') as WindowDef }, ...luffyWin, ...list]
     }
-    return list
-  }, [stack, introOpen, introPos])
+    return [...luffyWin, ...list]
+  }, [stack, introOpen, introPos, luffyOpen, luffyPos])
 
   const topId = openWindows.length ? openWindows[openWindows.length - 1].id : null
 

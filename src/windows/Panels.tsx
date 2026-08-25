@@ -1,4 +1,4 @@
-import { about, anime, animeCopyState, contact, type Role } from '../data/content'
+import { about, anime, animeCopyState, contact, msba, type Role } from '../data/content'
 
 // Placeholder copy is allowed. Passing placeholder copy off as final is not,
 // so anything still carrying the flag says so on screen. CLAUDE.md rule 9.
@@ -95,6 +95,42 @@ function RoleList({ rows }: { rows: Role[] }) {
         </li>
       ))}
     </ul>
+  )
+}
+
+export function MsbaPanel() {
+  return (
+    <div className="mac-doc">
+      <h1>{msba.title}</h1>
+      <p className="mac-lede">{msba.lede}</p>
+
+      <h2>COURSEWORK</h2>
+      <ul>
+        {msba.courses.map((c) => (
+          <li key={c.name}>
+            <strong>
+              {withBlanks(c.code)} · {withBlanks(c.name)}
+            </strong>
+            <br />
+            <span className="mac-meta">{withBlanks(c.note)}</span>
+          </li>
+        ))}
+      </ul>
+
+      <h2>TOPICS I KEEP COMING BACK TO</h2>
+      <ul>
+        {msba.topics.map((t) => (
+          <li key={t}>{withBlanks(t)}</li>
+        ))}
+      </ul>
+
+      <h2>FROM THE NOTEBOOK</h2>
+      <ul>
+        {msba.notes.map((n) => (
+          <li key={n}>{withBlanks(n)}</li>
+        ))}
+      </ul>
+    </div>
   )
 }
 

@@ -64,6 +64,11 @@ IP release lands. **T overrode that on 2026-08-23 and cleared CSI for the
 site**, framed as: the highway contractor, what was built, the architecture,
 and never the code.
 
+**Further cleared 2026-08-24.** CSI told T he may post the work publicly to get
+jobs, no NDA was signed, and the Gravl code is a clean room. So CSI and Gravl
+work can be featured by outcome and role. The Gravl constraint below still
+stands, to protect the company from competitors reading its internals here.
+
 One narrower question is still open and the CSI architecture section stays
 empty until T answers it. CSI is bid intelligence for asphalt paving
 contractors. Gravl is pre bid intelligence for construction. A detailed CSI
@@ -115,6 +120,12 @@ Every other project on this site can be as technically open as T likes.
    and must be visibly marked as placeholder. Invented specifics are not.
 10. **Photographs of identifiable people need T's explicit yes** before they
     go on the internet.
+11. **The three Cs: continuity, consistency, conciseness** (added 2026-08-24).
+    The visual north star. Charlie Dean's site is the reference: natural
+    editorial colours, photos centred and right sized (never overwhelming), one
+    consistent font system, concise prose. Judge every visual choice against these.
+12. **Read `HANDOFF.md` right after this file.** Cross-project agent rules live
+    in `~/dev/AGENT_RULES.md`. The full file index is the taxonomy in `README.md`.
 
 ## Traps that already bit this stack
 

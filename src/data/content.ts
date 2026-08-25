@@ -56,7 +56,9 @@ export interface Project {
   built?: string[]
   architecture?: string
   stack?: string[]
-  media?: { caption: string; tone: 'screenshot' | 'diagram' }[]
+  // `src` is a real image in /public; without it the tile renders as a labelled
+  // placeholder box (screenshot/diagram) until a real screen exists.
+  media?: { caption: string; tone: 'screenshot' | 'diagram'; src?: string }[]
   results?: string[]
   lessons?: string[]
   links?: ProjectLink[]
@@ -95,6 +97,7 @@ export const projects: Project[] = [
       '[ Draw the path from a PDF landing in the system to an estimator reading an answer. Name the retrieval approach, the model, and where the structured output lands. Q-06 in TICKETS.md: keep this at the level of what was built, not how Gravl works. ]',
     stack: ['Python', '[ retrieval and vector store ]', '[ model, and why that one ]', '[ how it was served ]'],
     media: [
+      { caption: 'The CSI ELP team, Alexandria MN', tone: 'screenshot', src: 'csi-team.jpeg' },
       { caption: 'Bid item extraction', tone: 'screenshot' },
       { caption: 'Document to answer path', tone: 'diagram' },
     ],
@@ -455,6 +458,45 @@ export interface Role {
   org: string
   role: string
   when: string
+}
+
+// MSBA highlights. Bracketed [ ... ] parts render as blanks (withBlanks) until
+// T fills them in with his own notes. The courses are drafted from the ones on
+// record; the favorite-topics and notebook sections are his to write.
+export const msba = {
+  title: 'MSBA HIGHLIGHTS',
+  lede: 'Carlson School of Management, MSBA. The coursework, the topics I keep coming back to, and a few notes from my own notebook.',
+  courses: [
+    {
+      code: 'MSBA 6461',
+      name: 'Advanced AI for Natural Language Processing',
+      note: 'Built a Bahdanau-attention classifier from scratch and fine-tuned a local model to replace a keyword takeoff step, measured on a hand-labeled gold set.',
+    },
+    {
+      code: 'MSBA 6431',
+      name: 'Time Series Forecasting',
+      note: '[ your favorite idea from this course ]',
+    },
+    {
+      code: '—',
+      name: 'Generative AI for Business',
+      note: 'Final project RoleRadar: a multi-agent (AutoGen + Azure AI Foundry) job tracker.',
+    },
+    {
+      code: '[ code ]',
+      name: '[ a spring 2026 course ]',
+      note: '[ one line on what stuck ]',
+    },
+  ],
+  topics: [
+    'Attention mechanisms, and how far you can get building them by hand',
+    'Honest evaluation: gold sets, calibration, and significance over vibes',
+    '[ another topic you keep coming back to ]',
+  ],
+  notes: [
+    '[ a note from your notebook ]',
+    '[ another one ]',
+  ],
 }
 
 export const about = {

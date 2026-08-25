@@ -1,9 +1,16 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Boot, shouldBoot } from './components/Boot'
+import { ErrorBoundary } from './components/ErrorBoundary'
 import { MenuBar, type Menu } from './components/MenuBar'
+
+// Video.js is heavy; load it only when the movie window opens so it never sits
+// in the initial bundle.
+const VideoJsPlayer = lazy(() =>
+  import('./components/VideoJsPlayer').then((m) => ({ default: m.VideoJsPlayer })),
+)
 import {
-  DiskIcon,
   DocIcon,
+  FilmIcon,
   FolderIcon,
   HomeIcon,
   ImgIcon,
@@ -16,12 +23,13 @@ import {
 import { MacWindow } from './components/Window'
 import { defFor, defSize, plannedRect, useWindowManager } from './system/windows'
 import { ZoomRect, type Rect } from './components/ZoomRect'
-import { projects, windowProjects } from './data/content'
+import { about, projects } from './data/content'
 import {
   AboutPanel,
   AnimePanel,
   ContactPanel,
   IntroPanel,
+  MsbaPanel,
   TrashPanel,
   ZippyPanel,
 } from './windows/Panels'
@@ -40,17 +48,21 @@ const ZippyIcon = ({ className }: { className?: string }) => (
 // Two identical diamonds for two very different projects was the thing that
 // made this read as a template. Every icon is now a different object, which is
 // most of why a classic Mac desktop is memorable at all.
+// Orientation, T's call: professional on the left, fun on the right. The left
+// column is the work you'd hire him for; the right is the person.
 const desktopItems = [
-  { id: 'work', label: 'WORK', Art: DiskIcon },
-  { id: 'project:csi-bid-intelligence', label: 'CSI.APP', Art: RoadIcon },
-  { id: 'project:pickleball-iq', label: 'PICKLEBALL_IQ', Art: PaddleIcon },
-  { id: 'photos', label: 'PHOTOS', Art: FolderIcon },
-  { id: 'anime', label: 'ANIME', Art: TvIcon },
-  { id: 'zippy', label: 'ZIPPY', Art: ZippyIcon },
-  { id: 'about', label: 'ABOUT_ME.TXT', Art: DocIcon },
-  { id: 'contact', label: 'CONTACT', Art: MailIcon },
-  { id: 'trash', label: 'TRASH', Art: TrashIcon },
-]
+  { id: 'work', label: 'PORTFOLIO', Art: FolderIcon, side: 'left' },
+  { id: 'project:csi-bid-intelligence', label: 'CSI.APP', Art: RoadIcon, side: 'left' },
+  { id: 'project:pickleball-iq', label: 'PICKLEBALL_IQ', Art: PaddleIcon, side: 'left' },
+  { id: 'msba', label: 'MSBA.TXT', Art: DocIcon, side: 'left' },
+  { id: 'about', label: 'ABOUT_ME.TXT', Art: DocIcon, side: 'left' },
+  { id: 'contact', label: 'CONTACT', Art: MailIcon, side: 'left' },
+  { id: 'photos', label: 'PHOTOS', Art: FolderIcon, side: 'right' },
+  { id: 'anime', label: 'ANIME', Art: TvIcon, side: 'right' },
+  { id: 'luffy', label: 'LUFFY.MOV', Art: FilmIcon, side: 'right' },
+  { id: 'zippy', label: 'ZIPPY', Art: ZippyIcon, side: 'right' },
+  { id: 'trash', label: 'TRASH', Art: TrashIcon, side: 'right' },
+] as const
 
 // Filenames have no spaces, so a browser either overflows them or breaks them
 // mid word. Neither is acceptable on a desktop icon: PICKLEB / ALL_IQ reads as
@@ -71,13 +83,15 @@ function breakableLabel(label: string) {
 function titleIconFor(id: string, kind: string) {
   const byId: Record<string, () => React.JSX.Element> = {
     intro: () => <HomeIcon className="mac-title-art" />,
-    work: () => <DiskIcon className="mac-title-art" />,
+    work: () => <FolderIcon className="mac-title-art" />,
     photos: () => <FolderIcon className="mac-title-art" />,
     about: () => <DocIcon className="mac-title-art" />,
+    msba: () => <DocIcon className="mac-title-art" />,
     contact: () => <MailIcon className="mac-title-art" />,
     anime: () => <TvIcon className="mac-title-art" />,
     trash: () => <TrashIcon className="mac-title-art" />,
     zippy: () => <ZippyIcon className="mac-title-art" />,
+    luffy: () => <FilmIcon className="mac-title-art" />,
     'project:csi-bid-intelligence': () => <RoadIcon className="mac-title-art" />,
     'project:pickleball-iq': () => <PaddleIcon className="mac-title-art" />,
   }
@@ -116,65 +130,30 @@ export default function App() {
   const [photoStatus, setPhotoStatus] = useState('')
   const [workStatus, setWorkStatus] = useState('')
 
+  // Functional nav, Charlie Dean style: an Apple dropdown (About Tobias / View
+  // Resume) plus Portfolio / About / Contact that open their window on click.
   const menus: Menu[] = useMemo(
     () => [
       {
         title: 'APPLE',
         items: [
-          { label: 'About This Macintosh', onSelect: () => open('intro') },
-          { label: 'Sherlock', separatorBefore: true },
-          { label: 'Control Panels', separatorBefore: true },
-          { label: 'Chooser' },
+          { label: 'About Tobias…', onSelect: () => open('about') },
+          {
+            label: 'View Resume',
+            onSelect: () => {
+              const r = about.resume
+              if (r?.present && r.file)
+                window.open(`${import.meta.env.BASE_URL}${r.file}`, '_blank')
+              else open('about')
+            },
+          },
         ],
       },
-      {
-        title: 'File',
-        items: [
-          { label: 'Open', shortcut: '⌘O' },
-          { label: 'Close Window', shortcut: '⌘W', onSelect: () => topId && close(topId) },
-          { label: 'Get Info', shortcut: '⌘I', separatorBefore: true },
-        ],
-      },
-      {
-        title: 'Edit',
-        items: [
-          { label: 'Undo', shortcut: '⌘Z' },
-          { label: 'Cut', shortcut: '⌘X', separatorBefore: true },
-          { label: 'Copy', shortcut: '⌘C' },
-          { label: 'Paste', shortcut: '⌘V' },
-        ],
-      },
-      {
-        title: 'View',
-        items: [{ label: 'as Icons' }, { label: 'as List' }, { label: 'Clean Up' }],
-      },
-      {
-        // The recruiter path. Handoff section 4: this has to be obvious, and
-        // it has to reach every part of the site in one click.
-        title: 'Go',
-        items: [
-          { label: 'Work', onSelect: () => open('work') },
-          ...windowProjects.map((p) => ({
-            label: p.title,
-            onSelect: () => open(`project:${p.slug}`),
-          })),
-          { label: 'Photos', onSelect: () => open('photos'), separatorBefore: true },
-          { label: 'Anime', onSelect: () => open('anime') },
-          { label: 'Zippy', onSelect: () => open('zippy') },
-          { label: 'About', onSelect: () => open('about'), separatorBefore: true },
-          { label: 'Contact', onSelect: () => open('contact') },
-        ],
-      },
-      {
-        title: 'Special',
-        items: [
-          { label: 'Empty Trash', onSelect: () => open('trash') },
-          { label: 'Restart', separatorBefore: true },
-          { label: 'Shut Down' },
-        ],
-      },
+      { title: 'Portfolio', onSelect: () => open('work') },
+      { title: 'About', onSelect: () => open('about') },
+      { title: 'Contact', onSelect: () => open('contact') },
     ],
-    [open, close, topId],
+    [open],
   )
 
   // The desktop icon for a window, so the rectangle has somewhere to fly from
@@ -241,23 +220,27 @@ export default function App() {
       )}
 
       <main className="mac-desktop">
-        <div className="mac-icons">
-          {desktopItems.map(({ id, label, Art }) => {
-            const isOpen = openWindows.some((w) => w.id === id)
-            return (
-              <button
-                className="mac-icon"
-                key={id}
-                data-active={isOpen}
-                onClick={() => openZoomed(id)}
-                aria-label={`Open ${label}`}
-              >
-                <Art className="mac-icon-art" />
-                <span className="mac-icon-label">{breakableLabel(label)}</span>
-              </button>
-            )
-          })}
-        </div>
+        {(['left', 'right'] as const).map((side) => (
+          <div className={`mac-icons mac-icons-${side}`} key={side}>
+            {desktopItems
+              .filter((d) => d.side === side)
+              .map(({ id, label, Art }) => {
+                const isOpen = openWindows.some((w) => w.id === id)
+                return (
+                  <button
+                    className="mac-icon"
+                    key={id}
+                    data-active={isOpen}
+                    onClick={() => openZoomed(id)}
+                    aria-label={`Open ${label}`}
+                  >
+                    <Art className="mac-icon-art" />
+                    <span className="mac-icon-label">{breakableLabel(label)}</span>
+                  </button>
+                )
+              })}
+          </div>
+        ))}
 
         {openWindows.map((w, i) => {
           const isTop = w.id === topId
@@ -293,10 +276,18 @@ export default function App() {
             >
               {w.def.kind === 'intro' && <IntroPanel onOpen={openZoomed} />}
               {w.def.kind === 'text' && <AboutPanel />}
+              {w.def.kind === 'msba' && <MsbaPanel />}
               {w.def.kind === 'trash' && <TrashPanel />}
               {w.def.kind === 'anime' && <AnimePanel />}
               {w.def.kind === 'contact' && <ContactPanel />}
               {w.def.kind === 'zippy' && <ZippyPanel />}
+              {w.def.kind === 'video' && (
+                <ErrorBoundary fallback={<div style={{ padding: 12 }}>Movie unavailable.</div>}>
+                  <Suspense fallback={null}>
+                    <VideoJsPlayer src={`${import.meta.env.BASE_URL}luffy.mp4`} />
+                  </Suspense>
+                </ErrorBoundary>
+              )}
               {w.def.kind === 'photos' && <PhotosPanel onStatus={handlePhotoStatus} />}
               {w.def.kind === 'work' && (
                 <WorkPanel

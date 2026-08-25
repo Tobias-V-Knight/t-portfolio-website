@@ -42,10 +42,11 @@ const base = {
 export function FolderIcon({ className }: IconProps) {
   return (
     <svg {...base} className={className}>
-      <path d="M2 8h10l2 3h16v18H2z" fill="#c9c6bf" stroke="#000" />
-      <path d="M2 13h28" stroke="#000" />
-      <path d="M3 14h26v14H3z" fill="#e6e3dc" />
-      <path d="M3 9h8l2 3H3z" fill="#f4f2ed" />
+      {/* Classic Mac folder: a back sheet with a left tab, and a front flap
+         over it. The 1px step between them is what gives it depth at 32px. */}
+      <path d="M2 7h9l2 3h17v4H2z" fill="#b9b6af" stroke="#000" />
+      <path d="M2 12h28v17H2z" fill="#dedbd4" stroke="#000" />
+      <path d="M3 13h26v2H3z" fill="#f2f0ea" />
     </svg>
   )
 }
@@ -74,10 +75,13 @@ export function AppIcon({ className }: IconProps) {
 export function DiskIcon({ className }: IconProps) {
   return (
     <svg {...base} className={className}>
-      <path d="M2 9h28v15H2z" fill="#dedbd4" stroke="#000" />
-      <path d="M3 10h26v4H3z" fill="#f4f2ed" />
-      <path d="M20 17h7v4h-7z" fill="#4a4a8c" stroke="#000" />
-      <path d="M5 18h11M5 21h8" stroke="#6c6a64" />
+      {/* 3.5" floppy: the OG Mac save/disk object, cut top-right corner, metal
+         shutter up top, a label with a couple of written lines. */}
+      <path d="M4 3h21l3 3v23H4z" fill="#3f5c86" stroke="#000" />
+      <path d="M10 3h11v8H10z" fill="#c9c6bf" stroke="#000" />
+      <path d="M16 4h3v6h-3z" fill="#7f8ea6" />
+      <path d="M7 15h18v13H7z" fill="#f4f2ed" stroke="#000" />
+      <path d="M9 18h14M9 21h14M9 24h9" stroke="#6c6a64" />
     </svg>
   )
 }
@@ -140,6 +144,19 @@ export function TvIcon({ className }: IconProps) {
   )
 }
 
+export function FilmIcon({ className }: IconProps) {
+  return (
+    <svg {...base} className={className}>
+      {/* A clapperboard: the board, the angled clapper top, its diagonal
+         stripes, and a couple of scene lines. */}
+      <path d="M4 12h24v16H4z" fill="#dedbd4" stroke="#000" />
+      <path d="M4 6l23-3 .8 4.6-23 3z" fill="#2b2b2b" stroke="#000" />
+      <path d="M9 5.4l-1 4.2M14 4.6l-1 4.2M19 3.8l-1 4.2M24 3.4l-1 4" stroke="#f4f2ed" />
+      <path d="M8 17h16M8 21h16M8 25h10" stroke="#6c6a64" />
+    </svg>
+  )
+}
+
 export function MailIcon({ className }: IconProps) {
   return (
     <svg {...base} className={className}>
@@ -153,10 +170,12 @@ export function MailIcon({ className }: IconProps) {
 export function TrashIcon({ className }: IconProps) {
   return (
     <svg {...base} className={className}>
-      <path d="M9 3h14v3H9z" fill="#dedbd4" stroke="#000" />
-      <path d="M6 7h20v3H6z" fill="#f4f2ed" stroke="#000" />
-      <path d="M8 10h16l-2 19H10z" fill="#dedbd4" stroke="#000" />
-      <path d="M13 14v11M19 14v11" stroke="#6c6a64" />
+      {/* Classic Mac trash can: knob handle, lid, and a tapered bin with the
+         vertical ridges that make it read as a metal wastebasket. */}
+      <path d="M13 3h6v2h-6z" fill="#c9c6bf" stroke="#000" />
+      <path d="M7 5h18v3H7z" fill="#dedbd4" stroke="#000" />
+      <path d="M9 8h14l-2 21H11z" fill="#c9c6bf" stroke="#000" />
+      <path d="M12.6 11l-.4 15M16 11v15M19.4 11l.4 15" stroke="#6c6a64" />
     </svg>
   )
 }

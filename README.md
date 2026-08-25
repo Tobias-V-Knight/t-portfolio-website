@@ -31,7 +31,9 @@ that gets consulted before a new file is ever created.
 |---|---|---|
 | `README.md` | This file | Setup, and the taxonomy of everything in the repo |
 | `CLAUDE.md` | Working rules | Decisions taken, constraints, traps, and the rules for how work happens here. The first thing any session reads |
+| `HANDOFF.md` | The map | State, what changed last session, next-up (bugs/enhancements/agents), open decisions, links. Read after CLAUDE.md |
 | `TICKETS.md` | The board | Every unit of work, its mode (AFK, SHOW, ASK) and its status. Also the list of what is blocked on T |
+| `assets_src/` | Raw source media | Original videos/photos (gitignored); the converted, served copies live in `public/` |
 | `index.html` | Page shell | Title, description, the Open Graph tags that drive the LinkedIn preview, and the Google Fonts link for Silkscreen and Inter |
 | `vite.config.ts` | Build config | Sets the base path from `VITE_BASE`, which is what differs between the custom domain and the github.io preview URL |
 | `package.json` | Manifest | React 19, React Router 7, Vite 8, TypeScript. No UI library and no CSS framework |
@@ -47,10 +49,11 @@ that gets consulted before a new file is ever created.
 | `system/windows.ts` | Window manager | The window registry and the hook that reconciles open windows with the URL. The routing model is documented in `CLAUDE.md` and in the file itself |
 | `components/Window.tsx` | Window chrome | Title bar, close box, pointer dragging, focus and z order. Drag is desktop only |
 | `components/MenuBar.tsx` | Menu bar | The menus, including the Go menu, which is the fast path to the work for anyone who does not want to explore |
-| `components/Icons.tsx` | Desktop icons | Folder, document, application, disk and trash, drawn as crisp edged SVG rather than bitmaps |
-| `windows/Panels.tsx` | Small windows | The intro card, the about window, the trash Easter egg, and the placeholder tag component |
-| `windows/Panels.tsx` also holds | Small windows | The intro card, about, contact, anime, Zippy, the trash Easter egg, the placeholder tag, and the blank renderer |
-| `windows/Work.tsx` | WORK window | Category filter chips and the full project list. Projects with a case study open a window, the rest are rows with a link |
+| `components/Icons.tsx` | Desktop icons | OG-Mac SVGs: folder, document, 3.5" floppy, ridged trash, road, paddle, TV, film (movie), drawn crisp-edged |
+| `components/ErrorBoundary.tsx` | Crash guard | Catches a component error and renders a message instead of blanking the whole app |
+| `components/VideoJsPlayer.tsx` | Movie player | StrictMode-safe Video.js player used by the LUFFY.MOV window (B&W via CSS) |
+| `windows/Panels.tsx` | Small windows | Intro card, About, Contact, Anime, Zippy, the MSBA panel, the Trash Easter egg, the placeholder tag + blank renderer |
+| `windows/Work.tsx` | PORTFOLIO window | Finder list view (Name / Date Modified / Kind / Size), one icon row per project; case-study rows open a window |
 | `components/ZoomRect.tsx` | The zoom rectangle | The classic Mac open and close animation: an outlined rectangle stepping from an icon out to a window and back. Its effect is mount only, and the comment in it explains why that is load bearing rather than lazy |
 | `components/Boot.tsx` | Boot sequence | A full screen ML training run: the import stack, then epochs with a jittering loss, then a prompt that waits for Enter. Plays once per session, skips on any key, homepage only. Never blocks content, because the desktop is already mounted underneath it |
 | `windows/Project.tsx` | Project window | The twelve section project template. Sections render only when the data has them, which is how Gravl stays outcome only |
@@ -68,7 +71,9 @@ that gets consulted before a new file is ever created.
 | `zippy-icon.png` | Zippy, icon size | 64px, used as an actual desktop icon rather than a drawing |
 | `og.png` | Link preview card | 1200x630. The actual front door, because almost every visitor sees this on LinkedIn before they see the site |
 | `favicon.svg` | Favicon | A small beige computer |
-| `photos/*.JPG` | Placeholder photographs | Eight generated stand ins at mixed resolutions and compression levels. Replaced the day real photos land |
+| `luffy.mp4` · `ice.mp4` | Movie clips | Played in the LUFFY.MOV window (B&W via player CSS); `ice.mp4` is queued to join a multi-clip loop |
+| `csi-team.jpeg` | CSI ELP team photo | Shown on the CSI.APP project page |
+| `photos/*.JPG` | Placeholder photographs | Eight generated stand ins. The Photos window is queued for removal |
 
 ### `scripts/`
 
