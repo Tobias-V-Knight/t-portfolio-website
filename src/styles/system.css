@@ -210,6 +210,12 @@ body {
 .mac-icons-right {
   left: auto;
   right: 18px;
+  /* Reversed wrap, which is the whole of P2-04's first half. A column that
+     wraps lays its second column out to the right, and for a container pinned
+     to the right edge that is off the screen: narrow the window and the icons
+     did not overflow, they left. wrap-reverse grows the second column inward
+     instead. */
+  flex-wrap: wrap-reverse;
 }
 
 .mac-icon {
@@ -1266,6 +1272,10 @@ body {
      the bar goes to 44px, which is the one rule here that beats authenticity. */
   :root { --mac-menu-h: 46px; }   /* 46 minus the 1px rule leaves 45 of target */
 
+  /* On a phone only one window is ever on screen and its close box is right
+     there, so Close All has nothing to do and no room to say it. */
+  .mac-menu[data-desktop-only='true'] { display: none; }
+
   .mac-menu-title { padding: 0 12px; }
   .mac-menu-item { min-height: 44px; padding: 12px 16px; }
   .mac-menu-drop { min-width: 220px; }
@@ -1306,6 +1316,12 @@ body {
   /* Only the window on top exists on a phone. */
   .mac-window[data-top='false'] { display: none; }
 
+  /* And the movie never exists on a phone at all. The window manager already
+     refuses to open it below this breakpoint (P2-04); this is the second lock,
+     because a full bleed autoplaying video covering HOME was bad enough to
+     deserve two. */
+  .mac-window[data-kind='video'] { display: none !important; }
+
   /* Except the intro, which stops being a window and becomes the top of the
      page. Full bleed on a phone it would cover every icon, so a visitor's
      first screen would be a bio with no visible way into the work. It keeps
@@ -1338,4 +1354,146 @@ body {
    letting the menu bar wrap, which would break the whole illusion. */
 @media (max-width: 460px) {
   .mac-menubar-right .mac-menubar-optional { display: none; }
+}
+
+/* --- Capabilities: what T contracts in ---------------------------------- */
+/* Rendered in BACKGROUND under the lede. Deliberately not a grid of equal
+   tiles: five equal boxes say all five are the same size of thing, and the
+   ordering is the whole point. A stacked list keeps the order readable and
+   keeps the first one first on a phone as well as on a desktop. */
+
+.mac-caps {
+  list-style: none;
+  margin: 0 0 18px;
+  padding: 0;
+  border-top: 1px solid var(--mac-line);
+}
+
+.mac-cap {
+  padding: 14px 0 12px;
+  border-bottom: 1px solid var(--mac-line);
+}
+
+.mac-cap-name {
+  font-family: var(--mac-chrome);
+  font-size: 15px;
+  line-height: 1.2;
+  margin: 0 0 6px;
+  color: var(--mac-ink);
+}
+
+.mac-cap-line {
+  font-family: var(--mac-body);
+  font-size: 15px;
+  line-height: 1.5;
+  margin: 0 0 10px;
+}
+
+.mac-cap-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-bottom: 8px;
+}
+
+/* Smaller than .mac-chip on purpose. These are evidence, not controls, and
+   sizing them like the WORK filters would invite a click that does nothing. */
+.mac-cap-tag {
+  font-family: var(--mac-chrome);
+  font-size: 11px;
+  line-height: 1;
+  padding: 5px 7px;
+  background: var(--mac-face);
+  color: var(--mac-ink);
+  border: 1px solid var(--mac-line);
+  white-space: nowrap;
+}
+
+.mac-cap-proof {
+  font-family: var(--mac-chrome);
+  font-size: 11px;
+  line-height: 1.3;
+  margin: 0;
+  opacity: 0.62;
+}
+
+.mac-runs {
+  font-family: var(--mac-body);
+  font-size: 14px;
+  line-height: 1.5;
+  margin: 0 0 8px;
+}
+
+.mac-runs-label {
+  font-family: var(--mac-chrome);
+  font-size: 11px;
+  margin-right: 8px;
+  opacity: 0.62;
+}
+
+/* The contracting chip in the home panel. Inverted, which is how a classic Mac
+   showed a selected thing, so it reads as active without introducing a colour
+   the palette does not already have. */
+.mac-avail {
+  display: inline-block;
+  font-family: var(--mac-chrome);
+  font-size: 12px;
+  line-height: 1.2;
+  text-align: left;
+  margin-top: 10px;
+  padding: 7px 10px;
+  background: var(--mac-ink);
+  color: var(--mac-paper);
+  border: 1px solid var(--mac-line);
+  box-shadow: inset 1px 1px 0 var(--mac-lo);
+  cursor: pointer;
+}
+
+.mac-avail:active {
+  background: var(--mac-paper);
+  color: var(--mac-ink);
+}
+
+/* An unanswered blank inside the chip has to stay legible against the inverted
+   ground, where the normal highlight colour disappears. */
+.mac-avail .mac-blank {
+  background: transparent;
+  color: var(--mac-paper);
+  text-decoration: underline dotted;
+}
+
+@media (max-width: 768px) {
+  .mac-cap-name { font-size: 14px; }
+  .mac-cap-line { font-size: 14px; }
+  .mac-avail { width: 100%; text-align: center; }
+}
+
+/* --- HOME: the focus snapshot ------------------------------------------- */
+/* Labels, not prose. Sized below the body text on purpose so the strip reads
+   as a status readout rather than as a second paragraph competing with the
+   one line of writing above it. */
+
+.mac-focus-label {
+  font-family: var(--mac-chrome);
+  font-size: 11px;
+  margin: 0 0 7px;
+  opacity: 0.62;
+}
+
+.mac-focus {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin: 0 0 18px;
+}
+
+.mac-focus-tag {
+  font-family: var(--mac-chrome);
+  font-size: 11px;
+  line-height: 1;
+  padding: 5px 7px;
+  background: rgba(255, 255, 255, 0.55);
+  color: var(--mac-ink);
+  border: 1px solid var(--mac-line);
+  white-space: nowrap;
 }

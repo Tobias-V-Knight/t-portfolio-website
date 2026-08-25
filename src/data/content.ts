@@ -499,6 +499,107 @@ export const msba = {
   ],
 }
 
+// ---------------------------------------------------------------------------
+// Capabilities
+//
+// The verticals T contracts in. This is the answer to a question a visitor is
+// actually asking, which is not "what has he done" but "what would I hire him
+// for", and the site had no place that answered it.
+//
+// Three altitudes got deliberately separated here, because T's first draft of
+// this list mixed them and the strong items were being diluted by the ordinary
+// ones:
+//
+//   capability  what a buyer buys. These five, and only these five.
+//   technique   how it gets done. Lives in `evidence`, under the capability.
+//   tool        what it runs on. Lives in `runsOn`, one strip, once.
+//
+// Cut on the way in, on purpose: clustering, KNN and exploratory analysis, all
+// of which every MSBA graduate has and which therefore signal coursework
+// rather than capability. CI/CD and version control were cut as headlines and
+// kept as one line in `practice`: nobody contracts you for git, but most solo
+// AI contractors genuinely do not do it, so saying it is worth a sentence.
+//
+// Order is a positioning bet, not a ranking. Whichever sits first is what T
+// gets called about. Evaluation leads because it is the thing most people
+// selling AI work skip, and it is the thing a sceptical buyer is quietly
+// worried about. T owns this order, see P2-15.
+// ---------------------------------------------------------------------------
+
+export interface Capability {
+  name: string
+  // One sentence, in buyer language, no jargon. What the work does for them.
+  line: string
+  // The techniques underneath it, rendered as chips.
+  evidence: string[]
+  // Which project on this site proves it. Nothing goes in this list without
+  // one, CLAUDE.md rule 9.
+  proof: string
+}
+
+export const capabilitiesCopyState: Placeholder = 'PLACEHOLDER'
+
+// The framing line. The point of it is that the pattern travels: the machine
+// does not know it is looking at a paving bid, so naming the shape rather than
+// the industry is what keeps construction as proof instead of as a ceiling.
+export const capabilitiesLede =
+  'The work is the same shape wherever a person reads a document to make a priced decision on a deadline. Construction bids are where I do it today. Underwriting, claims, contract review and RFP response are the same machine with a different vocabulary.'
+
+export const capabilities: Capability[] = [
+  {
+    name: 'EVALUATION HARNESSES',
+    line: 'The part that tells you whether any of the rest of it is good enough to put in front of a customer.',
+    evidence: ['eval sets', 'accuracy tables', 'error analysis', 'regression tests'],
+    proof: 'CSI, material classifier',
+  },
+  {
+    name: 'DOCUMENT INTELLIGENCE',
+    line: 'Turning documents somebody currently reads by hand into structured data a system can act on.',
+    evidence: ['RAG', 'PDF extraction', 'knowledge bases', 'schema design', 'human in the loop review'],
+    proof: 'CSI bid intelligence',
+  },
+  {
+    name: 'AGENTIC WORKFLOWS',
+    line: 'Multi step LLM systems that finish a job end to end, rather than a chat box that hands the work back.',
+    evidence: ['agent orchestration', 'tool use', 'state and retries', 'guardrails'],
+    proof: 'RoleRadar',
+  },
+  {
+    name: 'DOMAIN TUNED MODELS',
+    line: 'Fine tuning a small model on the vocabulary of one business, for the cases a general model guesses at.',
+    evidence: ['fine tuning', 'transformers', 'attention from scratch', 'small model deployment'],
+    proof: 'CSI material classifier',
+  },
+  {
+    name: 'PREDICTIVE MODELLING',
+    line: 'Forecasts and decision models built on the operational data a company already has and does not use.',
+    evidence: ['time series forecasting', 'feature engineering', 'model selection'],
+    proof: 'CSI, MSBA forecasting',
+  },
+]
+
+// One strip, under the five. Tools, not capabilities, and they earn a single
+// row rather than five repetitions.
+// The HOME snapshot. Short labels, no sentences: HOME is world building and a
+// visitor is fifteen seconds in, so this answers "what is he into right now"
+// and nothing more. The five capability blocks above are the long version and
+// they live in BACKGROUND, one click away. Do not let these two lists drift.
+export const focus = [
+  'EVALUATION HARNESSES',
+  'DOCUMENT INTELLIGENCE',
+  'KNOWLEDGE BASES',
+  'AGENTIC WORKFLOWS',
+  'FINE TUNING',
+  'PREDICTIVE MODELS',
+]
+
+export const runsOn = ['Python', 'Databricks', 'MLflow', 'Azure', 'React', 'Streamlit', 'Git + CI']
+
+// The hygiene line. See the note above on why this is a sentence and not a
+// headline.
+export const practice =
+  'Everything ships versioned, tested and deployed from a pipeline, because a model nobody can rebuild next quarter is a demo.'
+
 export const about = {
   name: 'TOBIAS KNIGHT',
   // Was 'technical founder / builder / applied AI'. The founder half came off
@@ -512,6 +613,16 @@ export const about = {
     'Right now that means bid documents in construction, video in pickleball, and a home lab that got out of hand.',
   ],
   status: 'CURRENTLY: TRAINING NLP ATTENTION BY HAND ON A MAC MINI',
+
+  // The contracting call to action, rendered as a chip in the home panel that
+  // opens CONTACT. Deliberately left as a blank: this one is T's voice and the
+  // register matters more than the information. It should say what kind of
+  // problem to bring him, not just that he is available.
+  //
+  // Two drafts to react to, neither of them the answer:
+  //   'Open to contract work. Bring me a pile of documents nobody wants to read.'
+  //   'Available for contract work. The messier the input, the more interesting.'
+  availability: '[ the contract work line, in your voice ]',
 
   // Endurance sport, which is the thing about T that explains the most about
   // how he works and appears nowhere on a resume.

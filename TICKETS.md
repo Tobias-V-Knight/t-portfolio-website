@@ -70,11 +70,11 @@ cross-refs noted where an existing ticket already covers part of it.
 **Bugs (SHOW)**
 | ID | Item | Detail |
 |---|---|---|
-| P2-01 | HOME + LUFFY title bars miss the pinstripe lines | Other windows show the classic title-bar pinstripes; HOME and LUFFY.MOV don't. Make consistent. |
-| P2-02 | Close All button | Closing windows is fiddly; add a single "close all" control. T likes it. |
-| P2-03 | Remove the Photos window | Take Photos off for now (window + icon). `public/photos/` can wait. |
-| P2-04 | Responsive/resize bug | Narrow the viewport → right-column icons overflow and vanish; shrink a window tiny → LUFFY video takes the full screen. Needs a real responsive fix. |
-| P2-05 | Boot: faster typing + Enter-only | Speed up the char typing; on keyboard only **Enter** advances. Mobile advance is a separate design problem. |
+| P2-01 | HOME + LUFFY title bars miss the pinstripe lines | **`review` 2026-08-25.** Root cause was deeper than the stripes: pinstripes paint on the active window, and these two could never become active because `focus()` bailed out for them, so clicking them did nothing at all. Added a `raised` state in `useWindowManager`, so both behave like windows and get their stripes when in front. |
+| P2-02 | Close All button | **`review` 2026-08-25.** Menu bar item, last position, only rendered when something is open, hidden below 768px (one window on a phone, close box right there). Navigates to `/` rather than clearing the stack, so the URL stays the owner and Back still works. |
+| P2-03 | Remove the Photos window | **`review` 2026-08-25.** Icon, window def, title icon and status wiring removed. `windows/Photos.tsx` and the `photos` kind stay in the tree, parked: putting it back is one entry in `windowDefs`. |
+| P2-04 | Responsive/resize bug | **`review` 2026-08-25.** Two separate causes. Icons: a wrapping column pinned to the right edge lays its second column further right, i.e. off screen, fixed with `flex-wrap: wrap-reverse`. LUFFY: on mobile every window is fixed and full bleed and LUFFY was top of the stack, so **the phone site opened on a full screen silent cartoon covering HOME and every icon** (worse than the ticket said). It now never opens below 768px, closes on a resize across the breakpoint, and is hidden in CSS as a second lock. |
+| P2-05 | Boot: faster typing + Enter-only | **`review` 2026-08-25.** `TYPE_MS` 13→6, `EPOCH_MS` 52→34, `RUN_DELAY_MS` 480→320. Keyboard advance is Enter only (Tab, Cmd or an arrow key used to skip the whole sequence). Tap still advances, since a phone has no key to press. |
 
 **Enhancements (SHOW / ASK)**
 | ID | Item | Detail |
@@ -83,6 +83,8 @@ cross-refs noted where an existing ticket already covers part of it.
 | P2-07 | Multi-clip LUFFY loop | `public/ice.mp4` ready (B&W via player). Loop should cycle luffy + ice + future clips. Distinct from B-01 (iMac screen). |
 | P2-08 | Typography/article pass toward Charlie Dean | The three Cs: fonts, centred right-sized photos, consistent system. |
 | P2-09 | Explore the Mac OS 9 Figma UI kit | Authentic chrome/icons. Advances B-06 (Susan Kare icons). Link in HANDOFF.md. |
+| P2-16 | FOCUS RIGHT NOW snapshot on HOME | **`review` 2026-08-25.** T's call: the verticals belong on HOME, short. Six labels (`focus` in content.ts), no sentences, above the button row. The five long capability blocks stay in BACKGROUND. Two lists that say the same thing in two registers, so **do not let them drift**. |
+| P2-15 | Contract verticals in BACKGROUND + availability chip | **`review` 2026-08-25.** Five capability blocks in `capabilities` (content.ts), rendered in BACKGROUND above the endurance list, plus the RUNS ON strip and the practice line. Availability chip in HOME opens CONTACT. **Open on T:** the block order (a positioning bet, evaluation currently leads) and the availability line, left as a visible blank in his voice. Related: P2-06 (tag rendering), P2-12 (About extractor overlaps this). |
 | P2-10 | Mac Mini AFK setup | tmux + `claude -p`. **T hooks up the machine manually**; agent proposes commands, never auto-installs. See `~/dev/MAC_MINI_HANDOFF.md`. |
 
 **Agents to build (ASK to launch)** — pattern: review + run the code, pull the stack, **screenshot the real UI from localhost into a labelled folder**, then talk.
@@ -138,3 +140,11 @@ Things T has decided he wants but has deliberately parked.
 
 Closed tickets keep their row above rather than moving to an archive file. The
 board is short by design and a second file would only split the history.
+
+**2026-08-25.** Pass 2 bug sweep: P2-01 through P2-05 all in `review`, plus
+P2-15 (contract verticals) and P2-16 (the HOME focus snapshot). Verified in a
+browser at 1440 and 390, and at 1000x290 for the icon wrap specifically. Two
+things worth carrying forward: P2-01 and P2-04 were both reported as cosmetic
+and both turned out to be structural, and the P2-04 mobile half was materially
+worse than described. Still open on T: the capability order and the
+availability line, both marked in `content.ts`.

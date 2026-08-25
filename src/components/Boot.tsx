@@ -18,7 +18,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 
 const SESSION_KEY = 'tk-booted'
 const EPOCHS = 30
-const EPOCH_MS = 52
+const EPOCH_MS = 34
 const isSmallScreen = () => typeof window !== 'undefined' && window.innerWidth <= 768
 const VISIBLE_EPOCHS = isSmallScreen() ? 4 : 6
 
@@ -27,8 +27,8 @@ const VISIBLE_EPOCHS = isSmallScreen() ? 4 : 6
 const SPEED = 1
 
 // Milliseconds per typed character, and the pause before the run kicks off.
-const TYPE_MS = 13
-const RUN_DELAY_MS = 480
+const TYPE_MS = 6
+const RUN_DELAY_MS = 320
 
 // train.py's imports: stdlib, data, sklearn, then the TensorFlow/Keras half
 // (transfer learning on ResNet50 + callbacks). Blank strings are group breaks.
@@ -155,7 +155,17 @@ export function Boot({ onDone }: { onDone: () => void }) {
   }, [exit])
 
   useEffect(() => {
+    // Enter only, on a keyboard. Any key skipping the boot meant that a
+    // visitor who touched Tab, or Cmd, or an arrow key on the way in never saw
+    // the sequence at all, which is the one piece of world building the site
+    // gets exactly one chance to show. Tapping still advances, because on a
+    // phone there is no key to press and no visible instruction that would
+    // help. P2-05.
     const onKey = (e: Event) => {
+      if (e.type === 'keydown') {
+        const key = (e as KeyboardEvent).key
+        if (key !== 'Enter') return
+      }
       e.preventDefault()
       advance()
     }

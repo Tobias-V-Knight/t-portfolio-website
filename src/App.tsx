@@ -34,7 +34,6 @@ import {
   ZippyPanel,
 } from './windows/Panels'
 import { ProjectPanel } from './windows/Project'
-import { PhotosPanel } from './windows/Photos'
 import { WorkPanel } from './windows/Work'
 import './styles/system.css'
 
@@ -57,7 +56,6 @@ const desktopItems = [
   { id: 'msba', label: 'MSBA.TXT', Art: DocIcon, side: 'left' },
   { id: 'about', label: 'ABOUT_ME.TXT', Art: DocIcon, side: 'left' },
   { id: 'contact', label: 'CONTACT', Art: MailIcon, side: 'left' },
-  { id: 'photos', label: 'PHOTOS', Art: FolderIcon, side: 'right' },
   { id: 'anime', label: 'ANIME', Art: TvIcon, side: 'right' },
   { id: 'luffy', label: 'LUFFY.MOV', Art: FilmIcon, side: 'right' },
   { id: 'zippy', label: 'ZIPPY', Art: ZippyIcon, side: 'right' },
@@ -84,7 +82,6 @@ function titleIconFor(id: string, kind: string) {
   const byId: Record<string, () => React.JSX.Element> = {
     intro: () => <HomeIcon className="mac-title-art" />,
     work: () => <FolderIcon className="mac-title-art" />,
-    photos: () => <FolderIcon className="mac-title-art" />,
     about: () => <DocIcon className="mac-title-art" />,
     msba: () => <DocIcon className="mac-title-art" />,
     contact: () => <MailIcon className="mac-title-art" />,
@@ -118,7 +115,7 @@ function useClock() {
 }
 
 export default function App() {
-  const { openWindows, topId, open, close, focus, move, resize, sizes, closing } =
+  const { openWindows, topId, open, close, closeAll, focus, move, resize, sizes, closing } =
     useWindowManager()
   const clock = useClock()
   // The desktop mounts underneath the boot curtain, not after it. If this
@@ -127,7 +124,6 @@ export default function App() {
   // The zoom rectangle currently flying between an icon and a window.
   const [zoom, setZoom] = useState<{ from: Rect; to: Rect; key: number } | null>(null)
   const zoomKey = useRef(0)
-  const [photoStatus, setPhotoStatus] = useState('')
   const [workStatus, setWorkStatus] = useState('')
 
   // Functional nav, Charlie Dean style: an Apple dropdown (About Tobias / View
@@ -152,8 +148,13 @@ export default function App() {
       { title: 'Portfolio', onSelect: () => open('work') },
       { title: 'About', onSelect: () => open('about') },
       { title: 'Contact', onSelect: () => open('contact') },
+      // Sits last, and only once there is something to close, so it never
+      // reads as navigation. P2-02.
+      ...(openWindows.length
+        ? [{ title: 'Close All', onSelect: closeAll, desktopOnly: true }]
+        : []),
     ],
-    [open],
+    [open, closeAll, openWindows.length],
   )
 
   // The desktop icon for a window, so the rectangle has somewhere to fly from
@@ -201,7 +202,6 @@ export default function App() {
     [close, openWindows, sizes, iconRect],
   )
 
-  const handlePhotoStatus = useCallback((s: string) => setPhotoStatus(s), [])
   const handleWorkStatus = useCallback((s: string) => setWorkStatus(s), [])
 
   return (
@@ -265,10 +265,8 @@ export default function App() {
               height={sizes[w.id]?.h ?? defSize(w.def).h}
               icon={titleIconFor(w.id, w.def.kind)}
               status={
-                w.def.kind === 'photos'
-                  ? photoStatus
-                  : w.def.kind === 'work'
-                    ? workStatus
+                w.def.kind === 'work'
+                  ? workStatus
                   : w.def.kind === 'project' && project
                     ? `${project.status}`
                     : undefined
@@ -288,7 +286,6 @@ export default function App() {
                   </Suspense>
                 </ErrorBoundary>
               )}
-              {w.def.kind === 'photos' && <PhotosPanel onStatus={handlePhotoStatus} />}
               {w.def.kind === 'work' && (
                 <WorkPanel
                   onOpenProject={(slug) => openZoomed(`project:${slug}`)}

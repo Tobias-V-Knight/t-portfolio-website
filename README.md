@@ -45,19 +45,19 @@ that gets consulted before a new file is ever created.
 |---|---|---|
 | `main.tsx` | Entry point | Mounts the app inside a `BrowserRouter`. Every route renders the same desktop, because the desktop has to survive the navigation |
 | `App.tsx` | The desktop | Owns the five desktop icons, builds the menus, renders the open windows, and runs the menu bar clock |
-| `data/content.ts` | All copy and data | Every word on the site, both projects, the about text and the photo manifest. Placeholder copy is flagged here and the flag renders on screen |
+| `data/content.ts` | All copy and data | Every word on the site, both projects, the about text, the contract capabilities and the photo manifest. Placeholder copy is flagged here and the flag renders on screen |
 | `system/windows.ts` | Window manager | The window registry and the hook that reconciles open windows with the URL. The routing model is documented in `CLAUDE.md` and in the file itself |
 | `components/Window.tsx` | Window chrome | Title bar, close box, pointer dragging, focus and z order. Drag is desktop only |
 | `components/MenuBar.tsx` | Menu bar | The menus, including the Go menu, which is the fast path to the work for anyone who does not want to explore |
 | `components/Icons.tsx` | Desktop icons | OG-Mac SVGs: folder, document, 3.5" floppy, ridged trash, road, paddle, TV, film (movie), drawn crisp-edged |
 | `components/ErrorBoundary.tsx` | Crash guard | Catches a component error and renders a message instead of blanking the whole app |
 | `components/VideoJsPlayer.tsx` | Movie player | StrictMode-safe Video.js player used by the LUFFY.MOV window (B&W via CSS) |
-| `windows/Panels.tsx` | Small windows | Intro card, About, Contact, Anime, Zippy, the MSBA panel, the Trash Easter egg, the placeholder tag + blank renderer |
+| `windows/Panels.tsx` | Small windows | Intro card, About, the capability list, Contact, Anime, Zippy, the MSBA panel, the Trash Easter egg, the placeholder tag + blank renderer |
 | `windows/Work.tsx` | PORTFOLIO window | Finder list view (Name / Date Modified / Kind / Size), one icon row per project; case-study rows open a window |
 | `components/ZoomRect.tsx` | The zoom rectangle | The classic Mac open and close animation: an outlined rectangle stepping from an icon out to a window and back. Its effect is mount only, and the comment in it explains why that is load bearing rather than lazy |
 | `components/Boot.tsx` | Boot sequence | A full screen ML training run: the import stack, then epochs with a jittering loss, then a prompt that waits for Enter. Plays once per session, skips on any key, homepage only. Never blocks content, because the desktop is already mounted underneath it |
 | `windows/Project.tsx` | Project window | The twelve section project template. Sections render only when the data has them, which is how Gravl stays outcome only |
-| `windows/Photos.tsx` | Photo viewer | Contact sheet, single image view, next and previous, and the byte formatter for the status bar |
+| `windows/Photos.tsx` | Photo gallery, parked | Built, then taken off the desktop on 2026-08-25 (P2-03) because `public/photos/` has nothing real in it. Unreferenced by design; one entry in `windowDefs` puts it back |
 | `styles/system.css` | The entire visual language | Palette tokens, bevels, window chrome, menu bar, type scale, focus states, and the mobile layout. Every colour in the codebase comes from here |
 
 ### `public/`

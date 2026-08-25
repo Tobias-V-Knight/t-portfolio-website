@@ -90,15 +90,10 @@ export const windowDefs: WindowDef[] = [
     height: 560,
     spawn: { x: 0.3, y: 0.1 },
   },
-  {
-    id: 'photos',
-    title: 'PHOTOS',
-    kind: 'photos',
-    route: '/photos',
-    width: 620,
-    height: 460,
-    spawn: { x: 0.24, y: 0.1 },
-  },
+  // PHOTOS is parked, not deleted. P2-03: the window and its icon came off on
+  // 2026-08-25 because `public/photos/` has nothing real in it yet, and an
+  // empty gallery is worse than no gallery. `windows/Photos.tsx` and the
+  // `photos` kind stay in the tree so putting it back is one entry here.
   {
     id: 'zippy',
     title: 'ZIPPY',
@@ -180,6 +175,11 @@ export interface OpenWindow {
 // section 12 calls this out specifically. We clamp on spawn and on every drag
 // frame, and we always leave the title bar reachable.
 const MENU_BAR = 24
+
+// The one breakpoint, matching the 768px in system.css. Kept as a function
+// rather than a constant because it is read on resize, not just on load.
+export const isSmallScreen = () =>
+  typeof window !== 'undefined' && window.innerWidth <= 768
 const KEEP_VISIBLE = 96
 
 function clamp(x: number, y: number, def: WindowDef) {
@@ -248,8 +248,23 @@ export function useWindowManager() {
   const [introPos, setIntroPos] = useState(() => spawnPosition(byId.get('intro') as WindowDef))
   // Luffy is a second non-routed window that also opens on load: a movie already
   // playing in the corner. Managed like the intro (own open + position state).
-  const [luffyOpen, setLuffyOpen] = useState(true)
+  // Not on a phone. On mobile every window is fixed and full bleed, and Luffy
+  // is the top of the stack on load, so it covered HOME and every icon behind
+  // it: the mobile site opened on a silent cartoon and nothing else. Luffy is
+  // desktop scenery, a movie playing in the corner of somebody's computer, and
+  // a corner is exactly what a phone does not have. P2-04.
+  const [luffyOpen, setLuffyOpen] = useState(() => !isSmallScreen())
   const [luffyPos, setLuffyPos] = useState(() => spawnPosition(byId.get('luffy') as WindowDef))
+
+  // Which non-routed window has been clicked to the front, if any.
+  //
+  // P2-01 was reported as "HOME and LUFFY.MOV are missing their title bar
+  // pinstripes", but the pinstripes are painted on the active window and these
+  // two could never become active: they sat permanently under the routed stack
+  // and clicking them did nothing. So the missing stripes were the symptom and
+  // the real bug was that two of the windows on the desktop were not really
+  // windows. Raising them fixes both at once.
+  const [raised, setRaised] = useState<'intro' | 'luffy' | null>(null)
 
   const routeId = byRoute.get(location.pathname) ?? null
 
@@ -288,6 +303,7 @@ export function useWindowManager() {
         else setIntroOpen(true)
         return
       }
+      setRaised(null)
       if (location.pathname === def.route) return
       navigate(def.route)
     },
@@ -335,7 +351,11 @@ export function useWindowManager() {
 
   const focus = useCallback(
     (id: string) => {
-      if (id === 'intro' || id === 'luffy') return
+      if (id === 'intro' || id === 'luffy') {
+        setRaised(id)
+        return
+      }
+      setRaised(null)
       const def = byId.get(id)
       if (def?.route && location.pathname !== def.route) navigate(def.route)
     },
@@ -380,16 +400,36 @@ export function useWindowManager() {
     const luffyWin = luffyOpen
       ? [{ id: 'luffy', ...luffyPos, def: byId.get('luffy') as WindowDef }]
       : []
-    if (introOpen) {
-      // The intro window sits underneath anything routed. It is scenery on
-      // first load, and it should never fight a project window for attention.
-      // Luffy floats just above it, still under any routed window.
-      return [{ id: 'intro', ...introPos, def: byId.get('intro') as WindowDef }, ...luffyWin, ...list]
-    }
-    return [...luffyWin, ...list]
-  }, [stack, introOpen, introPos, luffyOpen, luffyPos])
+    const introWin = introOpen
+      ? [{ id: 'intro', ...introPos, def: byId.get('intro') as WindowDef }]
+      : []
+
+    // Default order: the intro sits underneath anything routed, because it is
+    // scenery on first load and should never fight a project window for
+    // attention. Luffy floats just above it, still under any routed window.
+    const base = [...introWin, ...luffyWin, ...list]
+
+    // Unless one of them was clicked, in which case it comes to the front like
+    // any other window would. Clicking a window and watching nothing happen is
+    // the single most broken-feeling thing a desktop can do.
+    if (!raised) return base
+    const idx = base.findIndex((w) => w.id === raised)
+    if (idx < 0) return base
+    return [...base.slice(0, idx), ...base.slice(idx + 1), base[idx]]
+  }, [stack, introOpen, introPos, luffyOpen, luffyPos, raised])
 
   const topId = openWindows.length ? openWindows[openWindows.length - 1].id : null
+
+  // Crossing the breakpoint mid session has to behave like loading there. A
+  // desktop visitor who narrows the browser was the other half of P2-04: the
+  // movie window stayed open and went full bleed on top of everything.
+  useEffect(() => {
+    function onResize() {
+      if (isSmallScreen()) setLuffyOpen(false)
+    }
+    window.addEventListener('resize', onResize)
+    return () => window.removeEventListener('resize', onResize)
+  }, [])
 
   // Escape closes the window on top. Keyboard reachable close is an
   // accessibility requirement, not a nicety, because the close box is 12px.
@@ -405,5 +445,20 @@ export function useWindowManager() {
     return () => window.removeEventListener('keydown', onKey)
   }, [close])
 
-  return { openWindows, topId, open, close, focus, move, resize, sizes, closing }
+  // P2-02. Closing windows one box at a time is fiddly, and by the time a
+  // visitor has opened four projects the desk is buried. This is the Finder's
+  // option-click-the-close-box, promoted to a menu item because nobody
+  // discovers a modifier key on a website.
+  //
+  // It navigates rather than clearing the stack directly, because the URL owns
+  // the stack. Pushing / rather than replacing means Back still walks a
+  // visitor's history the way it did before they hit it.
+  const closeAll = useCallback(() => {
+    setRaised(null)
+    setIntroOpen(false)
+    setLuffyOpen(false)
+    if (location.pathname !== '/') navigate('/')
+  }, [location.pathname, navigate])
+
+  return { openWindows, topId, open, close, closeAll, focus, move, resize, sizes, closing }
 }

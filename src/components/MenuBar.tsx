@@ -10,6 +10,10 @@ export interface MenuAction {
 
 export interface Menu {
   title: string
+  // Desktop only. The bar is 390px wide on a phone and it cannot wrap without
+  // breaking the illusion, so a menu that is meaningless there says so rather
+  // than pushing the navigation off the edge. P2-02.
+  desktopOnly?: boolean
   // A menu either drops down a list of items, or is a direct nav action (no
   // items, just onSelect on the title) like Charlie Dean's Portfolio/About/Contact.
   items?: MenuAction[]
@@ -49,7 +53,12 @@ export function MenuBar({ menus, clock }: { menus: Menu[]; clock: string }) {
   return (
     <nav className="mac-menubar" ref={barRef} aria-label="Main menu">
       {menus.map((menu) => (
-        <div className="mac-menu" key={menu.title} data-open={open === menu.title}>
+        <div
+          className="mac-menu"
+          key={menu.title}
+          data-open={open === menu.title}
+          data-desktop-only={menu.desktopOnly ? 'true' : undefined}
+        >
           <button
             className="mac-menu-title"
             aria-haspopup={menu.items ? 'true' : undefined}

@@ -1,4 +1,17 @@
-import { about, anime, animeCopyState, contact, msba, type Role } from '../data/content'
+import {
+  about,
+  anime,
+  animeCopyState,
+  capabilities,
+  capabilitiesCopyState,
+  capabilitiesLede,
+  contact,
+  focus,
+  msba,
+  practice,
+  runsOn,
+  type Role,
+} from '../data/content'
 
 // Placeholder copy is allowed. Passing placeholder copy off as final is not,
 // so anything still carrying the flag says so on screen. CLAUDE.md rule 9.
@@ -58,10 +71,30 @@ export function IntroPanel({ onOpen }: { onOpen: (id: string) => void }) {
             <p className="mac-home-sub">{about.positioning}</p>
             <p className="mac-meta">{about.location}</p>
             <p className="mac-meta">{about.status}</p>
+
+            {/* The contracting call to action. A chip rather than a fifth
+                button: the four buttons below are navigation, this is an
+                offer, and giving it the same shape as PORTFOLIO would bury it
+                in the row. It still opens CONTACT, so it is one click from
+                the thing it is asking for. */}
+            <button className="mac-avail" onClick={() => onOpen('contact')}>
+              {withBlanks(about.availability)}
+            </button>
           </div>
         </div>
 
         <p className="mac-home-line">{about.lines[0]}</p>
+
+        {/* The snapshot. Labels only: the sentences are in BACKGROUND and
+            repeating them here would make HOME a document instead of a desk. */}
+        <p className="mac-focus-label">FOCUS RIGHT NOW</p>
+        <div className="mac-focus">
+          {focus.map((f) => (
+            <span className="mac-focus-tag" key={f}>
+              {f}
+            </span>
+          ))}
+        </div>
 
         <div className="mac-home-actions">
           {buttons.map((b) =>
@@ -134,6 +167,43 @@ export function MsbaPanel() {
   )
 }
 
+// WHAT I CONTRACT IN.
+//
+// Sits directly under the lede in BACKGROUND, above the endurance list and the
+// job history, because it is the answer to the question a visitor came with.
+// The history explains where the capability came from; it is not the offer.
+export function CapabilityList() {
+  return (
+    <>
+      <p className="mac-lede">{capabilitiesLede}</p>
+
+      <ul className="mac-caps">
+        {capabilities.map((c) => (
+          <li className="mac-cap" key={c.name}>
+            <h3 className="mac-cap-name">{c.name}</h3>
+            <p className="mac-cap-line">{c.line}</p>
+            <div className="mac-cap-tags">
+              {c.evidence.map((e) => (
+                <span className="mac-cap-tag" key={e}>
+                  {e}
+                </span>
+              ))}
+            </div>
+            <p className="mac-cap-proof">PROOF: {c.proof}</p>
+          </li>
+        ))}
+      </ul>
+
+      <p className="mac-runs">
+        <span className="mac-runs-label">RUNS ON</span> {runsOn.join('  \u00b7  ')}
+      </p>
+      <p className="mac-meta">{practice}</p>
+
+      {capabilitiesCopyState === 'PLACEHOLDER' && <PlaceholderTag />}
+    </>
+  )
+}
+
 export function AboutPanel() {
   return (
     <div className="mac-doc">
@@ -142,6 +212,9 @@ export function AboutPanel() {
       {about.lines.map((line) => (
         <p key={line}>{line}</p>
       ))}
+
+      <h2>WHAT I CONTRACT IN</h2>
+      <CapabilityList />
 
       {/* Endurance sport goes above the professional history on purpose. It is
           the thing that explains the most about how he works and the thing a

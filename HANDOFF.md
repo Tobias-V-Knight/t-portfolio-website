@@ -2,7 +2,7 @@
 
 **Read this first on any resume.** It is the map: what the site is, what state it's in, where every
 file lives, and what's queued. Deepest rules live in `CLAUDE.md`; the work board is `TICKETS.md`;
-the 1070-line design spec lives in iCloud (see CLAUDE.md "Source of truth"). Last updated 2026-08-24.
+the 1070-line design spec lives in iCloud (see CLAUDE.md "Source of truth"). Last updated 2026-08-25.
 
 ## What this is
 A personal portfolio for Tobias Knight (`tobiasknight.dev`), built as a **classic Macintosh desktop**.
@@ -22,6 +22,21 @@ explicitly said Tobias may post the work publicly to get jobs. So the classifier
 be featured by outcome/role. Still: no client's private bid data, and keep to what was built, not raw code.
 
 ---
+
+## Session 2026-08-25 — contract positioning + the Pass 2 bug sweep
+
+Two threads. **Positioning:** the site never answered "what would I hire him for", so there is now a
+`capabilities` model in `content.ts` (five blocks, each with buyer-language copy, technique chips and a
+`proof` field naming the project behind it) rendered in BACKGROUND, plus a short `focus` label strip on
+HOME and an availability chip that opens CONTACT. The data model separates three altitudes that were
+mixed in the first draft: **capability** (what a buyer buys), **technique** (`evidence[]`), **tool**
+(`runsOn`). Clustering, KNN and EDA were deliberately cut, and CI/version control demoted from headline
+to one sentence, with the reasoning written into the file so nobody re-adds them.
+
+**Still open on Tobias, both marked in `content.ts`:** the capability *order* (a positioning bet;
+evaluation currently leads) and the availability line, left as a visible blank because it is his voice.
+
+**Bugs:** P2-01…05 all fixed, see above.
 
 ## File map — what this session touched
 The **canonical, always-current file index is `README.md` → Taxonomy** (update it every session; that is
@@ -69,14 +84,19 @@ knows where the recent work landed. `★` = created/edited this session.
 ---
 
 ## Next up (queued work) — details in `TICKETS.md`
-### Bugs (SHOW)
-- **HOME + LUFFY title bars miss the pinstripe "headline lines"** other windows have.
-- **Hard to close windows** → add a simple **Close All** button (dope).
-- **Remove the Photos window** for now (and the `public/photos/` repo weight can wait).
-- **Responsive/resize bug:** right-column icons overflow and disappear as the viewport narrows; shrink a
-  window very small and the LUFFY video takes over full screen. Needs a real responsive fix.
-- **Boot typing too slow** → speed up; and make **only Enter** advance on keyboard (any-key is jarring;
-  mobile is a separate problem to design later).
+### Bugs (SHOW) — all five fixed 2026-08-25, sitting in `review`
+P2-01 through P2-05 are built and verified in a browser; they stay `review` until Tobias looks.
+Per-ticket detail and root causes are in `TICKETS.md`. The two worth knowing about:
+
+- **P2-01 (pinstripes) was not cosmetic.** Stripes paint on the active window, and HOME and LUFFY could
+  never *become* active: `focus()` returned early for both, so clicking them did nothing. They were not
+  really windows. Fixed with a `raised` state in `useWindowManager`.
+- **P2-04 (mobile) was worse than reported.** LUFFY is top of the stack, and on mobile every window is
+  fixed and full bleed, so **the phone site opened on a full screen silent cartoon** covering HOME and
+  every icon. LUFFY is desktop scenery now and never opens below 768px.
+
+### Bugs still open
+None from Pass 2. New ones go in `TICKETS.md` with a fresh id.
 
 ### Enhancements (SHOW / ASK)
 - **MSBA window stack tags** — render each course's stack as tag/hashtag/code blocks (like the placeholder
