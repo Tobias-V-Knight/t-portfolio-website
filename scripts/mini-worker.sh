@@ -94,10 +94,16 @@ Here is the issue.
 $(gh issue view "$n" --json body --jq .body)
 --- END ISSUE ---
 
-Do the work. Then:
-1. Run: npx tsc -b --noEmit && npm run build
-2. Commit to $branch with a message explaining WHY, not just what.
-3. Do NOT push and do NOT open a PR. The worker script does that.
+Do the work by editing files. That is all you have to do.
+
+Do NOT run a build, a typecheck, or any git command. This shell will refuse
+them and it is not your job: the worker script runs the typecheck and the build
+after you exit, and it does the commit, the push and the PR. If either check
+fails your work is discarded, so make it compile.
+
+Write your commit message to a file called COMMIT_MSG.md at the repo root. The
+worker commits with it and then deletes it, so it never lands in the tree.
+Explain WHY, not just what. End it with the UNVERIFIED: line described above.
 
 If the issue turns out to need a decision only Tobias can make, do not guess.
 Make no changes, and write a file called BLOCKED.md at the repo root saying
@@ -105,52 +111,96 @@ exactly what you need from him.
 PROMPT
 )
 
-  # acceptEdits accepts file edits and STILL GATES Bash. The first real run, on
-  # issue #2, hit exactly that: the agent edited three files correctly and then
-  # could not run tsc, could not run the build, and could not commit, so the
-  # definition of done three lines above it was unreachable. The fix is the
-  # allowlist in .claude/settings.json, which permits build, test and the git
-  # verbs needed to make a commit, and denies push and merge.
+  # The agent EDITS. The script BUILDS, COMMITS, PUSHES and OPENS THE PR.
   #
-  # The branch and the PR gate are what make this safe, not the permission
-  # mode. The agent cannot push, cannot merge, and cannot reach main.
-  claude -p "$prompt" --permission-mode acceptEdits 2>&1 | tail -40 || {
+  # This split is the lesson from the first two runs. Twice the agent did
+  # correct work and shipped nothing, because it was asked to run `tsc`, `npm
+  # run build` and `git commit` from inside a session whose shell refused all
+  # three. An allowlist in .claude/settings.json did not help: in headless mode
+  # the project settings are not loaded for an untrusted directory.
+  #
+  # Rather than keep negotiating with the sandbox, take the work away from it.
+  # The agent only has to write files, which it can always do. Everything that
+  # needs a shell happens out here, where there is one.
+  claude -p "$prompt" --permission-mode acceptEdits 2>&1 | tail -30 || {
     log "#$n: claude exited non-zero"
   }
 
   if [[ -f BLOCKED.md ]]; then
     log "#$n: agent reports blocked"
-    gh issue comment "$n" --body "$(printf 'The Mac Mini worker could not complete this unattended.\n\n%s' "$(cat BLOCKED.md)")"
-    gh issue edit "$n" --add-label blocked-on-t --remove-label agent-ready
+    gh issue comment "$n" --body "$(printf 'The Mac Mini worker could not complete this unattended.\n\n%s' "$(cat BLOCKED.md)")" || log "#$n: could not comment (token permissions?)"
+    gh issue edit "$n" --add-label blocked-on-t --remove-label agent-ready || true
     rm -f BLOCKED.md
-    git checkout main --quiet
-    git branch -D "$branch" --quiet
-    continue
-  fi
-
-  if [[ -z "$(git log origin/main..HEAD --oneline)" ]]; then
-    log "#$n: no commits, nothing to open a PR with"
-    # Uncommitted edits have to be discarded before leaving the branch, or they
-    # follow the checkout onto main and strand there. That happened on the
-    # first run of #2: the agent could not commit, the branch was deleted, and
-    # three modified files were left sitting on main. The dirty tree guard at
-    # the top caught it on the next run, which is the guard working, but the
-    # right behaviour is not to create the mess in the first place.
     git checkout -- . 2>/dev/null || true
-    git clean -fd --quiet 2>/dev/null || true
+    git clean -fdq 2>/dev/null || true
     git checkout main --quiet
     git branch -D "$branch" --quiet
-    gh issue comment "$n" --body "The Mac Mini worker made changes but produced no commit, so there is nothing to review. Working tree was reset. Check the worker log."
     continue
   fi
 
-  git push --quiet -u origin "$branch"
+  if [[ -z "$(git status --porcelain)" ]]; then
+    log "#$n: the agent changed nothing"
+    git checkout main --quiet
+    git branch -D "$branch" --quiet
+    continue
+  fi
+
+  # Verify what the agent could not. A branch that does not compile must never
+  # become a PR: the whole point of the gate is that Tobias reviews working
+  # code, not a diff he has to build himself to evaluate.
+  log "#$n: verifying"
+  if ! npx tsc -b --noEmit 2>&1 | tail -5; then
+    log "#$n: TYPECHECK FAILED, not opening a PR"
+    gh issue comment "$n" --body "The Mac Mini worker made changes that do not typecheck. Left unmerged and reset. See the worker log." || true
+    git checkout -- . 2>/dev/null || true
+    git clean -fdq 2>/dev/null || true
+    git checkout main --quiet
+    git branch -D "$branch" --quiet
+    continue
+  fi
+  if ! npm run build 2>&1 | tail -5; then
+    log "#$n: BUILD FAILED, not opening a PR"
+    gh issue comment "$n" --body "The Mac Mini worker made changes that do not build. Left unmerged and reset. See the worker log." || true
+    git checkout -- . 2>/dev/null || true
+    git clean -fdq 2>/dev/null || true
+    git checkout main --quiet
+    git branch -D "$branch" --quiet
+    continue
+  fi
+  log "#$n: typecheck and build pass"
+
+  # The agent writes its commit message to a file, since it cannot run git. If
+  # it did not, fall back to something honest rather than inventing a summary
+  # of work this script did not do.
+  if [[ -f COMMIT_MSG.md ]]; then
+    msg_file=COMMIT_MSG.md
+  else
+    msg_file=$(mktemp)
+    printf 'Work issue #%s: %s\n\nThe agent did not leave a commit message.\n' "$n" "$title" > "$msg_file"
+  fi
+
+  git add -A
+  git reset --quiet COMMIT_MSG.md 2>/dev/null || true
+  rm -f COMMIT_MSG.md
+  git commit --quiet -F "$msg_file"
+
+  if ! git push --quiet -u origin "$branch" 2>&1; then
+    log "#$n: PUSH FAILED. The commit is on local branch $branch on the Mini."
+    log "#$n: this is usually the GitHub token lacking write access."
+    git checkout main --quiet
+    continue
+  fi
+
   url=$(gh pr create \
     --base main \
     --head "$branch" \
     --title "$title" \
-    --body "$(printf 'Closes #%s\n\nWorked unattended on the Mac Mini. Review before merging: the agent has not seen this in a browser the way Tobias will.\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)' "$n")")
-  gh issue comment "$n" --body "Worked on the Mac Mini. PR: $url"
+    --body "$(printf 'Closes #%s\n\nWorked unattended on the Mac Mini. The agent edited the files; this script ran the typecheck and the build, both of which pass.\n\n**The Mini has no browser.** Anything visual in this PR is unverified. See the UNVERIFIED line in the commit message for what still needs human eyes.\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)' "$n")") || {
+      log "#$n: could not open a PR (token permissions?). Branch $branch is pushed."
+      git checkout main --quiet
+      continue
+    }
+  gh issue comment "$n" --body "Worked on the Mac Mini. PR: $url" || true
   log "#$n: PR $url"
 
   git checkout main --quiet
