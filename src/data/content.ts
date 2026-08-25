@@ -466,26 +466,40 @@ export interface Role {
 export const msba = {
   title: 'MSBA HIGHLIGHTS',
   lede: 'Carlson School of Management, MSBA. The coursework, the topics I keep coming back to, and a few notes from my own notebook.',
+
+  // P2-06: each course carries its stack as tags rather than as prose. A stack
+  // is a list and prose is the wrong shape for a list: nobody reads "built
+  // with X, Y and Z" but everybody scans four chips.
+  //
+  // Rule 9 applies harder here than anywhere else on the site. A tag goes in
+  // only where the repo or the handoff actually says so, and every course
+  // whose folder has not been walked yet carries a blank instead of a
+  // plausible guess. P2-13 (the MSBA extractor) is the ticket that fills them
+  // in from the coursework folders.
   courses: [
     {
       code: 'MSBA 6461',
       name: 'Advanced AI for Natural Language Processing',
       note: 'Built a Bahdanau-attention classifier from scratch and fine-tuned a local model to replace a keyword takeoff step, measured on a hand-labeled gold set.',
+      stack: ['attention from scratch', 'DistilBERT', 'fine tuning', 'gold set eval', 'local (M4)'],
     },
     {
       code: 'MSBA 6431',
       name: 'Time Series Forecasting',
       note: '[ your favorite idea from this course ]',
+      stack: ['[ the stack for this course ]'],
     },
     {
-      code: '—',
+      code: '[ code ]',
       name: 'Generative AI for Business',
       note: 'Final project RoleRadar: a multi-agent (AutoGen + Azure AI Foundry) job tracker.',
+      stack: ['AutoGen', 'Azure AI Foundry', 'Python', 'multi agent'],
     },
     {
       code: '[ code ]',
       name: '[ a spring 2026 course ]',
       note: '[ one line on what stuck ]',
+      stack: ['[ the stack for this course ]'],
     },
   ],
   topics: [
@@ -761,7 +775,7 @@ export const anime: string[] = Array.from(
 export const contact: ProjectLink[] = [
   { label: 'hi@tobiasknight.dev', href: 'mailto:hi@tobiasknight.dev' },
   { label: 'github', href: 'https://github.com/Tobias-V-Knight' },
-  { label: 'linkedin', href: '[ your LinkedIn URL ]' },
+  { label: 'linkedin', href: 'https://www.linkedin.com/in/tobiasknight/' },
 ]
 
 // Deliberately links and no form. This is a static site with no backend, so a

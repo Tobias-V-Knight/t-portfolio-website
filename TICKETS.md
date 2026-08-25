@@ -79,9 +79,9 @@ cross-refs noted where an existing ticket already covers part of it.
 **Enhancements (SHOW / ASK)**
 | ID | Item | Detail |
 |---|---|---|
-| P2-06 | MSBA stack tags | Render each course's stack as tag/hashtag/code blocks (like the placeholder blocks), not prose. Feeds B-08. |
+| P2-06 | MSBA stack tags | **`review` 2026-08-25.** Each course is a header, one line and its stack as chips, reusing `.mac-stack-tag` so the site has one way of saying "built with". Rule 9 bites hardest here: a tag went in only where the repo or handoff says so (6461 and RoleRadar), and the two unwalked courses carry visible blanks instead of plausible guesses. P2-13 fills them. |
 | P2-07 | Multi-clip LUFFY loop | `public/ice.mp4` ready (B&W via player). Loop should cycle luffy + ice + future clips. Distinct from B-01 (iMac screen). |
-| P2-08 | Typography/article pass toward Charlie Dean | The three Cs: fonts, centred right-sized photos, consistent system. |
+| P2-08 | Typography/article pass toward Charlie Dean | **`review` 2026-08-25.** The real problem was that there was no scale: Silkscreen appeared at 16/15/13/11px and Inter at 17/15/14, each chosen locally. Added seven tokens (`--type-display`, three body, three chrome, plus leadings and `--measure`) and routed **every** declaration in the file through them, except `.mac-editor-body`, which belongs to the boot curtain and is its own system. Also added a 66ch measure to running text, and deleted the dead `.mac-cap-tag*` and `.mac-runs*` rules left behind by P2-17. |
 | P2-09 | Explore the Mac OS 9 Figma UI kit | Authentic chrome/icons. Advances B-06 (Susan Kare icons). Link in HANDOFF.md. |
 | P2-16 | FOCUS RIGHT NOW snapshot on HOME | **`review` 2026-08-25.** T's call: the verticals belong on HOME, short. Six labels (`focus` in content.ts), no sentences, above the button row. The five long capability blocks stay in BACKGROUND. Two lists that say the same thing in two registers, so **do not let them drift**. |
 | P2-17 | HOME / ABOUT / CV three way split | **`review` 2026-08-25.** T's call: HOME is purely professional, ABOUT is the person (Minneapolis, hobbies, endurance, photographs), CV is the record (capabilities long form, full skills, history, the PDF). CV is its own window, its own route `/cv`, its own desktop icon and its own menu title, so a visitor can tell ABOUT and CV apart before clicking. `about` in content.ts split into `home` / `about` / `cv`. |
@@ -103,6 +103,11 @@ cross-refs noted where an existing ticket already covers part of it.
 |---|---|---|
 | Q-13 | Resume download gate | Capture name+email: form service (Formspree/Tally) vs small backend vs Google Form. |
 | Q-14 | Portfolio cleanup | Confirm: remove PickleTrack, dogs-vs-cats, fig-viewer, this-website; keep 4mativ; add Gravl. |
+| Q-16 | LinkedIn URL | **Answered 2026-08-25:** `https://www.linkedin.com/in/tobiasknight/`, now live in `contact`. |
+
+**Open decisions (ASK), continued**
+| ID | Item | Detail |
+|---|---|---|
 | Q-15 | PB IQ link + photos | `https://www.pbiq.ai/` in; extract photos; one-liner "a pickleball app for players and coaches to …". See Q-10, B-10. |
 
 ## Backlog

@@ -156,15 +156,29 @@ export function MsbaPanel() {
       <h1>{msba.title}</h1>
       <p className="mac-lede">{msba.lede}</p>
 
+      {/* P2-06. A course is a header, a line and a stack, and the stack is
+          tags: it is a list, and prose is the wrong shape for a list. Same
+          chip as the HOME and CV stack rows, deliberately, so the site has one
+          way of showing "these are the things it was built with". */}
       <h2>COURSEWORK</h2>
-      <ul>
+      <ul className="mac-courses">
         {msba.courses.map((c) => (
-          <li key={c.name}>
-            <strong>
+          <li className="mac-course" key={c.name}>
+            <p className="mac-course-head">
               {withBlanks(c.code)} · {withBlanks(c.name)}
-            </strong>
-            <br />
-            <span className="mac-meta">{withBlanks(c.note)}</span>
+            </p>
+            <p className="mac-course-note">{withBlanks(c.note)}</p>
+            <div className="mac-stack-tags">
+              {c.stack.map((tag) =>
+                tag.startsWith('[') ? (
+                  <span key={tag}>{withBlanks(tag)}</span>
+                ) : (
+                  <span className="mac-stack-tag" key={tag}>
+                    {tag}
+                  </span>
+                ),
+              )}
+            </div>
           </li>
         ))}
       </ul>
