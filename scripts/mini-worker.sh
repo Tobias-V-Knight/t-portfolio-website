@@ -111,6 +111,26 @@ exactly what you need from him.
 PROMPT
 )
 
+  # Directories outside the repo that this issue needs to read.
+  #
+  # Claude Code confines a session to its working directory, and a headless run
+  # can never answer the prompt that would widen it. All three extractor
+  # tickets blocked on exactly that: #4 could not read
+  # ~/dev/nlp-material-classifier, #5 and #6 could not read iCloud. They were
+  # right to stop rather than invent, but the fix is to grant the access.
+  #
+  # An issue declares what it reads with lines like:
+  #   ADD_DIR: /Users/tmaxxx/dev/nlp-material-classifier
+  # which become --add-dir arguments. Access is per issue and declared in
+  # public, rather than the worker handing every agent the whole disk.
+  add_dirs=()
+  while IFS= read -r d; do
+    [[ -n "$d" ]] && add_dirs+=(--add-dir "$d")
+  done < <(gh issue view "$n" --json body --jq .body | sed -n 's/^ADD_DIR:[[:space:]]*//p' | tr -d '\r')
+  if [[ ${#add_dirs[@]} -gt 0 ]]; then
+    log "#$n: granting read access to $((${#add_dirs[@]})) extra path(s)"
+  fi
+
   # The agent EDITS. The script BUILDS, COMMITS, PUSHES and OPENS THE PR.
   #
   # This split is the lesson from the first two runs. Twice the agent did
@@ -122,7 +142,7 @@ PROMPT
   # Rather than keep negotiating with the sandbox, take the work away from it.
   # The agent only has to write files, which it can always do. Everything that
   # needs a shell happens out here, where there is one.
-  claude -p "$prompt" --permission-mode acceptEdits 2>&1 | tail -30 || {
+  claude -p "$prompt" ${add_dirs[@]+"${add_dirs[@]}"} --permission-mode acceptEdits 2>&1 | tail -30 || {
     log "#$n: claude exited non-zero"
   }
 
