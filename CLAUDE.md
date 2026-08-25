@@ -5,7 +5,7 @@ Working rules for this repo. Read before touching anything.
 ## What this is
 
 Personal portfolio site for Tobias Knight at `tobiasknight.dev`. Static Vite +
-React, deployed to GitHub Pages. The site presents as a classic Macintosh
+React, deployed to Cloudflare. The site presents as a classic Macintosh
 desktop: projects, photos, music and personal artifacts live on it as files.
 
 ## Source of truth
@@ -33,7 +33,7 @@ does it just make the interface more complicated?
 | Decision | Value | Where it came from |
 |---|---|---|
 | Stack | Vite + React + TypeScript, static output | handoff, confirmed |
-| Deploy | GitHub Pages, custom domain `tobiasknight.dev` | handoff section 10 |
+| Deploy | **Cloudflare Workers**, custom domain `tobiasknight.dev`, live 2026-08-25 | T, superseding the GitHub Pages plan |
 | Repo | `~/dev/t-portfolio-website`, never iCloud | T, 2026-08-23 |
 | Aesthetic | Classic Mac as specced. Y2K stays about 10 percent | T, 2026-08-23 |
 | Routing | URL owns the active window. See below | T, 2026-08-23 |
@@ -129,13 +129,22 @@ Every other project on this site can be as technically open as T likes.
 
 ## Traps that already bit this stack
 
-* Client side routing on GitHub Pages needs `public/404.html` mirroring
-  `index.html`, or every deep link 404s on refresh.
-* A custom domain needs `public/CNAME`. Vite will not create it.
-* Ship the `CNAME` file only once DNS resolves. Pages redirects the working
-  `github.io` URL the moment it sees that file. This took gravl-ai.com down
-  for two minutes on 2026-08-21. The full record is in `~/dev/gravl/README.md`
-  under *The custom domain*.
+* **The two Pages traps below no longer apply to this repo** (Cloudflare since
+  2026-08-25) and are kept because Gravl is still on GitHub Pages and will hit
+  them during its own migration.
+  * Client side routing on GitHub Pages needs `public/404.html` mirroring
+    `index.html`, or every deep link 404s on refresh. Cloudflare solves this
+    properly with `not_found_handling = "single-page-application"` in
+    `wrangler.toml`, so no mirror file is needed here.
+  * A custom domain on Pages needs `public/CNAME`, and shipping that file
+    before DNS resolves redirects the working `github.io` URL at once. This
+    took gravl-ai.com down for two minutes on 2026-08-21. The full record is in
+    `~/dev/gravl/README.md` under *The custom domain*.
+* **Cloudflare refuses to overwrite existing DNS records** when you attach a
+  custom domain to a Worker. The imported registrar records (a parking A record
+  and a `www` CNAME) have to be deleted by hand first, or the dialog just
+  errors. Leaving the stale proxied A record in place is what produced a 522 on
+  2026-08-25: Cloudflare was fine, the origin it pointed at was dead.
 * Chicago and Geneva are Apple typefaces and cannot be redistributed. Silkscreen
   is the licensed substitute in use here.
 * Pixel fonts never set long-form copy. Bitmap for chrome, labels, filenames

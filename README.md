@@ -4,7 +4,7 @@ Personal site for Tobias Knight at **tobiasknight.dev**. It presents as a
 classic Macintosh desktop: projects, photos and personal artifacts are files on
 someone's computer rather than sections of a portfolio.
 
-Static Vite + React + TypeScript, deployed to GitHub Pages.
+Static Vite + React + TypeScript, deployed to Cloudflare Workers at `tobiasknight.dev`.
 
 ```bash
 npm install
@@ -86,7 +86,7 @@ that gets consulted before a new file is ever created.
 
 | File | What it is | What it does |
 |---|---|---|
-| `deploy.yml` | Pages deploy | Builds on push to main, copies `index.html` to `404.html` so deep links survive a refresh, and publishes to GitHub Pages |
+| `wrangler.toml` | Cloudflare deploy config | Static assets from `dist/`, and the SPA rule that makes deep links return 200 instead of 404. Replaces the old Pages workflow and its `404.html` mirror hack |
 
 ### Not in this repo, but load bearing
 

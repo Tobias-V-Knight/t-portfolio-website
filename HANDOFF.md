@@ -6,7 +6,7 @@ the 1070-line design spec lives in iCloud (see CLAUDE.md "Source of truth"). Las
 
 ## What this is
 A personal portfolio for Tobias Knight (`tobiasknight.dev`), built as a **classic Macintosh desktop**.
-Static **Vite + React + TypeScript**, React Router, deployed to GitHub Pages. Projects, photos, a movie,
+Static **Vite + React + TypeScript**, React Router, deployed to **Cloudflare Workers**, live at `tobiasknight.dev` since 2026-08-25. Projects, photos, a movie,
 and personal artifacts live on the desktop as files/windows. Run: `npm run dev` (→ localhost:5173).
 Verify a change: `npx tsc --noEmit && npm run build`.
 
