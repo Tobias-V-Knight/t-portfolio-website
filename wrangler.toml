@@ -1,0 +1,25 @@
+# Cloudflare deploy config.
+#
+# Cloudflare has folded Pages into Workers, so a new git-connected project runs
+# `npx wrangler deploy` rather than the old Pages build flow, and that command
+# needs this file. Without it the deploy fails with nothing to deploy.
+#
+# There is no `main` here on purpose. This is a static site, so the Worker
+# serves assets and runs no code of its own.
+
+name = "t-portfolio-website"
+compatibility_date = "2026-08-25"
+
+[assets]
+directory = "./dist"
+
+# The SPA rule, and the reason `public/404.html` can eventually go.
+#
+# React Router owns the URL, so /cv and /projects/pickleball-iq are not files on
+# disk. A plain static host looks for them, fails, and serves a 404 to anyone
+# who refreshes the page or follows a deep link. GitHub Pages needed a 404.html
+# that mirrors index.html to work around that, which is the trap recorded in
+# CLAUDE.md. Cloudflare solves it properly: this setting serves index.html with
+# a 200 for any path that is not a real file, and the router takes it from
+# there.
+not_found_handling = "single-page-application"
