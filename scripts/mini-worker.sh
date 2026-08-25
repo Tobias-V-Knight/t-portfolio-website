@@ -169,20 +169,29 @@ PROMPT
   fi
   log "#$n: typecheck and build pass"
 
-  # The agent writes its commit message to a file, since it cannot run git. If
-  # it did not, fall back to something honest rather than inventing a summary
-  # of work this script did not do.
+  # The agent writes its commit message to a file, since it cannot run git.
+  #
+  # Copy it OUT of the tree before doing anything else. The first version of
+  # this pointed msg_file at COMMIT_MSG.md in place, then deleted the file to
+  # keep it out of the commit, and then asked git to read the message from the
+  # path it had just deleted. git failed, set -e killed the run, and issue #3
+  # in the same batch was never attempted. The work survived on the branch, the
+  # agent's own commit message did not.
+  msg_file=$(mktemp)
   if [[ -f COMMIT_MSG.md ]]; then
-    msg_file=COMMIT_MSG.md
+    cp COMMIT_MSG.md "$msg_file"
+    rm -f COMMIT_MSG.md
   else
-    msg_file=$(mktemp)
     printf 'Work issue #%s: %s\n\nThe agent did not leave a commit message.\n' "$n" "$title" > "$msg_file"
   fi
 
   git add -A
-  git reset --quiet COMMIT_MSG.md 2>/dev/null || true
-  rm -f COMMIT_MSG.md
-  git commit --quiet -F "$msg_file"
+  if ! git commit --quiet -F "$msg_file"; then
+    log "#$n: COMMIT FAILED, leaving branch $branch in place for a human"
+    gh issue comment "$n" --body "The Mac Mini worker could not commit. Branch \`$branch\` is on the Mini with the changes intact." || true
+    git checkout main --quiet
+    continue
+  fi
 
   if ! git push --quiet -u origin "$branch" 2>&1; then
     log "#$n: PUSH FAILED. The commit is on local branch $branch on the Mini."
