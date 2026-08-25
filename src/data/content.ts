@@ -774,6 +774,12 @@ export const anime: string[] = Array.from(
   (_, i) => `[ favourite anime ${String(i + 1).padStart(2, '0')} ]`,
 )
 
+// The LUFFY.MOV window plays this list in order and starts over at the top.
+// Filenames only: the player prefixes BASE_URL, so a clip is one entry here
+// plus the converted file in `public/`, and nothing else. The black and white
+// look is CSS on the player, never baked into the file, so any clip inherits it.
+export const moviePlaylist: string[] = ['luffy.mp4', 'ice.mp4']
+
 export const contact: ProjectLink[] = [
   { label: 'hi@tobiasknight.dev', href: 'mailto:hi@tobiasknight.dev' },
   { label: 'github', href: 'https://github.com/Tobias-V-Knight' },

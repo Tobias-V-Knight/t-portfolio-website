@@ -23,7 +23,7 @@ import {
 import { MacWindow } from './components/Window'
 import { defFor, defSize, plannedRect, useWindowManager } from './system/windows'
 import { ZoomRect, type Rect } from './components/ZoomRect'
-import { home, projects } from './data/content'
+import { home, moviePlaylist, projects } from './data/content'
 import {
   AboutPanel,
   AnimePanel,
@@ -288,7 +288,7 @@ export default function App() {
               {w.def.kind === 'video' && (
                 <ErrorBoundary fallback={<div style={{ padding: 12 }}>Movie unavailable.</div>}>
                   <Suspense fallback={null}>
-                    <VideoJsPlayer src={`${import.meta.env.BASE_URL}luffy.mp4`} />
+                    <VideoJsPlayer sources={moviePlaylist} />
                   </Suspense>
                 </ErrorBoundary>
               )}
