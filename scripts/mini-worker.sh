@@ -98,9 +98,15 @@ exactly what you need from him.
 PROMPT
 )
 
-  # acceptEdits lets it write files without a prompt per edit. It cannot push,
-  # cannot merge, and cannot reach main: the branch and the PR gate are what
-  # make that safe, not the permission mode.
+  # acceptEdits accepts file edits and STILL GATES Bash. The first real run, on
+  # issue #2, hit exactly that: the agent edited three files correctly and then
+  # could not run tsc, could not run the build, and could not commit, so the
+  # definition of done three lines above it was unreachable. The fix is the
+  # allowlist in .claude/settings.json, which permits build, test and the git
+  # verbs needed to make a commit, and denies push and merge.
+  #
+  # The branch and the PR gate are what make this safe, not the permission
+  # mode. The agent cannot push, cannot merge, and cannot reach main.
   claude -p "$prompt" --permission-mode acceptEdits 2>&1 | tail -40 || {
     log "#$n: claude exited non-zero"
   }
@@ -117,8 +123,17 @@ PROMPT
 
   if [[ -z "$(git log origin/main..HEAD --oneline)" ]]; then
     log "#$n: no commits, nothing to open a PR with"
+    # Uncommitted edits have to be discarded before leaving the branch, or they
+    # follow the checkout onto main and strand there. That happened on the
+    # first run of #2: the agent could not commit, the branch was deleted, and
+    # three modified files were left sitting on main. The dirty tree guard at
+    # the top caught it on the next run, which is the guard working, but the
+    # right behaviour is not to create the mess in the first place.
+    git checkout -- . 2>/dev/null || true
+    git clean -fd --quiet 2>/dev/null || true
     git checkout main --quiet
     git branch -D "$branch" --quiet
+    gh issue comment "$n" --body "The Mac Mini worker made changes but produced no commit, so there is nothing to review. Working tree was reset. Check the worker log."
     continue
   fi
 
