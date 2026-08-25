@@ -700,8 +700,10 @@ export const home = {
   line: 'I build software and AI systems: mostly, taking something a person currently reads by hand and finding out whether a machine can read it well enough to be trusted.',
   status: 'CURRENTLY: PUTTING CSI INTO PRODUCTION',
 
-  // T approved the second of two drafts on 2026-08-25 and asked for a more
-  // collaborative close, so this is real copy now rather than a blank.
+  // PARKED 2026-08-25, T's call: the chip is not rendered on HOME right now.
+  // The copy stays because it is approved and the decision may reverse, and
+  // because deleting approved copy to re-derive it later is how a voice drifts.
+  // IntroPanel in Panels.tsx has the commented block that puts it back.
   availability:
     "AVAILABLE FOR CONTRACT WORK. The messier the input, the more interesting. Let's build together.",
 

@@ -73,13 +73,9 @@ export function IntroPanel({ onOpen }: { onOpen: (id: string) => void }) {
             <p className="mac-meta">{home.location}</p>
             <p className="mac-meta">{home.status}</p>
 
-            {/* The contracting call to action. A chip rather than a fifth
-                button: the buttons below are navigation, this is an offer, and
-                giving it the same shape as PORTFOLIO would bury it in the row.
-                It opens CONTACT, so it is one click from what it asks for. */}
-            <button className="mac-avail" onClick={() => onOpen('contact')}>
-              {withBlanks(home.availability)}
-            </button>
+            {/* The availability chip is parked, T 2026-08-25. The copy and the
+                styling both stay in the tree (`home.availability`, `.mac-avail`)
+                so putting it back is uncommenting this block. */}
           </div>
         </div>
 
