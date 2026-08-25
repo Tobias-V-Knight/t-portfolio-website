@@ -6,10 +6,11 @@ import {
   capabilitiesCopyState,
   capabilitiesLede,
   contact,
-  focus,
+  cv,
+  home,
+  HOME_TAGS,
   msba,
-  practice,
-  runsOn,
+  stack,
   type Role,
 } from '../data/content'
 
@@ -48,9 +49,9 @@ export function withBlanks(text: string) {
 export function IntroPanel({ onOpen }: { onOpen: (id: string) => void }) {
   const buttons: { label: string; id?: string; blank?: boolean }[] = [
     { label: 'PORTFOLIO', id: 'work' },
-    { label: 'BACKGROUND', id: 'about' },
+    { label: 'CV', id: 'cv' },
+    { label: 'ABOUT', id: 'about' },
     { label: 'CONTACT', id: 'contact' },
-    { label: 'CV', blank: !about.resume.present },
   ]
 
   return (
@@ -67,39 +68,32 @@ export function IntroPanel({ onOpen }: { onOpen: (id: string) => void }) {
           />
 
           <div>
-            <h1 className="mac-home-name">{about.name}</h1>
-            <p className="mac-home-sub">{about.positioning}</p>
-            <p className="mac-meta">{about.location}</p>
-            <p className="mac-meta">{about.status}</p>
+            <h1 className="mac-home-name">{home.name}</h1>
+            <p className="mac-home-sub">{home.positioning}</p>
+            <p className="mac-meta">{home.location}</p>
+            <p className="mac-meta">{home.status}</p>
 
             {/* The contracting call to action. A chip rather than a fifth
-                button: the four buttons below are navigation, this is an
-                offer, and giving it the same shape as PORTFOLIO would bury it
-                in the row. It still opens CONTACT, so it is one click from
-                the thing it is asking for. */}
+                button: the buttons below are navigation, this is an offer, and
+                giving it the same shape as PORTFOLIO would bury it in the row.
+                It opens CONTACT, so it is one click from what it asks for. */}
             <button className="mac-avail" onClick={() => onOpen('contact')}>
-              {withBlanks(about.availability)}
+              {withBlanks(home.availability)}
             </button>
           </div>
         </div>
 
-        <p className="mac-home-line">{about.lines[0]}</p>
+        <p className="mac-home-line">{home.line}</p>
 
-        {/* The snapshot. Labels only: the sentences are in BACKGROUND and
-            repeating them here would make HOME a document instead of a desk. */}
-        <p className="mac-focus-label">FOCUS RIGHT NOW</p>
-        <div className="mac-focus">
-          {focus.map((f) => (
-            <span className="mac-focus-tag" key={f}>
-              {f}
-            </span>
-          ))}
-        </div>
+        {/* The snapshot. Labels only, first `HOME_TAGS` of each group, because
+            HOME is a desk and not a document. CV renders the same lists in
+            full, which is what stops the two from drifting apart. */}
+        <StackSnapshot />
 
         <div className="mac-home-actions">
           {buttons.map((b) =>
             b.blank ? (
-              <span className="mac-btn" key={b.label} data-blank="true" title="Add public/resume.pdf">
+              <span className="mac-btn" key={b.label} data-blank="true">
                 {b.label}
               </span>
             ) : (
@@ -110,8 +104,33 @@ export function IntroPanel({ onOpen }: { onOpen: (id: string) => void }) {
           )}
         </div>
 
-        {about.copyState === 'PLACEHOLDER' && <PlaceholderTag />}
+        {home.copyState === 'PLACEHOLDER' && <PlaceholderTag />}
       </div>
+    </div>
+  )
+}
+
+// The four rows, short form. One row per group, label on the left so the eye
+// can skip a row it does not care about, which is the whole reason these are
+// grouped rather than being one long wall of tags.
+export function StackSnapshot() {
+  return (
+    <div className="mac-stack">
+      {stack.map((g) => (
+        <div className="mac-stack-row" key={g.id}>
+          <p className="mac-stack-label">{g.label}</p>
+          <div className="mac-stack-tags">
+            {g.items.slice(0, HOME_TAGS).map((item) => (
+              <span className="mac-stack-tag" key={item}>
+                {item}
+              </span>
+            ))}
+            {g.items.length > HOME_TAGS && (
+              <span className="mac-stack-more">+{g.items.length - HOME_TAGS}</span>
+            )}
+          </div>
+        </div>
+      ))}
     </div>
   )
 }
@@ -167,11 +186,8 @@ export function MsbaPanel() {
   )
 }
 
-// WHAT I CONTRACT IN.
-//
-// Sits directly under the lede in BACKGROUND, above the endurance list and the
-// job history, because it is the answer to the question a visitor came with.
-// The history explains where the capability came from; it is not the offer.
+// WHAT I CONTRACT IN. Lives in CV, not on HOME: these are paragraphs and HOME
+// is a snapshot. The four stack rows are the HOME version of this idea.
 export function CapabilityList() {
   return (
     <>
@@ -182,69 +198,46 @@ export function CapabilityList() {
           <li className="mac-cap" key={c.name}>
             <h3 className="mac-cap-name">{c.name}</h3>
             <p className="mac-cap-line">{c.line}</p>
-            <div className="mac-cap-tags">
-              {c.evidence.map((e) => (
-                <span className="mac-cap-tag" key={e}>
-                  {e}
-                </span>
-              ))}
-            </div>
             <p className="mac-cap-proof">PROOF: {c.proof}</p>
           </li>
         ))}
       </ul>
-
-      <p className="mac-runs">
-        <span className="mac-runs-label">RUNS ON</span> {runsOn.join('  \u00b7  ')}
-      </p>
-      <p className="mac-meta">{practice}</p>
 
       {capabilitiesCopyState === 'PLACEHOLDER' && <PlaceholderTag />}
     </>
   )
 }
 
+// ABOUT. The person.
+//
+// Split off from the resume on 2026-08-25. A visitor who wants the record
+// clicks CV; a visitor who wants to know who they would be working with clicks
+// ABOUT. One window trying to be both was why it read as neither.
 export function AboutPanel() {
   return (
     <div className="mac-doc">
-      <h1>{about.name}</h1>
-      <p className="mac-lede">{about.positioning}</p>
-      {about.lines.map((line) => (
-        <p key={line}>{line}</p>
+      <h1>{home.name}</h1>
+      <p className="mac-lede">{home.positioning}</p>
+
+      {about.lines.map((line, i) => (
+        <p key={i}>{withBlanks(line)}</p>
       ))}
 
-      <h2>WHAT I CONTRACT IN</h2>
-      <CapabilityList />
-
-      {/* Endurance sport goes above the professional history on purpose. It is
-          the thing that explains the most about how he works and the thing a
-          resume has no room for, which makes it the reason this window exists
-          rather than a link to a PDF. */}
-      <h2>OUTSIDE WORK</h2>
+      {/* Endurance sport goes first among the lists on purpose. It is the
+          thing that explains the most about how he works and the thing a
+          resume has no room for, which is the reason this window exists at
+          all rather than being a link to a PDF. */}
+      <h2>ENDURANCE</h2>
       <ul>
         {about.endurance.map((e) => (
           <li key={e}>{e}</li>
         ))}
       </ul>
 
-      <h2>PROFESSIONAL BACKGROUND</h2>
-      <RoleList rows={about.experience} />
+      <h2>PHOTOGRAPHS</h2>
+      <p>{withBlanks(about.photos)}</p>
 
-      <h2>EDUCATION</h2>
-      <RoleList rows={about.education} />
-
-      <h2>RESUME</h2>
-      {about.resume.present ? (
-        <p>
-          <a href={`${import.meta.env.BASE_URL}${about.resume.file}`} download>
-            RESUME.PDF
-          </a>
-        </p>
-      ) : (
-        <p>{withBlanks(`[ drop resume.pdf into public/ and flip present to true ]`)}</p>
-      )}
-
-      <h2>CONTACT</h2>
+      <h2>ELSEWHERE</h2>
       <ul>
         {contact.map((c) => (
           <li key={c.label}>
@@ -260,6 +253,57 @@ export function AboutPanel() {
       </p>
 
       {about.copyState === 'PLACEHOLDER' && <PlaceholderTag />}
+    </div>
+  )
+}
+
+// CV. The record: what he contracts in, the full skills table, the history,
+// and the PDF a recruiter came for.
+export function CvPanel() {
+  return (
+    <div className="mac-doc">
+      <h1>{home.name}</h1>
+      <p className="mac-lede">{home.positioning}</p>
+
+      <h2>WHAT I CONTRACT IN</h2>
+      <CapabilityList />
+
+      {/* The full lists. HOME shows the first few of each; this is the same
+          arrays rendered whole, so the short version cannot drift. */}
+      <h2>TECHNICAL SKILLS</h2>
+      {stack.map((g) => (
+        <div className="mac-stack-full" key={g.id}>
+          <p className="mac-stack-label">
+            {g.label} <span className="mac-stack-note">{g.note}</span>
+          </p>
+          <div className="mac-stack-tags">
+            {g.items.map((item) => (
+              <span className="mac-stack-tag" key={item}>
+                {item}
+              </span>
+            ))}
+          </div>
+        </div>
+      ))}
+
+      <h2>PROFESSIONAL BACKGROUND</h2>
+      <RoleList rows={cv.experience} />
+
+      <h2>EDUCATION</h2>
+      <RoleList rows={cv.education} />
+
+      <h2>RESUME</h2>
+      {home.resume.present ? (
+        <p>
+          <a href={`${import.meta.env.BASE_URL}${home.resume.file}`} download>
+            RESUME.PDF
+          </a>
+        </p>
+      ) : (
+        <p>{withBlanks(`[ drop resume.pdf into public/ and flip present to true ]`)}</p>
+      )}
+
+      {cv.copyState === 'PLACEHOLDER' && <PlaceholderTag />}
     </div>
   )
 }

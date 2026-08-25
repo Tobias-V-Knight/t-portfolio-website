@@ -25,6 +25,7 @@ export type WindowKind =
   | 'zippy'
   | 'video'
   | 'msba'
+  | 'cv'
 
 export interface WindowDef {
   id: string
@@ -70,6 +71,18 @@ export const windowDefs: WindowDef[] = [
     width: 500,
     height: 520,
     spawn: { x: 0.26, y: 0.12 },
+  },
+  {
+    // Its own window and its own menu title, T 2026-08-25. ABOUT is the person
+    // and CV is the record, and a visitor should be able to tell which one
+    // they are clicking before they click it.
+    id: 'cv',
+    title: 'CV.TXT',
+    kind: 'cv',
+    route: '/cv',
+    width: 560,
+    height: 620,
+    spawn: { x: 0.3, y: 0.08 },
   },
   {
     id: 'work',

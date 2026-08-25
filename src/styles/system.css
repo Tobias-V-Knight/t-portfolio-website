@@ -1354,6 +1354,12 @@ body {
    letting the menu bar wrap, which would break the whole illusion. */
 @media (max-width: 460px) {
   .mac-menubar-right .mac-menubar-optional { display: none; }
+  .mac-menubar-right { gap: 0; padding: 0 4px; }
+
+  /* Four titles plus a clock is 474px of content in a 433px bar, measured, so
+     the padding comes off rather than a title. Every title in the bar is a
+     route into the site and losing one costs more than tight spacing does. */
+  .mac-menu-title { padding: 0 6px; }
 }
 
 /* --- Capabilities: what T contracts in ---------------------------------- */
@@ -1468,26 +1474,50 @@ body {
   .mac-avail { width: 100%; text-align: center; }
 }
 
-/* --- HOME: the focus snapshot ------------------------------------------- */
-/* Labels, not prose. Sized below the body text on purpose so the strip reads
-   as a status readout rather than as a second paragraph competing with the
-   one line of writing above it. */
+/* --- The stack: four grouped rows ---------------------------------------
+   Grouped, not one long wall of tags, so the eye can skip a row it does not
+   care about. The label sits in its own column on desktop and above the row on
+   a phone, where a fixed label column would leave the tags about 40 percent of
+   the width and wrap every one of them. */
 
-.mac-focus-label {
+.mac-stack {
+  margin: 0 0 18px;
+  border-top: 1px solid rgba(0, 0, 0, 0.14);
+  padding-top: 12px;
+}
+
+.mac-stack-row {
+  display: grid;
+  grid-template-columns: 104px 1fr;
+  gap: 8px;
+  align-items: baseline;
+  padding: 5px 0;
+}
+
+.mac-stack-full { padding: 8px 0 12px; }
+
+.mac-stack-label {
   font-family: var(--mac-chrome);
   font-size: 11px;
-  margin: 0 0 7px;
+  line-height: 1.4;
+  margin: 0;
   opacity: 0.62;
 }
 
-.mac-focus {
+.mac-stack-note {
+  font-family: var(--mac-body);
+  font-size: 12px;
+  font-style: italic;
+  margin-left: 6px;
+}
+
+.mac-stack-tags {
   display: flex;
   flex-wrap: wrap;
   gap: 5px;
-  margin: 0 0 18px;
 }
 
-.mac-focus-tag {
+.mac-stack-tag {
   font-family: var(--mac-chrome);
   font-size: 11px;
   line-height: 1;
@@ -1496,4 +1526,27 @@ body {
   color: var(--mac-ink);
   border: 1px solid var(--mac-line);
   white-space: nowrap;
+}
+
+/* CV shows every tag, so its rows sit on the window face rather than on a
+   photograph and need the opaque background. */
+.mac-stack-full .mac-stack-tag { background: var(--mac-face); }
+
+/* The count of what HOME is not showing. It is a signal that the list is
+   longer, not a control: the full list is one click away in CV, and making
+   this clickable would be a second route to the same window. */
+.mac-stack-more {
+  font-family: var(--mac-chrome);
+  font-size: 11px;
+  line-height: 1;
+  padding: 5px 4px;
+  opacity: 0.5;
+}
+
+@media (max-width: 768px) {
+  .mac-stack-row {
+    grid-template-columns: 1fr;
+    gap: 4px;
+    padding: 7px 0;
+  }
 }

@@ -25,7 +25,12 @@ export interface Menu {
 // The disabled items in the other menus are period texture: a real Mac menu
 // was mostly greyed out most of the time.
 
-export function MenuBar({ menus, clock }: { menus: Menu[]; clock: string }) {
+export interface Clock {
+  date: string
+  time: string
+}
+
+export function MenuBar({ menus, clock }: { menus: Menu[]; clock: Clock }) {
   const [open, setOpen] = useState<string | null>(null)
   const barRef = useRef<HTMLDivElement>(null)
 
@@ -108,7 +113,12 @@ export function MenuBar({ menus, clock }: { menus: Menu[]; clock: string }) {
       ))}
 
       <div className="mac-menubar-right">
-        <span>{clock}</span>
+        {/* Two spans, not one string. The bar cannot wrap without breaking the
+            illusion, and adding the CV title pushed the clock off the right
+            edge on a phone. Splitting the date off means the narrow rule can
+            drop it and keep the time, which is the half anyone reads. */}
+        <span className="mac-menubar-optional">{clock.date}</span>
+        <span>{clock.time}</span>
       </div>
     </nav>
   )

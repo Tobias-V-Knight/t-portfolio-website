@@ -38,6 +38,23 @@ evaluation currently leads) and the availability line, left as a visible blank b
 
 **Bugs:** P2-01…05 all fixed, see above.
 
+## The three way split (2026-08-25) — read before touching copy
+
+**HOME is professional. ABOUT is the person. CV is the record.** T's call, and the reason the earlier
+single ABOUT window read as neither one thing nor the other.
+
+- **HOME** — name, positioning, status, the availability chip, one line of prose, and the four stack
+  rows in short form. No history, no hobbies.
+- **ABOUT** — Minneapolis, hobbies, endurance, photographs. `/about`.
+- **CV** — capabilities long form, the full skills table, work history, education, the PDF. `/cv`, its
+  own icon and its own menu title so a visitor can tell it apart from ABOUT before clicking.
+
+**The stack model.** Four buckets: CAPABILITIES (what he gets hired to build), TOOLS (what he builds it
+with), TECHNIQUES (what is under the hood), SHIPPING IT (what puts it in production). The fourth exists
+because nginx, cron, CI/CD, hosted Postgres and hosted Chroma fit none of the other three, and because
+most analytics graduates never touch them. **One array per group, favourites first.** HOME slices the
+first `HOME_TAGS`, CV renders all: never fork these into two lists.
+
 ## File map — what this session touched
 The **canonical, always-current file index is `README.md` → Taxonomy** (update it every session; that is
 the rule). The table below is just the record of what the 2026-08-24 session changed, so the next agent

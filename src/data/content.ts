@@ -500,38 +500,136 @@ export const msba = {
 }
 
 // ---------------------------------------------------------------------------
-// Capabilities
+// The stack
 //
-// The verticals T contracts in. This is the answer to a question a visitor is
-// actually asking, which is not "what has he done" but "what would I hire him
-// for", and the site had no place that answered it.
+// Restructured 2026-08-25 on T's call. The site now splits three ways and the
+// split is the point:
 //
-// Three altitudes got deliberately separated here, because T's first draft of
-// this list mixed them and the strong items were being diluted by the ordinary
-// ones:
+//   HOME    purely professional. What he does, what he uses, and that he is
+//           available. A snapshot, not a document.
+//   ABOUT   the person. Minneapolis, hobbies, endurance, photographs.
+//   CV      the record. History, education, the full skills table, the PDF.
 //
-//   capability  what a buyer buys. These five, and only these five.
-//   technique   how it gets done. Lives in `evidence`, under the capability.
-//   tool        what it runs on. Lives in `runsOn`, one strip, once.
+// Four groups, because T's first list mixed them and could not be ordered:
 //
-// Cut on the way in, on purpose: clustering, KNN and exploratory analysis, all
-// of which every MSBA graduate has and which therefore signal coursework
-// rather than capability. CI/CD and version control were cut as headlines and
-// kept as one line in `practice`: nobody contracts you for git, but most solo
-// AI contractors genuinely do not do it, so saying it is worth a sentence.
+//   CAPABILITIES  what someone hires him to build
+//   TOOLS         what he builds it with
+//   TECHNIQUES    what is under the hood
+//   SHIPPING      what puts it in production
 //
-// Order is a positioning bet, not a ranking. Whichever sits first is what T
-// gets called about. Evaluation leads because it is the thing most people
-// selling AI work skip, and it is the thing a sceptical buyer is quietly
-// worried about. T owns this order, see P2-15.
+// SHIPPING exists because of a question T asked while deploying CSI: nginx,
+// cron, CI/CD, hosted Postgres and a hosted vector store did not fit anywhere
+// in the other three. They are not capabilities and they are not techniques,
+// they are the difference between a notebook and a system somebody else can
+// use. Most analytics graduates never touch them, which is exactly why they
+// get their own row rather than being scattered into the others.
+//
+// ONE list per group, ordered favourites first. HOME renders the first
+// `HOME_TAGS` of each and CV renders all of them, so the short version can
+// never drift from the long one. Reorder to change what HOME shows.
+// ---------------------------------------------------------------------------
+
+export interface StackGroup {
+  id: string
+  label: string
+  // One clause, lower case, explaining what the row is. Not a sentence.
+  note: string
+  items: string[]
+}
+
+export const HOME_TAGS = 6
+
+export const stack: StackGroup[] = [
+  {
+    id: 'capabilities',
+    label: 'CAPABILITIES',
+    note: 'what I get hired to build',
+    items: [
+      'RAG',
+      'agent orchestration',
+      'human in the loop',
+      'evaluation harnesses',
+      'document extraction',
+      'knowledge bases',
+      'open source fine tuning',
+      'feature engineering',
+      'predictive modelling',
+      'client discovery + scoping',
+    ],
+  },
+  {
+    id: 'tools',
+    label: 'TOOLS',
+    note: 'what I build it with',
+    items: [
+      'Python',
+      'SQL',
+      'Databricks',
+      'FastAPI',
+      'Streamlit',
+      'Anthropic API',
+      'ChromaDB',
+      'Swift (iOS)',
+      'R',
+      'TypeScript',
+      'Azure AI Foundry',
+      'Supabase',
+      'MongoDB',
+      'Pinecone',
+      'Firebase',
+      'AWS',
+      'Spark / Hadoop',
+      'Tableau',
+      'Plotly',
+    ],
+  },
+  {
+    id: 'techniques',
+    label: 'TECHNIQUES',
+    note: 'what is under the hood',
+    items: [
+      'XGBoost',
+      'clustering / k means',
+      'time series forecasting',
+      'prompt engineering',
+      'prompt evaluation',
+      'KNN',
+      'logistic regression',
+      'matrix factorization',
+      'A/B testing',
+      'statistical analysis',
+      'scikit-learn',
+    ],
+  },
+  {
+    id: 'shipping',
+    label: 'SHIPPING IT',
+    note: 'what puts it in production',
+    items: [
+      'CI/CD',
+      'nginx',
+      'cron jobs',
+      'hosted Postgres (Supabase)',
+      'hosted ChromaDB',
+      'git',
+      'ETL pipelines',
+    ],
+  },
+]
+
+// ---------------------------------------------------------------------------
+// Capabilities, the long version
+//
+// Five blocks, in CV rather than on HOME: HOME is a snapshot and these are
+// paragraphs. Order is a positioning bet, not a ranking. Whichever sits first
+// is what T gets called about, and evaluation leads because it is the thing
+// most people selling AI work skip. T owns this order, see P2-15.
 // ---------------------------------------------------------------------------
 
 export interface Capability {
   name: string
   // One sentence, in buyer language, no jargon. What the work does for them.
   line: string
-  // The techniques underneath it, rendered as chips.
-  evidence: string[]
   // Which project on this site proves it. Nothing goes in this list without
   // one, CLAUDE.md rule 9.
   proof: string
@@ -539,9 +637,9 @@ export interface Capability {
 
 export const capabilitiesCopyState: Placeholder = 'PLACEHOLDER'
 
-// The framing line. The point of it is that the pattern travels: the machine
-// does not know it is looking at a paving bid, so naming the shape rather than
-// the industry is what keeps construction as proof instead of as a ceiling.
+// The framing line, and the answer to "what travels outside construction".
+// The machine does not know it is looking at a paving bid, so naming the shape
+// rather than the industry keeps CSI as proof instead of as a ceiling.
 export const capabilitiesLede =
   'The work is the same shape wherever a person reads a document to make a priced decision on a deadline. Construction bids are where I do it today. Underwriting, claims, contract review and RFP response are the same machine with a different vocabulary.'
 
@@ -549,80 +647,70 @@ export const capabilities: Capability[] = [
   {
     name: 'EVALUATION HARNESSES',
     line: 'The part that tells you whether any of the rest of it is good enough to put in front of a customer.',
-    evidence: ['eval sets', 'accuracy tables', 'error analysis', 'regression tests'],
     proof: 'CSI, material classifier',
   },
   {
     name: 'DOCUMENT INTELLIGENCE',
     line: 'Turning documents somebody currently reads by hand into structured data a system can act on.',
-    evidence: ['RAG', 'PDF extraction', 'knowledge bases', 'schema design', 'human in the loop review'],
     proof: 'CSI bid intelligence',
   },
   {
     name: 'AGENTIC WORKFLOWS',
     line: 'Multi step LLM systems that finish a job end to end, rather than a chat box that hands the work back.',
-    evidence: ['agent orchestration', 'tool use', 'state and retries', 'guardrails'],
     proof: 'RoleRadar',
   },
   {
     name: 'DOMAIN TUNED MODELS',
     line: 'Fine tuning a small model on the vocabulary of one business, for the cases a general model guesses at.',
-    evidence: ['fine tuning', 'transformers', 'attention from scratch', 'small model deployment'],
     proof: 'CSI material classifier',
   },
   {
     name: 'PREDICTIVE MODELLING',
     line: 'Forecasts and decision models built on the operational data a company already has and does not use.',
-    evidence: ['time series forecasting', 'feature engineering', 'model selection'],
     proof: 'CSI, MSBA forecasting',
   },
 ]
 
-// One strip, under the five. Tools, not capabilities, and they earn a single
-// row rather than five repetitions.
-// The HOME snapshot. Short labels, no sentences: HOME is world building and a
-// visitor is fifteen seconds in, so this answers "what is he into right now"
-// and nothing more. The five capability blocks above are the long version and
-// they live in BACKGROUND, one click away. Do not let these two lists drift.
-export const focus = [
-  'EVALUATION HARNESSES',
-  'DOCUMENT INTELLIGENCE',
-  'KNOWLEDGE BASES',
-  'AGENTIC WORKFLOWS',
-  'FINE TUNING',
-  'PREDICTIVE MODELS',
-]
+// ---------------------------------------------------------------------------
+// HOME. Professional only.
+// ---------------------------------------------------------------------------
 
-export const runsOn = ['Python', 'Databricks', 'MLflow', 'Azure', 'React', 'Streamlit', 'Git + CI']
-
-// The hygiene line. See the note above on why this is a sentence and not a
-// headline.
-export const practice =
-  'Everything ships versioned, tested and deployed from a pipeline, because a model nobody can rebuild next quarter is a demo.'
-
-export const about = {
+export const home = {
   name: 'TOBIAS KNIGHT',
   // Was 'technical founder / builder / applied AI'. The founder half came off
   // on 2026-08-23 for the same reason Gravl lost its window.
   positioning: 'builder / applied AI',
-  location: 'MINNEAPOLIS, MN / SOUTH SIDE',
+  location: 'MINNEAPOLIS, MN',
+  copyState: 'PLACEHOLDER' as Placeholder,
+  // One line. HOME earns its keep by being short.
+  line: 'I build software and AI systems: mostly, taking something a person currently reads by hand and finding out whether a machine can read it well enough to be trusted.',
+  status: 'CURRENTLY: PUTTING CSI INTO PRODUCTION',
+
+  // T approved the second of two drafts on 2026-08-25 and asked for a more
+  // collaborative close, so this is real copy now rather than a blank.
+  availability:
+    "AVAILABLE FOR CONTRACT WORK. The messier the input, the more interesting. Let's build together.",
+
+  // Points at a file that is not in public/ yet. The window renders it as an
+  // unanswered blank rather than a broken download until it is.
+  resume: { file: 'resume.pdf', present: false },
+}
+
+// ---------------------------------------------------------------------------
+// ABOUT. The person, and deliberately not the resume.
+//
+// The split T asked for on 2026-08-25: a visitor who wants the record clicks
+// CV, and a visitor who wants to know who they would be working with clicks
+// ABOUT. Putting both in one window was why neither read as either.
+// ---------------------------------------------------------------------------
+
+export const about = {
   copyState: 'PLACEHOLDER' as Placeholder,
   lines: [
-    'I build software, AI systems, and weird side projects.',
-    'Most of it lands somewhere in the same place: take something a person currently reads by hand, and find out whether a machine can read it well enough to be trusted.',
-    'Right now that means bid documents in construction, video in pickleball, and a home lab that got out of hand.',
+    'I live in Minneapolis, on the south side.',
+    '[ what you actually like about living there ]',
+    '[ a hobby that is not endurance sport and not a computer ]',
   ],
-  status: 'CURRENTLY: TRAINING NLP ATTENTION BY HAND ON A MAC MINI',
-
-  // The contracting call to action, rendered as a chip in the home panel that
-  // opens CONTACT. Deliberately left as a blank: this one is T's voice and the
-  // register matters more than the information. It should say what kind of
-  // problem to bring him, not just that he is available.
-  //
-  // Two drafts to react to, neither of them the answer:
-  //   'Open to contract work. Bring me a pile of documents nobody wants to read.'
-  //   'Available for contract work. The messier the input, the more interesting.'
-  availability: '[ the contract work line, in your voice ]',
 
   // Endurance sport, which is the thing about T that explains the most about
   // how he works and appears nowhere on a resume.
@@ -631,6 +719,18 @@ export const about = {
     'Triple Bypass, Colorado',
     'Ironman 70.3, Madison',
   ],
+
+  // PHOTOS is parked (P2-03) and hobby photographs are the thing that would
+  // bring it back. Named here so the next agent knows what the window is for.
+  photos: '[ pick 4 to 6 photographs: Minneapolis, the bike, the races, the home lab ]',
+}
+
+// ---------------------------------------------------------------------------
+// CV. The record.
+// ---------------------------------------------------------------------------
+
+export const cv = {
+  copyState: 'PLACEHOLDER' as Placeholder,
 
   experience: [
     { org: 'Formative Technologies', role: '[ title ]', when: '[ dates ]' },
@@ -648,10 +748,6 @@ export const about = {
     },
     { org: 'University of St. Thomas', role: '[ degree ]', when: '[ years ]' },
   ] as Role[],
-
-  // Points at a file that is not in public/ yet. The window renders it as an
-  // unanswered blank rather than a broken download until it is.
-  resume: { file: 'resume.pdf', present: false },
 }
 
 // A fun one, and the only part of the site with no professional purpose at

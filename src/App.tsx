@@ -23,11 +23,12 @@ import {
 import { MacWindow } from './components/Window'
 import { defFor, defSize, plannedRect, useWindowManager } from './system/windows'
 import { ZoomRect, type Rect } from './components/ZoomRect'
-import { about, projects } from './data/content'
+import { home, projects } from './data/content'
 import {
   AboutPanel,
   AnimePanel,
   ContactPanel,
+  CvPanel,
   IntroPanel,
   MsbaPanel,
   TrashPanel,
@@ -54,6 +55,7 @@ const desktopItems = [
   { id: 'project:csi-bid-intelligence', label: 'CSI.APP', Art: RoadIcon, side: 'left' },
   { id: 'project:pickleball-iq', label: 'PICKLEBALL_IQ', Art: PaddleIcon, side: 'left' },
   { id: 'msba', label: 'MSBA.TXT', Art: DocIcon, side: 'left' },
+  { id: 'cv', label: 'CV.TXT', Art: DocIcon, side: 'left' },
   { id: 'about', label: 'ABOUT_ME.TXT', Art: DocIcon, side: 'left' },
   { id: 'contact', label: 'CONTACT', Art: MailIcon, side: 'left' },
   { id: 'anime', label: 'ANIME', Art: TvIcon, side: 'right' },
@@ -84,6 +86,7 @@ function titleIconFor(id: string, kind: string) {
     work: () => <FolderIcon className="mac-title-art" />,
     about: () => <DocIcon className="mac-title-art" />,
     msba: () => <DocIcon className="mac-title-art" />,
+    cv: () => <DocIcon className="mac-title-art" />,
     contact: () => <MailIcon className="mac-title-art" />,
     anime: () => <TvIcon className="mac-title-art" />,
     trash: () => <TrashIcon className="mac-title-art" />,
@@ -111,7 +114,7 @@ function useClock() {
     .toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })
     .replace(' ', '')
     .toUpperCase()
-  return `${date}  ${time}`
+  return { date, time }
 }
 
 export default function App() {
@@ -134,18 +137,20 @@ export default function App() {
         title: 'APPLE',
         items: [
           { label: 'About Tobias…', onSelect: () => open('about') },
+          { label: 'Curriculum Vitae…', onSelect: () => open('cv') },
           {
             label: 'View Resume',
             onSelect: () => {
-              const r = about.resume
+              const r = home.resume
               if (r?.present && r.file)
                 window.open(`${import.meta.env.BASE_URL}${r.file}`, '_blank')
-              else open('about')
+              else open('cv')
             },
           },
         ],
       },
       { title: 'Portfolio', onSelect: () => open('work') },
+      { title: 'CV', onSelect: () => open('cv') },
       { title: 'About', onSelect: () => open('about') },
       { title: 'Contact', onSelect: () => open('contact') },
       // Sits last, and only once there is something to close, so it never
@@ -274,6 +279,7 @@ export default function App() {
             >
               {w.def.kind === 'intro' && <IntroPanel onOpen={openZoomed} />}
               {w.def.kind === 'text' && <AboutPanel />}
+              {w.def.kind === 'cv' && <CvPanel />}
               {w.def.kind === 'msba' && <MsbaPanel />}
               {w.def.kind === 'trash' && <TrashPanel />}
               {w.def.kind === 'anime' && <AnimePanel />}

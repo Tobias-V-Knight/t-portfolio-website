@@ -84,6 +84,9 @@ cross-refs noted where an existing ticket already covers part of it.
 | P2-08 | Typography/article pass toward Charlie Dean | The three Cs: fonts, centred right-sized photos, consistent system. |
 | P2-09 | Explore the Mac OS 9 Figma UI kit | Authentic chrome/icons. Advances B-06 (Susan Kare icons). Link in HANDOFF.md. |
 | P2-16 | FOCUS RIGHT NOW snapshot on HOME | **`review` 2026-08-25.** T's call: the verticals belong on HOME, short. Six labels (`focus` in content.ts), no sentences, above the button row. The five long capability blocks stay in BACKGROUND. Two lists that say the same thing in two registers, so **do not let them drift**. |
+| P2-17 | HOME / ABOUT / CV three way split | **`review` 2026-08-25.** T's call: HOME is purely professional, ABOUT is the person (Minneapolis, hobbies, endurance, photographs), CV is the record (capabilities long form, full skills, history, the PDF). CV is its own window, its own route `/cv`, its own desktop icon and its own menu title, so a visitor can tell ABOUT and CV apart before clicking. `about` in content.ts split into `home` / `about` / `cv`. |
+| P2-18 | The four bucket stack model | **`review` 2026-08-25.** CAPABILITIES / TOOLS / TECHNIQUES / SHIPPING IT, seeded from T's resume screenshot plus the CSI deployment list. SHIPPING exists because nginx, cron, CI/CD, hosted Postgres and hosted Chroma fit none of the other three. One array per group, favourites first: HOME renders `HOME_TAGS` (6) of each with a `+n` count, CV renders all, so the short version cannot drift from the long one. |
+| P2-19 | Menu bar overflow at 433px | **`review` 2026-08-25.** Adding the CV title made the bar 474px of content in a 433px window and the clock fell off the edge. Clock split into date + time spans so the narrow rule can drop the date, and title padding tightened below 460px. Every title is a route into the site, so padding gives way before a title does. |
 | P2-15 | Contract verticals in BACKGROUND + availability chip | **`review` 2026-08-25.** Five capability blocks in `capabilities` (content.ts), rendered in BACKGROUND above the endurance list, plus the RUNS ON strip and the practice line. Availability chip in HOME opens CONTACT. **Open on T:** the block order (a positioning bet, evaluation currently leads) and the availability line, left as a visible blank in his voice. Related: P2-06 (tag rendering), P2-12 (About extractor overlaps this). |
 | P2-10 | Mac Mini AFK setup | tmux + `claude -p`. **T hooks up the machine manually**; agent proposes commands, never auto-installs. See `~/dev/MAC_MINI_HANDOFF.md`. |
 
@@ -146,5 +149,13 @@ P2-15 (contract verticals) and P2-16 (the HOME focus snapshot). Verified in a
 browser at 1440 and 390, and at 1000x290 for the icon wrap specifically. Two
 things worth carrying forward: P2-01 and P2-04 were both reported as cosmetic
 and both turned out to be structural, and the P2-04 mobile half was materially
-worse than described. Still open on T: the capability order and the
-availability line, both marked in `content.ts`.
+worse than described. Still open on T: the capability order, marked in
+`content.ts`.
+
+**2026-08-25, second pass.** The HOME / ABOUT / CV restructure (P2-17), the four
+bucket stack (P2-18) and the menu bar overflow it caused (P2-19). The
+availability line is answered and is real copy now. What is still blank and
+only T can fill: the ABOUT personal lines (what he likes about Minneapolis, a
+hobby that is not endurance sport and not a computer), the photograph
+selection, every job title and date in CV, the St Thomas degree, and
+`public/resume.pdf` itself.
