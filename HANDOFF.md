@@ -38,6 +38,36 @@ evaluation currently leads) and the availability line, left as a visible blank b
 
 **Bugs:** P2-01…05 all fixed, see above.
 
+## Where the work lives (2026-08-25) — read this before looking for a queue
+
+**GitHub Issues are the board.** `TICKETS.md` is now the index and the history.
+Open work: `gh issue list` or the repo's Issues tab.
+
+```
+LAPTOP (Tobias in the loop)     spec, scope, design, docs
+        v  gh issue create
+GITHUB ISSUES                   the handoff medium
+        v  gh issue list --label agent-ready
+MAC MINI (AFK)                  pulls, works, opens a PR
+        v
+LAPTOP                          Tobias reviews and merges
+```
+
+Nothing goes to the Mini until it is specced on the laptop. **Branch and PR,
+never main**, no exceptions: a bad commit on main is live on the site until
+somebody notices.
+
+**The Mac Mini** is `tmaxxx@10.0.11.125`, key auth working as of 2026-08-25, all
+tooling installed and authed (Claude Code, gh, tmux, node, brew, ollama), the
+full iCloud workspace synced and materialised, and `sleep 0` already set. The
+one gotcha that wasted time: a non-interactive `ssh host 'cmd'` does not read
+`~/.zprofile`, so Homebrew is not on PATH and every tool reports as missing.
+Export `PATH=/opt/homebrew/bin:$PATH` in anything you send it. Machine details
+in `~/dev/MAC_MINI_HANDOFF.md`; the operating principle there still stands, so
+system level changes are Tobias's to make.
+
+Worker: `scripts/mini-worker.sh`, run inside tmux.
+
 ## The three way split (2026-08-25) — read before touching copy
 
 **HOME is professional. ABOUT is the person. CV is the record.** T's call, and the reason the earlier

@@ -1,6 +1,46 @@
 # TICKETS
 
-The board. Nothing gets built that is not a ticket. Opened 2026-08-23.
+**GitHub Issues are the board now** (2026-08-25). This file is the index and the
+history, not the queue. Open work lives at
+[github.com/Tobias-V-Knight/t-portfolio-website/issues](https://github.com/Tobias-V-Knight/t-portfolio-website/issues).
+
+Two boards holding the same work drift apart within weeks, which is the same
+reason HOME and CV render one array rather than two lists. Issues won because
+the Mac Mini can read them and cannot read this file's intent.
+
+## How work flows now
+
+```
+LAPTOP (Tobias in the loop)     spec, scope, design, docs
+        v  gh issue create
+GITHUB ISSUES                   the handoff medium
+        v  gh issue list --label agent-ready
+MAC MINI (AFK)                  pulls, works, opens a PR
+        v
+LAPTOP                          Tobias reviews and merges
+```
+
+Nothing reaches the Mini until it is specced here. A fully specced issue is
+safe to hand to a machine; "make the About page better" is not, and the gap
+between those two is where AFK agents go wrong.
+
+## Labels
+
+| Label | Means |
+|---|---|
+| `agent-ready` | Fully specced. The Mini may run it unattended. |
+| `needs-spec` | Not ready. Scope it on the laptop first. |
+| `blocked-on-t` | Needs a fact, a judgement call or a decision no agent can make. |
+| `show` | Visual. Screenshot required in the PR before it closes. |
+| `content` | Copy about Tobias. Rule 9: never invent, leave a visible blank. |
+
+## The rule the Mini cannot break
+
+**Branch and PR, never main.** Every issue gets its own branch, a PR, and a
+comment on the issue. Tobias reviews and merges. A bad commit on main is live
+on the site until somebody notices, and no throughput is worth that.
+
+Modes below predate the labels and still describe the intent behind them.
 
 ## Modes
 
@@ -90,25 +130,10 @@ cross-refs noted where an existing ticket already covers part of it.
 | P2-15 | Contract verticals in BACKGROUND + availability chip | **`review` 2026-08-25.** Five capability blocks in `capabilities` (content.ts), rendered in BACKGROUND above the endurance list, plus the RUNS ON strip and the practice line. Availability chip in HOME opens CONTACT. **Open on T:** the block order (a positioning bet, evaluation currently leads) and the availability line, left as a visible blank in his voice. Related: P2-06 (tag rendering), P2-12 (About extractor overlaps this). |
 | P2-10 | Mac Mini AFK setup | tmux + `claude -p`. **T hooks up the machine manually**; agent proposes commands, never auto-installs. See `~/dev/MAC_MINI_HANDOFF.md`. |
 
-**Agents to build (ASK to launch)** — pattern: review + run the code, pull the stack, **screenshot the real UI from localhost into a labelled folder**, then talk.
-| ID | Item | Detail |
-|---|---|---|
-| P2-11 | Material classifier extractor (marquee) | `~/dev/nlp-material-classifier`: lessons, full accuracy table (keyword / TF-IDF / attention-scratch / LoRA-Qwen / deployed CSI model), eval-harness (V2) story, generate the real chart images. |
-| P2-12 | Resume + About extractor | `04_career/00_Resume and Cover Letter/` + `pbiq.ai` → clean LinkedIn-style About + HOME skills/current-stack/key-projects snapshot. Not verbatim. |
-| P2-13 | MSBA extractor | Walk the MSBA folder, list every class, rough outline + key topics per course. Feeds B-08; see B-09 (archive deadline). |
-| P2-14 | Per-project reviewers + screenshot agent | PB IQ, RoleRadar, 4mativ, Gravl, CSI.APP: run locally, screenshot the real UI. Feeds B-10 (real icons). Some (iOS) can't run headless. |
-
-**Open decisions (ASK)**
-| ID | Item | Detail |
-|---|---|---|
-| Q-13 | Resume download gate | Capture name+email: form service (Formspree/Tally) vs small backend vs Google Form. |
-| Q-14 | Portfolio cleanup | Confirm: remove PickleTrack, dogs-vs-cats, fig-viewer, this-website; keep 4mativ; add Gravl. |
-| Q-16 | LinkedIn URL | **Answered 2026-08-25:** `https://www.linkedin.com/in/tobiasknight/`, now live in `contact`. |
-
-**Open decisions (ASK), continued**
-| ID | Item | Detail |
-|---|---|---|
-| Q-15 | PB IQ link + photos | `https://www.pbiq.ai/` in; extract photos; one-liner "a pickleball app for players and coaches to …". See Q-10, B-10. |
+**Agents to build, and the open decisions** — moved to GitHub Issues on
+2026-08-25 as #4, #5, #6 (extractors) and #7 through #11 (decisions). P2-11
+through P2-14 and Q-13 through Q-16 are superseded by those issue numbers. The
+rows above stay because they are the record of what was built and why.
 
 ## Backlog
 
