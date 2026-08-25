@@ -122,7 +122,7 @@ knows where the recent work landed. `★` = created/edited this session.
 **`public/`** (served assets)
 | Path | Purpose |
 |---|---|
-| `luffy.mp4` · `ice.mp4` | ★ the movie clips (B&W applied by player CSS). `ice.mp4` ready to add to the loop |
+| `luffy.mp4` · `ice.mp4` | ★ the movie clips (B&W applied by player CSS), cycled in the order set by `moviePlaylist` in `data/content.ts` |
 | `csi-team.jpeg` | ★ CSI ELP team photo (on the CSI.APP page) |
 | `home-bg.jpg` | the Porsche behind the HOME window |
 | `wallpaper.jpg` · `favicon.svg` · `og.png` · `t-profile.jpg` · `zippy*.png` | desktop + branding |
@@ -154,7 +154,8 @@ touch `openWindows` in `src/system/windows.ts`, that ordering is load bearing.
 ### Enhancements (SHOW / ASK)
 - **MSBA window stack tags** — render each course's stack as tag/hashtag/code blocks (like the placeholder
   "your favorite idea" blocks), more scannable than prose.
-- **Add `ice.mp4` to a multi-clip LUFFY loop** (B&W). More clips coming; loop should cycle them.
+- ~~**Add `ice.mp4` to a multi-clip LUFFY loop**~~ built 2026-08-25 (issue #3). The player cycles
+  `moviePlaylist` in `content.ts`; a new clip is one entry there plus the converted file in `public/`.
 - **Article/typography pass** toward Charlie Dean (the three Cs) — fonts, centered right-sized photos.
 - **Explore the Mac OS 9 Figma UI kit** (link below) for authentic chrome/icons.
 - **Mac Mini AFK** — set up background jobs (tmux + `claude -p`). Operating principle: **Tobias hooks up

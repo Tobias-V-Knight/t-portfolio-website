@@ -52,7 +52,7 @@ that gets consulted before a new file is ever created.
 | `components/MenuBar.tsx` | Menu bar | The menus, including the Go menu, which is the fast path to the work for anyone who does not want to explore |
 | `components/Icons.tsx` | Desktop icons | OG-Mac SVGs: folder, document, 3.5" floppy, ridged trash, road, paddle, TV, film (movie), drawn crisp-edged |
 | `components/ErrorBoundary.tsx` | Crash guard | Catches a component error and renders a message instead of blanking the whole app |
-| `components/VideoJsPlayer.tsx` | Movie player | StrictMode-safe Video.js player used by the LUFFY.MOV window (B&W via CSS) |
+| `components/VideoJsPlayer.tsx` | Movie player | StrictMode-safe Video.js player used by the LUFFY.MOV window (B&W via CSS). Cycles the `moviePlaylist` clips in order and repeats |
 | `windows/Panels.tsx` | Small windows | HOME (professional snapshot + stack rows), ABOUT (the person), CV (capabilities, full skills, history), Contact, Anime, Zippy, the MSBA panel, the Trash Easter egg, the placeholder tag + blank renderer |
 | `windows/Work.tsx` | PORTFOLIO window | Finder list view (Name / Date Modified / Kind / Size), one icon row per project; case-study rows open a window |
 | `components/ZoomRect.tsx` | The zoom rectangle | The classic Mac open and close animation: an outlined rectangle stepping from an icon out to a window and back. Its effect is mount only, and the comment in it explains why that is load bearing rather than lazy |
@@ -72,7 +72,7 @@ that gets consulted before a new file is ever created.
 | `zippy-icon.png` | Zippy, icon size | 64px, used as an actual desktop icon rather than a drawing |
 | `og.png` | Link preview card | 1200x630. The actual front door, because almost every visitor sees this on LinkedIn before they see the site |
 | `favicon.svg` | Favicon | A small beige computer |
-| `luffy.mp4` · `ice.mp4` | Movie clips | Played in the LUFFY.MOV window (B&W via player CSS); `ice.mp4` is queued to join a multi-clip loop |
+| `luffy.mp4` · `ice.mp4` | Movie clips | The LUFFY.MOV playlist (B&W via player CSS), cycled in the order set by `moviePlaylist` in `data/content.ts`. A new clip is one entry there plus the file here |
 | `csi-team.jpeg` | CSI ELP team photo | Shown on the CSI.APP project page |
 | `photos/*.JPG` | Placeholder photographs | Eight generated stand ins. The Photos window is queued for removal |
 
