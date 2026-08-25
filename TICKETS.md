@@ -164,7 +164,7 @@ Things T has decided he wants but has deliberately parked.
 | Q-06 | How much CSI architecture can be published | T cleared CSI for the site on 2026-08-23, overriding the handoff hold, on the condition it shows what was built and not the code. Open question is narrower: CSI is bid intelligence for paving contractors and Gravl is pre bid intelligence for construction, so a detailed CSI architecture may describe Gravl's mechanism by proxy. The section stays empty until T rules |
 | Q-12 | The fifth home button | T listed "contact, portfolio, background, csv, cv". Four are built. "csv" is either a mis-dictation of CV or a fifth thing nobody has identified yet |
 | Q-09 | The ten anime | Ten empty slots are sitting in the ANIME window waiting for T. Nobody else can fill these |
-| Q-10 | Employer names | T said "AC Surety Delivery Associates" in one breath. Currently two entries, AC Surety and Delivery Associates, because it is not clear whether that is one employer or two. Titles and dates are blank |
+| Q-10 | Employer names | **Answered by the extraction, 2026-08-25, issue #5. Needs T's yes, then a wire up ticket.** It is two employers, and the documents call them Accenture and Delivery Associates. "Formative Technologies" is 4MATIV Technologies, which is how 4MATIV sounds spoken aloud. Neither "AC Surety" nor "Formative Technologies" appears anywhere in `04_career`, while 4MATIV and Accenture are in every resume and CV in it. Titles, dates and the sources are in `docs/extracted/career.md`. It stays an identification until T confirms, because there is no document string to match "AC Surety" against |
 | Q-11 | LinkedIn URL | The contact window has a dashed placeholder where the link goes |
 | Q-08 | Every blank in the copy | Thirteen project articles now exist with every unknown marked as a visible yellow slot. Each one is a question with a specific answer only T has |
 | Q-07 | The category taxonomy is too generous | AI / ML currently returns 10 of 13 projects, so the chip barely filters. Gravl, Pickleball IQ and CSI are tagged both product and AI / ML. T should decide whether a project gets one primary category or many |
@@ -181,6 +181,17 @@ things worth carrying forward: P2-01 and P2-04 were both reported as cosmetic
 and both turned out to be structural, and the P2-04 mobile half was materially
 worse than described. Still open on T: the capability order, marked in
 `content.ts`.
+
+**2026-08-25, issue #5.** Career extractor. `docs/extracted/career.md` now holds
+role, employer, dates and one line per position, each citing its source file,
+walked out of the `04_career` folder in iCloud. It answers Q-10 above and fills
+every blank in `cv.experience` and `cv.education` on paper. `content.ts` was
+deliberately not touched: T reads the extraction first. Two findings beyond the
+brief. The CV list is not just blank, it is short, missing the two most recent
+employers, Carlson Analytics Lab and Pickleball IQ, which exist on the site as
+projects but not as work history. And every source calls the MSBA a candidacy
+expected Aug 2026, which the site states flat, so whether it is conferred is now
+a live question rather than a formatting one.
 
 **2026-08-25, issue #1.** HOME opened inactive on a cold load. P2-01 gave HOME
 and LUFFY the ability to take focus but not the right to start with it: the

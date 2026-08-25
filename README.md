@@ -39,6 +39,18 @@ that gets consulted before a new file is ever created.
 | `package.json` | Manifest | React 19, React Router 7, Vite 8, TypeScript. No UI library and no CSS framework |
 | `.gitignore` | Ignore list | `node_modules`, `dist`, editor and OS noise |
 
+### `docs/`
+
+Extraction output. Facts pulled out of the source material in iCloud so that
+`content.ts` can be filled in from a document rather than from memory. Nothing
+in here is rendered by the site, and nothing in here is private career material:
+this repo is public, so salary, offers, rejections and interview content stay
+out, and named recruiters and target companies are redacted.
+
+| File | What it is | What it does |
+|---|---|---|
+| `extracted/career.md` | Career extraction (issue #5) | Role, employer, dates and one line per position, every claim citing the file it came from. Resolves the "AC Surety Delivery Associates" ambiguity: two employers, and the three names in `cv.experience` are mis-transcriptions. Seeds `cv.experience` and `cv.education`; the wire up is a separate ticket |
+
 ### `src/`
 
 | File | What it is | What it does |
