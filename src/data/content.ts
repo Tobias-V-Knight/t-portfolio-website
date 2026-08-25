@@ -461,8 +461,9 @@ export interface Role {
 }
 
 // MSBA highlights. Bracketed [ ... ] parts render as blanks (withBlanks) until
-// T fills them in with his own notes. The courses are drafted from the ones on
-// record; the favorite-topics and notebook sections are his to write.
+// T fills them in with his own notes. The courses are extracted from the
+// coursework folders (see the comment on `courses`); the notebook section is
+// his to write.
 export const msba = {
   title: 'MSBA HIGHLIGHTS',
   lede: 'Carlson School of Management, MSBA. The coursework, the topics I keep coming back to, and a few notes from my own notebook.',
@@ -472,10 +473,19 @@ export const msba = {
   // with X, Y and Z" but everybody scans four chips.
   //
   // Rule 9 applies harder here than anywhere else on the site. A tag goes in
-  // only where the repo or the handoff actually says so, and every course
-  // whose folder has not been walked yet carries a blank instead of a
-  // plausible guess. P2-13 (the MSBA extractor) is the ticket that fills them
-  // in from the coursework folders.
+  // only where the coursework actually used the tool: an import, a library()
+  // call, a requirements file or a course document. Nothing is inferred from
+  // the topic, so a course that teaches neural networks does not get a PyTorch
+  // chip unless PyTorch is in the work.
+  //
+  // Filled 2026-08-25 (issue #6) by walking both coursework folders in iCloud.
+  // The walk is written up in docs/extracted/msba.md: twelve entries, ten of
+  // them with codes, plus the file each fact came from. This panel is
+  // HIGHLIGHTS, so it carries four of them. Swapping one in is an edit against
+  // that doc, not another extraction.
+  //
+  // What stays blank: `notes` below, because FROM THE NOTEBOOK is T's voice and
+  // no coursework folder can stand in for it.
   courses: [
     {
       code: 'MSBA 6461',
@@ -485,27 +495,27 @@ export const msba = {
     },
     {
       code: 'MSBA 6431',
-      name: 'Time Series Forecasting',
-      note: '[ your favorite idea from this course ]',
-      stack: ['[ the stack for this course ]'],
+      name: 'Time Series Analysis and Forecasting',
+      note: 'Forecast the ready-mix concrete PPI back to 1965: the trend regression fit at R squared 0.96 and was still spurious, so the model was rebuilt on differences.',
+      stack: ['R', 'R Markdown', 'forecast', 'TSA', 'SARIMA'],
     },
     {
-      code: '[ code ]',
+      code: 'MSBA 6511',
       name: 'Generative AI for Business',
       note: 'Final project RoleRadar: a multi-agent (AutoGen + Azure AI Foundry) job tracker.',
       stack: ['AutoGen', 'Azure AI Foundry', 'Python', 'multi agent'],
     },
     {
-      code: '[ code ]',
-      name: '[ a spring 2026 course ]',
-      note: '[ one line on what stuck ]',
-      stack: ['[ the stack for this course ]'],
+      code: 'MSBA 6441',
+      name: 'Causal Inference',
+      note: 'Matching, difference in differences, synthetic control, regression discontinuity and instrumental variables: five ways to build the counterfactual a regression cannot see.',
+      stack: ['R', 'R Markdown', 'MatchIt', 'plm', 'Synth'],
     },
   ],
   topics: [
     'Attention mechanisms, and how far you can get building them by hand',
     'Honest evaluation: gold sets, calibration, and significance over vibes',
-    '[ another topic you keep coming back to ]',
+    'Causal identification: whether an effect is real, or the design just let it look real',
   ],
   notes: [
     '[ a note from your notebook ]',

@@ -39,6 +39,12 @@ that gets consulted before a new file is ever created.
 | `package.json` | Manifest | React 19, React Router 7, Vite 8, TypeScript. No UI library and no CSS framework |
 | `.gitignore` | Ignore list | `node_modules`, `dist`, editor and OS noise |
 
+### `docs/`
+
+| File | What it is | What it does |
+|---|---|---|
+| `extracted/msba.md` | The MSBA coursework extraction (issue #6) | Every course found in the two iCloud coursework folders: code, name, what the work shows, a 3 to 5 item stack, and the file each fact came from. Four of them are on the site, the rest are staged here. Read it before editing `msba` in `data/content.ts` |
+
 ### `src/`
 
 | File | What it is | What it does |
