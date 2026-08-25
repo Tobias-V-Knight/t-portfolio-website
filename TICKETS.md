@@ -182,6 +182,17 @@ and both turned out to be structural, and the P2-04 mobile half was materially
 worse than described. Still open on T: the capability order, marked in
 `content.ts`.
 
+**2026-08-25, issue #1.** HOME opened inactive on a cold load. P2-01 gave HOME
+and LUFFY the ability to take focus but not the right to start with it: the
+default order in `openWindows` was intro, then luffy, then the routed stack,
+and the top of that list is both the front of the z order and the active
+window, so the movie held focus on `/` and HOME rendered greyed with no
+pinstripes. The order is luffy, intro, routed now, and the route effect clears
+`raised` whenever a routed window arrives, which also covers the Forward button
+and a pasted deep link, neither of which goes through `open` or `focus`. Worth
+carrying forward: P2-01 was the second half of this bug and it looked fixed
+because it was tested on the screens where a routed window was already open.
+
 **2026-08-25, second pass.** The HOME / ABOUT / CV restructure (P2-17), the four
 bucket stack (P2-18) and the menu bar overflow it caused (P2-19). The
 availability line is answered and is real copy now. What is still blank and

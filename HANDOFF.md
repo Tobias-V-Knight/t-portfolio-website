@@ -143,7 +143,13 @@ Per-ticket detail and root causes are in `TICKETS.md`. The two worth knowing abo
   every icon. LUFFY is desktop scenery now and never opens below 768px.
 
 ### Bugs still open
-None from Pass 2. New ones go in `TICKETS.md` with a fresh id.
+None from Pass 2. New ones go on GitHub Issues, with the record in `TICKETS.md`.
+
+**Issue #1 (fixed, in `review`).** HOME opened inactive on `/`: the default
+window order made LUFFY the top of the stack, and the top of that stack is both
+the front of the z order and the active window, so the movie held focus on the
+one screen everybody lands on. Order is LUFFY, HOME, routed stack now. If you
+touch `openWindows` in `src/system/windows.ts`, that ordering is load bearing.
 
 ### Enhancements (SHOW / ASK)
 - **MSBA window stack tags** — render each course's stack as tag/hashtag/code blocks (like the placeholder

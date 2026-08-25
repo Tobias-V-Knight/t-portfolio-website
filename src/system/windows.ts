@@ -262,7 +262,7 @@ export function useWindowManager() {
   // Luffy is a second non-routed window that also opens on load: a movie already
   // playing in the corner. Managed like the intro (own open + position state).
   // Not on a phone. On mobile every window is fixed and full bleed, and Luffy
-  // is the top of the stack on load, so it covered HOME and every icon behind
+  // was the top of the stack on load, so it covered HOME and every icon behind
   // it: the mobile site opened on a silent cartoon and nothing else. Luffy is
   // desktop scenery, a movie playing in the corner of somebody's computer, and
   // a corner is exactly what a phone does not have. P2-04.
@@ -293,6 +293,12 @@ export function useWindowManager() {
   // navigation type is what tells them apart. Getting this wrong makes
   // clicking a background window silently close the windows on top of it.
   useEffect(() => {
+    // A routed window always arrives in front. `open` and `focus` already
+    // clear this, but the Forward button and a pasted deep link reach the
+    // stack through here without touching either, and a project window that
+    // opens underneath HOME is the same bug as HOME opening underneath the
+    // movie.
+    if (routeId) setRaised(null)
     setStack((prev) => {
       if (!routeId) return []
       const existing = prev.findIndex((w) => w.id === routeId)
@@ -417,10 +423,17 @@ export function useWindowManager() {
       ? [{ id: 'intro', ...introPos, def: byId.get('intro') as WindowDef }]
       : []
 
-    // Default order: the intro sits underneath anything routed, because it is
-    // scenery on first load and should never fight a project window for
-    // attention. Luffy floats just above it, still under any routed window.
-    const base = [...introWin, ...luffyWin, ...list]
+    // Default order, back to front: Luffy, then HOME, then anything routed.
+    //
+    // Focus and z order are the same thing here, the way they are on a real
+    // desktop: the last entry is on top and is the window that draws its
+    // pinstripes. So the order below decides what has focus on a cold load,
+    // and Luffy used to win it by construction. That put a silent cartoon in
+    // front of the site's own front door and left HOME greyed out on the one
+    // screen every visitor lands on. HOME sits above the movie now, and both
+    // still sit under anything routed, because a project window a visitor
+    // asked for outranks scenery that opened by itself.
+    const base = [...luffyWin, ...introWin, ...list]
 
     // Unless one of them was clicked, in which case it comes to the front like
     // any other window would. Clicking a window and watching nothing happen is
