@@ -588,9 +588,10 @@ export const stack: StackGroup[] = [
       'TypeScript',
       'Azure AI Foundry',
       'Supabase',
-      'MongoDB',
-      'Pinecone',
-      'Firebase',
+      // MongoDB, Pinecone and Firebase came off 2026-08-25. ChromaDB and
+      // Supabase are what actually runs in production, and listing three more
+      // datastores used once each says there is no default, which is the
+      // opposite of what someone hiring for a data problem wants to hear.
       'AWS',
       'Spark / Hadoop',
       'Tableau',
@@ -601,25 +602,43 @@ export const stack: StackGroup[] = [
     id: 'techniques',
     label: 'TECHNIQUES',
     note: 'what is under the hood',
+    // Trimmed and sharpened 2026-08-25. Out: logistic regression, KNN and
+    // 'statistical analysis'. The first two are stats 101 and signal
+    // coursework; the third was the worse problem, because a generic label is
+    // a claim anyone can make.
+    //
+    // In: the named methods that replaced it. 'Causal inference' and
+    // 'difference in differences' say something specific and checkable in a
+    // way that 'statistical analysis' never did, and they are the half of T's
+    // training that the applied AI framing was hiding.
     items: [
       'XGBoost',
-      'clustering / k means',
+      'causal inference',
+      'difference in differences',
       'time series forecasting',
       'prompt engineering',
       'prompt evaluation',
-      'KNN',
-      'logistic regression',
-      'matrix factorization',
+      'clustering / k means',
       'A/B testing',
-      'statistical analysis',
+      'matrix factorization',
       'scikit-learn',
+      // Ordered last on purpose so it never surfaces on HOME, which shows the
+      // first HOME_TAGS of each group. These are public claims about what T
+      // can do, so rule 9 applies: he names them, nobody names them for him.
+      '[ the other advanced stats you have actually done ]',
     ],
   },
   {
     id: 'shipping',
     label: 'SHIPPING IT',
     note: 'what puts it in production',
+    // On prem leads as of 2026-08-25, the day CSI went live on the client's
+    // own Windows Server and became reachable across their network. Shipping
+    // to somebody else's infrastructure, on their terms, is a harder and rarer
+    // claim than any managed platform on this list, so it goes first.
     items: [
+      'on prem deployment',
+      'Windows Server services',
       'CI/CD',
       'nginx',
       'cron jobs',
