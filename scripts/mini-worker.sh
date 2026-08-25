@@ -11,7 +11,7 @@
 #   Ctrl-b d          to detach
 #   tmux attach -t worker
 #
-# One issue only:      ./mini-worker.sh 2
+# Specific issues:     ./mini-worker.sh 1 3
 # See what it would do: DRY_RUN=1 ./mini-worker.sh
 #
 set -euo pipefail
@@ -22,7 +22,7 @@ export PATH=/opt/homebrew/bin:/opt/homebrew/sbin:$PATH
 
 REPO_DIR="${REPO_DIR:-$HOME/dev/t-portfolio-website}"
 DRY_RUN="${DRY_RUN:-0}"
-ONLY_ISSUE="${1:-}"
+ONLY_ISSUES="$*"
 
 cd "$REPO_DIR"
 
@@ -36,8 +36,8 @@ if [[ -n "$(git status --porcelain)" ]]; then
   exit 1
 fi
 
-if [[ -n "$ONLY_ISSUE" ]]; then
-  numbers="$ONLY_ISSUE"
+if [[ -n "$ONLY_ISSUES" ]]; then
+  numbers="$ONLY_ISSUES"
 else
   numbers=$(gh issue list --label agent-ready --state open --json number --jq '.[].number')
 fi
@@ -78,8 +78,15 @@ You are working on GitHub issue #$n in this repository, on branch $branch.
 
 Read CLAUDE.md first, then HANDOFF.md. Follow every rule in them. The ones that
 bite most often: no dashes in prose, never invent facts about Tobias or his
-projects (leave a visible blank instead), screenshot anything visual, verify in
-a browser at 1440 and 390, and route every font-size through the type tokens.
+projects (leave a visible blank instead), and route every font-size through the
+type tokens.
+
+On CLAUDE.md rules 5 and 6, show do not describe and verify in a browser: this
+machine has no browser tool. You cannot screenshot and you cannot load the
+site. Do NOT claim visual verification you did not do. Instead, end your commit
+message with a line beginning "UNVERIFIED:" listing exactly what a human still
+has to look at. Someone with a browser checks it on the PR. Claiming a clean
+visual check you could not run is worse than saying you could not run it.
 
 Here is the issue.
 
