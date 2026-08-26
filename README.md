@@ -33,6 +33,9 @@ that gets consulted before a new file is ever created.
 | `CLAUDE.md` | Working rules | Decisions taken, constraints, traps, and the rules for how work happens here. The first thing any session reads |
 | `HANDOFF.md` | The map | State, what changed last session, next-up (bugs/enhancements/agents), open decisions, links. Read after CLAUDE.md |
 | `TICKETS.md` | The board | Every unit of work, its mode (AFK, SHOW, ASK) and its status. Also the list of what is blocked on T |
+| `CONTEXT.md` | The vocabulary | What this repo means by case study, archive entry, evidence, the shape, the measure, set dressing, blank. Read before writing copy or naming a component |
+| `docs/agents/` | Skill configuration | Where issues live, how the triage labels map, and the domain doc layout. Written by `setup-matt-pocock-skills`; the engineering skills read these |
+| `docs/adr/` | Decisions, with reasoning | One file per architectural decision: what was chosen, why, and what was rejected on what grounds. Numbered, append only, not edited after acceptance |
 | `assets_src/` | Raw source media | Original videos/photos (gitignored); the converted, served copies live in `public/` |
 | `docs/` | Extractor output | Raw material gathered from other repos, one file per project. See its own section below |
 | `index.html` | Page shell | Title, description, the Open Graph tags that drive the LinkedIn preview, and the Google Fonts link for Silkscreen and Inter |
@@ -63,14 +66,14 @@ redacted.
 | `App.tsx` | The desktop | Owns the five desktop icons, builds the menus, renders the open windows, and runs the menu bar clock |
 | `.github/workflows/ci.yml` | CI | Install, typecheck, build, on every PR and push to main. The `verify` job is the required check on the protected `main` branch |
 | `scripts/mini-worker.sh` | The Mac Mini worker | Pulls `agent-ready` issues off GitHub, works one per branch, opens a PR, comments on the issue. Never touches main. Run it inside tmux |
-| `data/content.ts` | All copy and data | Every word on the site. Split three ways since 2026-08-25: `home` (professional), `about` (the person), `cv` (the record), plus `stack` (the four skill buckets) and `capabilities` (the long form). Placeholder copy is flagged here and the flag renders on screen |
+| `data/content.ts` | All copy and data | Every word on the site. Split three ways: `home` (professional), `about` (the person), `resume` (the record). Skills are two levels, `skills` (eight discipline groups) and `toolbox` (named technologies), plus `capabilities` (the long form). Placeholder copy is flagged here and the flag renders on screen |
 | `system/windows.ts` | Window manager | The window registry and the hook that reconciles open windows with the URL. The routing model is documented in `CLAUDE.md` and in the file itself |
 | `components/Window.tsx` | Window chrome | Title bar, close box, pointer dragging, focus and z order. Drag is desktop only |
 | `components/MenuBar.tsx` | Menu bar | The menus, including the Go menu, which is the fast path to the work for anyone who does not want to explore |
 | `components/Icons.tsx` | Desktop icons | OG-Mac SVGs: folder, document, 3.5" floppy, ridged trash, road, paddle, TV, film (movie), drawn crisp-edged |
 | `components/ErrorBoundary.tsx` | Crash guard | Catches a component error and renders a message instead of blanking the whole app |
 | `components/VideoJsPlayer.tsx` | Movie player | StrictMode-safe Video.js player used by the LUFFY.MOV window (B&W via CSS). Cycles the `moviePlaylist` clips in order and repeats |
-| `windows/Panels.tsx` | Small windows | HOME (professional snapshot + stack rows), ABOUT (the person), CV (capabilities, full skills, history), Contact, Anime, Zippy, the MSBA panel, the Trash Easter egg, the placeholder tag + blank renderer |
+| `windows/Panels.tsx` | Small windows | HOME (professional snapshot + skill rows), ABOUT (the person), RESUME (capabilities, core skills, toolbox, history), Contact, Anime, Zippy, the MSBA panel, the Trash Easter egg, the placeholder tag + blank renderer |
 | `windows/Work.tsx` | PORTFOLIO window | Finder list view (Name / Date Modified / Kind / Size), one icon row per project; case-study rows open a window |
 | `components/ZoomRect.tsx` | The zoom rectangle | The classic Mac open and close animation: an outlined rectangle stepping from an icon out to a window and back. Its effect is mount only, and the comment in it explains why that is load bearing rather than lazy |
 | `components/Boot.tsx` | Boot sequence | A full screen ML training run: the import stack, then epochs with a jittering loss, then a prompt that waits for Enter. Plays once per session, skips on any key, homepage only. Never blocks content, because the desktop is already mounted underneath it |

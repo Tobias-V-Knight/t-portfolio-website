@@ -114,6 +114,29 @@ fact that the human had no gate at all.
 * Cloudflare builds non production branches too, so **every PR has a live
   preview URL**. That is how a `show` labelled ticket gets looked at.
 
+## Agent skills
+
+### Issue tracker
+
+GitHub Issues on `Tobias-V-Knight/t-portfolio-website`, via the `gh` CLI. Pull
+requests are **not** a triage surface: every PR here is T's or the Mac Mini's,
+so they are in flight work rather than incoming requests. See
+`docs/agents/issue-tracker.md`, which also defines what makes an issue
+`agent-ready`.
+
+### Triage labels
+
+The repo's own vocabulary, mapped to the five canonical roles:
+`needs-spec` = needs-triage, `needs-info`, `agent-ready` = ready-for-agent,
+`ready-for-human`, `wontfix`. `show` and `content` are not triage states and
+sit alongside one. See `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+Single context: `CONTEXT.md` at the root, `docs/adr/` beside it. Read
+`CONTEXT.md` before writing copy or naming a component, and the ADRs before
+reopening a decision. See `docs/agents/domain.md`.
+
 ## Rules for working
 
 1. **No dashes in prose.** Not in this repo's docs, not in site copy, not in
