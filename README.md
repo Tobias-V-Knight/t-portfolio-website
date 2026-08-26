@@ -34,6 +34,7 @@ that gets consulted before a new file is ever created.
 | `HANDOFF.md` | The map | State, what changed last session, next-up (bugs/enhancements/agents), open decisions, links. Read after CLAUDE.md |
 | `TICKETS.md` | The board | Every unit of work, its mode (AFK, SHOW, ASK) and its status. Also the list of what is blocked on T |
 | `assets_src/` | Raw source media | Original videos/photos (gitignored); the converted, served copies live in `public/` |
+| `docs/` | Extractor output | Raw material gathered from other repos, one file per project. See its own section below |
 | `index.html` | Page shell | Title, description, the Open Graph tags that drive the LinkedIn preview, and the Google Fonts link for Silkscreen and Inter |
 | `vite.config.ts` | Build config | Sets the base path from `VITE_BASE`, which is what differs between the custom domain and the github.io preview URL |
 | `package.json` | Manifest | React 19, React Router 7, Vite 8, TypeScript. No UI library and no CSS framework |
@@ -66,6 +67,18 @@ that gets consulted before a new file is ever created.
 | `windows/Project.tsx` | Project window | The twelve section project template. Sections render only when the data has them, which is how Gravl stays outcome only |
 | `windows/Photos.tsx` | Photo gallery, parked | Built, then taken off the desktop on 2026-08-25 (P2-03) because `public/photos/` has nothing real in it. Unreferenced by design; one entry in `windowDefs` puts it back |
 | `styles/system.css` | The entire visual language | Palette tokens, bevels, window chrome, menu bar, type scale, focus states, and the mobile layout. Every colour in the codebase comes from here |
+
+### `docs/extracted/`
+
+One markdown file per project walked in another repo. These are **not site
+copy**. They are the evidence a case study window gets written from: every
+number cited by path back to the source repo, and anything that was never
+recorded written as a visible `[ not recorded ]` rather than reconstructed. Read
+one before writing project copy, never instead of it.
+
+| File | What it is | What it does |
+|---|---|---|
+| `nlp-material-classifier.md` | The marquee technical project | Walked from `~/dev/nlp-material-classifier` on 2026-08-25. The problem quantified, the hand adjudicated gold set, the five lane accuracy table, the two versions of the eval harness, the lessons, and the nine charts worth generating with what produces each. Three lanes have real numbers, three are blank on purpose |
 
 ### `public/`
 
