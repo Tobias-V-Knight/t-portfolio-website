@@ -6,7 +6,8 @@ import { DocIcon, FolderIcon, PaddleIcon, RoadIcon } from '../components/Icons'
 // Kind / Size, one row per project, each with its own icon.
 //
 // Only the case studies are listed here. Everything else lives in an ARCHIVE
-// folder, which is one row that opens its own window.
+// folder, which is one row that opens its own window. Everything in that folder
+// opens too: the archive is about prominence, not about access.
 //
 // The curation is the point rather than a shortcut. A Finder list puts every
 // row on identical footing, which is exactly why the metaphor works and
@@ -26,7 +27,7 @@ const iconFor = (slug: string) => ICON[slug] ?? DocIcon
 const sizeFor = (seed: string) => `${((seed.length * 37) % 900) + 24} K`
 
 const kindFor = (p: (typeof projects)[number]) =>
-  p.hasWindow ? 'Case Study' : categories.find((c) => c.id === p.categories[0])?.label ?? 'Document'
+  p.caseStudy ? 'Case Study' : categories.find((c) => c.id === p.categories[0])?.label ?? 'Document'
 
 function FinderHead() {
   return (
@@ -44,22 +45,24 @@ function ProjectRow({
   onOpen,
 }: {
   project: (typeof projects)[number]
-  onOpen?: (slug: string) => void
+  onOpen: (slug: string) => void
 }) {
   const Icon = iconFor(project.slug)
-  const openable = project.hasWindow && Boolean(onOpen)
 
-  // An archived project is a plain row, not a disabled button. A greyed out
-  // control that swallows a click reads as a case study that is broken, which
-  // is the opposite of the intent. A row that was never a control reads as a
-  // file that is simply listed.
-  const Tag = openable ? 'button' : 'div'
-
+  // Every row opens, archived or not. A Finder list makes a promise on every
+  // row, and a file that does nothing when you click it reads as broken rather
+  // than as unimportant. The archive says these are not the headline; it does
+  // not say they are off limits.
+  //
+  // Depth is decided by the data, not here. `ProjectPanel` renders a section
+  // only when the project has it, so a thin entry opens a short window on its
+  // own and there is no second template to keep in step.
   return (
-    <Tag
+    <button
       className="mac-finder-row"
       role="listitem"
-      {...(openable ? { onClick: () => onOpen?.(project.slug), title: `Open ${project.title}` } : {})}
+      onClick={() => onOpen(project.slug)}
+      title={`Open ${project.title}`}
     >
       <span className="mac-finder-name">
         <Icon className="mac-finder-icon" />
@@ -68,7 +71,7 @@ function ProjectRow({
       <span className="mac-finder-cell">{project.year}</span>
       <span className="mac-finder-cell">{kindFor(project)}</span>
       <span className="mac-finder-cell">{sizeFor(project.slug)}</span>
-    </Tag>
+    </button>
   )
 }
 
@@ -114,8 +117,14 @@ export function WorkPanel({
   )
 }
 
-// The ARCHIVE window. Same Finder chrome, nothing in it opens.
-export function ArchivePanel({ onStatus }: { onStatus: (s: string) => void }) {
+// The ARCHIVE window. Same Finder chrome, and everything in it opens.
+export function ArchivePanel({
+  onOpenProject,
+  onStatus,
+}: {
+  onOpenProject: (slug: string) => void
+  onStatus: (s: string) => void
+}) {
   useEffect(() => {
     onStatus(`${archiveProjects.length} items`)
   }, [onStatus])
@@ -125,7 +134,7 @@ export function ArchivePanel({ onStatus }: { onStatus: (s: string) => void }) {
       <FinderHead />
       <div role="list">
         {archiveProjects.map((p) => (
-          <ProjectRow key={p.slug} project={p} />
+          <ProjectRow key={p.slug} project={p} onOpen={onOpenProject} />
         ))}
       </div>
     </div>
