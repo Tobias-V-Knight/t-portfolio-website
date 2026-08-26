@@ -57,11 +57,8 @@ redacted.
 | `extracted/career.md` | Career extraction (issue #5) | Role, employer, dates and one line per position, every claim citing the file it came from. Resolved the "AC Surety Delivery Associates" ambiguity: two employers, and two names in the repo were mis-transcriptions. Wired into `resume.experience` on 2026-08-26 |
 | `extracted/msba.md` | MSBA coursework extraction (issue #6) | Every course found in the two iCloud coursework folders: code, name, what the work shows, a 3 to 5 item stack, and the file each fact came from. Four are on the site, the rest are staged here. Read before editing `msba` in `data/content.ts` |
 | `extracted/nlp-material-classifier.md` | Material classifier extraction (issue #4) | The full accuracy table from that repo, every figure cited by path, blanks left as `[ not recorded ]`. The source for the NLP case study window |
-<<<<<<< HEAD
 | `extracted/roleradar.md` | RoleRadar extraction (issue #46) | The agent topology described concretely, the Foundry integration read honestly, and the finding that the AutoGen GroupChat is built and never driven. No credentials, and the target company list is redacted to a count. The source for the RoleRadar case study window |
-=======
 | `extracted/pickleball-iq.md` | Pickleball IQ extraction (issue #45) | The joint venture with Kameron Lymon, walked across the iCloud knowledge base and all three repos. What it is, the system, the honest stack (MongoDB, Pinecone and Firebase are all real here), the two different video pipelines, what was measured and what was not, and the product story. Contribution is drawn from what Tobias has written about his own work, never from commit counts |
->>>>>>> main
 
 ### `src/`
 
@@ -97,11 +94,8 @@ one before writing project copy, never instead of it.
 | File | What it is | What it does |
 |---|---|---|
 | `nlp-material-classifier.md` | The marquee technical project | Walked from `~/dev/nlp-material-classifier` on 2026-08-25. The problem quantified, the hand adjudicated gold set, the five lane accuracy table, the two versions of the eval harness, the lessons, and the nine charts worth generating with what produces each. Three lanes have real numbers, three are blank on purpose |
-<<<<<<< HEAD
 | `roleradar.md` | The agent orchestration project | Walked from the MSBA 6511 final project folder in iCloud on 2026-08-26. The four agent objects and what each owns, the handoff that is a function call rather than a conversation, why AutoGen, what Foundry actually provides here, an evaluation section whose answer is that nothing was ever scored, and ten failure modes. Also checks nine lines of current `content.ts` copy against the source: one is contradicted outright, two overstate, three are supported, and three are blanks, two of which the walk can now fill |
-=======
 | `pickleball-iq.md` | Second in the case study order | Walked on 2026-08-26 across the iCloud PB IQ knowledge base and all three repos in `~/dev/pbiq`. Reads the knowledge base first, because the code holds none of the intent. Covers the joint venture with Kameron Lymon, the three repo system and the one architecture decision that explains how they relate, the stack as it actually is, the two different things called the video pipeline, and the measured numbers. Retention, latency and recommender accuracy are `[ not recorded ]`, which is a finding. No player or member data |
->>>>>>> main
 
 ### `public/`
 
