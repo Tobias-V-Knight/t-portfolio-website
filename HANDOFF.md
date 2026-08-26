@@ -15,8 +15,7 @@ Last rewritten **2026-08-26**.
 
 **Live at `tobiasknight.dev`**, Cloudflare Workers, deploying on every merge to
 `main`. `main` is protected: no direct push from anyone including T, PR plus
-green CI. `main` is at `52c3a94`, 48 commits, working tree clean, **no open
-PRs**.
+green CI. `main` is at `f0eb74b`, working tree clean.
 
 Static Vite + React + TypeScript. The site is a classic Macintosh desktop.
 
@@ -77,35 +76,26 @@ Cloudflare and the GitHub Pages machinery is retired.
 config). Priority labels P0 to P3 and backlog, with #63 carrying the dependency
 order.
 
-## Next, in order — T's sequence for the next session
+## Next, in order
 
-**1. Grill before building.** `grilling` was written on 2026-08-26 and is now
-installed at `~/.claude/skills/grilling/`. `grill-with-docs` delegates to it.
-Two things are worth grilling before any code: the ordering below, and #64's
-design, because `OWNS:` is one answer to the collision problem and not
-obviously the best one.
+**The two infrastructure tickets are done.** #64 the collision guard and #71 the
+split both merged on 2026-08-26. `main` is at `f0eb74b`.
 
-**2. #64, the collision guard. P0.** The worker can queue two tickets that
-rewrite the same file. It pulls fresh `main` before each ticket, but merging is
-human gated, so ticket two branches from a `main` without ticket one. Both PRs
-come back green and only one can merge. **This already cost a completed
-ticket.**
+**1. The four case studies. #56, #57, #58, #59.** This is the actual goal. All
+`agent-ready`, all following CSI's shape, and after #71 they touch no file in
+common, so they can run as one Mini batch. A dry run confirms no collisions.
+**#57 ships a blank marquee number unless the LoRA eval runs first.**
 
-**3. Worktrees, for parallel tracks.** Once collisions are impossible by
-construction, running non colliding tickets at once is safe. The worker is a
-serial `for` loop today: a four ticket batch took roughly 40 minutes of wall
-clock that could have been 12. **Order matters here** — worktrees before the
-guard would ship isolation that does not fix the actual bug, since this was a
-stale base rather than a concurrent write.
+**2. Worktrees, for parallel tracks.** Now safe, because collisions are caught
+by construction. The worker is a serial `for` loop and a four ticket batch takes
+roughly 40 minutes that could be 12. Not yet a ticket.
 
-**4. Re-prioritise the whole board**, after the two above land. 24 issues, and
-the P0 to P3 labels were assigned before the case study system existed. #63
-carries the current dependency order and should be rewritten rather than
-patched.
+**3. The visual backlog**, after the content: #62 the oversized team photo, #27
+the PORTFOLIO columns, #12 the mobile type overrides, #21 mobile as a designed
+thing. #28 and #2 collide with nothing and can ride along in any batch.
 
-**Then the content**, which is the actual goal: #56 to #59, the four case
-studies. All `agent-ready`, all following CSI's shape. **All four rewrite
-`content.ts`, so they are exactly the batch #64 exists to protect.**
+#63 carries the dependency order and was rewritten on 2026-08-26. The P0 to P3
+labels predate the case study system and are not authoritative.
 
 ## Blocked on T, and these gate real work
 

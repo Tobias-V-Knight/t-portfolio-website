@@ -112,3 +112,50 @@ site with no blanks in it.
 **Scoreboard, end of day.** 48 commits on `main`. 21 PRs merged. 12 tickets
 worked by the Mini, 11 shipped. Six extractions. One P0 open: the collision
 guard.
+
+## 2026-08-26, later — the guard, and removing the thing it guards
+
+**Grilled #64 before building it, and the grilling changed the design three
+times.**
+
+The sharpest finding was that #64 contradicted itself. It rejects "wait for the
+merge before the next ticket" because an overnight batch would complete one
+ticket, then specifies refuse-the-batch, which on the very next queue does
+exactly that: all four case studies claim `content.ts`, so the batch is refused
+and the two tickets that collide with nothing do not run either. The guard's
+first act would have been to stop the work it exists to protect. It skips the
+later ticket instead.
+
+**`OWNS:` alone is not enough, and the incident proves it.** #37 rewrote
+`Project.tsx` while being titled "CSI as the reference case study", so its
+honest declaration would have read `content.ts` and the guard would have waved
+it through. A declaration catches what somebody anticipated. The real diff,
+checked against every open PR before one is opened, catches what nobody did, and
+catches collisions with PRs left open by an earlier run of the script, which a
+per invocation scan structurally cannot.
+
+**A collided branch is discarded, not held.** Holding the branch holds the stale
+base with it, so merging it later reintroduces the same problem. Re-running is
+the only thing that resolves it, and re-running #37 that way is what produced
+the better result earlier in the day.
+
+**Then the better move, which was not to arbitrate the contention at all.** The
+four case studies collide only because every word on the site lived in one 1091
+line file. Thirteen projects are now one file each, collected by a glob and
+sorted on `order`. Order lives on the project rather than in an index listing
+every slug, because that index would be a file every case study ticket edits,
+which is the thing being removed.
+
+**The diagram half was the part worth catching.** `DiagramId` was a closed union
+and the registry was one object literal, so NLP and RoleRadar would both have
+edited both lines and the four would still have been serialised. A split that
+stops at the copy buys less than it looks. Diagrams now register by existing as
+a file.
+
+Both landed. A dry run over #56 to #59 now reports no collisions, where the same
+four tickets an hour earlier produced three skips.
+
+**Also found: #36 had been done for hours and was still open and still
+`agent-ready`.** `csi-shape` shipped inside #65. An unchanged worker run would
+have handed a finished ticket to an agent. A ticket that ships inside another
+ticket's PR does not close itself.
