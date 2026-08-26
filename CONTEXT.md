@@ -116,3 +116,20 @@ case study window is a statement about what he built.
 Copy nobody has signed off, flagged with `copyState: 'PLACEHOLDER'`, which
 renders a visible tag on the window. Distinct from a blank: a blank is one
 missing fact, a placeholder is a whole section awaiting approval.
+
+## Collision
+
+Two branches that rewrite the same file and cannot both merge, even though both
+are correct and both are green.
+
+Not a race. The worker pulls fresh `main` before every ticket, but merging is
+human gated, so the second ticket branches from a `main` that does not contain
+the first and will not until somebody clicks merge. Serial execution does not
+prevent a collision, it only delays finding one.
+
+`OWNS: path` in a ticket body declares the files that ticket expects to rewrite.
+The worker refuses to queue two tickets claiming one file, and separately
+refuses to open a PR whose real diff overlaps an open PR. See
+[ADR-0005](docs/adr/0005-collision-guard.md), and
+[ADR-0006](docs/adr/0006-one-file-per-project.md) for the split that removes the
+contention rather than arbitrating it.
