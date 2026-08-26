@@ -167,6 +167,7 @@ Things T has decided he wants but has deliberately parked.
 | Q-10 | Employer names | **Answered by the extraction, 2026-08-25, issue #5. Needs T's yes, then a wire up ticket.** It is two employers, and the documents call them Accenture and Delivery Associates. "Formative Technologies" is 4MATIV Technologies, which is how 4MATIV sounds spoken aloud. Neither "AC Surety" nor "Formative Technologies" appears anywhere in `04_career`, while 4MATIV and Accenture are in every resume and CV in it. Titles, dates and the sources are in `docs/extracted/career.md`. It stays an identification until T confirms, because there is no document string to match "AC Surety" against |
 | Q-11 | LinkedIn URL | The contact window has a dashed placeholder where the link goes |
 | Q-08 | Every blank in the copy | Thirteen project articles now exist with every unknown marked as a visible yellow slot. Each one is a question with a specific answer only T has |
+| Q-13 | EDA GED is on the list of six and is not a project | Issue #38 named six case studies and only five exist in `projects`. EDA GED is the GED Testing Service case from MSBA 6411, 304,137 candidates, phi coefficient then a logistic regression over eleven prep methods, written up in `docs/extracted/msba.md`. Creating the entry is adding a project, which #38 put out of scope and #11 owns. Until T rules, the PORTFOLIO window shows five case studies rather than six |
 | Q-07 | The category taxonomy is too generous | AI / ML currently returns 10 of 13 projects, so the chip barely filters. Gravl, Pickleball IQ and CSI are tagged both product and AI / ML. T should decide whether a project gets one primary category or many |
 
 ## Log
@@ -227,3 +228,23 @@ so the chart list names what produces each number and what still has to be
 written to produce each image. Worth carrying forward: the extractor's value was
 mostly in what it refused to fill in, and five open threads for T are listed at
 the bottom of the file.
+
+**2026-08-26, issue #38.** The PORTFOLIO window is curated. Thirteen of the
+fourteen projects had `hasWindow: true`, so every row opened a full case study
+and `CSI BID INTELLIGENCE` sat at the same visual weight as `DOGS V CATS`. Eight
+projects are demoted to archive entries, the array is reordered so the case
+studies lead in T's ranking, and an `ARCHIVE` divider splits the list. Nothing
+was deleted: the case study copy stays in `content.ts` behind the flag, so a
+promotion is one boolean and a move up the array.
+
+Two things are worth carrying forward. First, an archive entry is a plain row
+rather than a disabled button, because a greyed out control that swallows a
+click reads as a broken case study, and the row was never a control. Second,
+demoting a project takes its route with it, so `/projects/dogs-v-cats` and the
+seven other former routes now land on the desktop with no window open rather
+than on a case study. Nothing linked to them, and they were never published, but
+that is the trade the flag makes.
+
+Only five of the six named case studies exist. EDA GED is not a project entry
+and never has been, so it is Q-13 rather than something this ticket could
+finish.

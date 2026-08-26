@@ -11,7 +11,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useLocation, useNavigate, useNavigationType } from 'react-router-dom'
-import { windowProjects } from '../data/content'
+import { caseStudyProjects } from '../data/content'
 
 export type WindowKind =
   | 'intro'
@@ -154,9 +154,10 @@ export const windowDefs: WindowDef[] = [
     height: 286,
     spawn: { x: 0.75, y: 0.58 },
   },
-  // Only projects with a full case study get a window. Everything else is a
-  // row in the WORK list, which is not the same thing as a thin window.
-  ...windowProjects.map((p, i) => ({
+  // Only the case studies get a window, and therefore only they get a route.
+  // An archive entry is a row in the PORTFOLIO list and nothing else, which is
+  // not the same thing as a thin window.
+  ...caseStudyProjects.map((p, i) => ({
     id: `project:${p.slug}`,
     title: p.windowTitle,
     kind: 'project' as const,

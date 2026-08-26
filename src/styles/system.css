@@ -1057,20 +1057,37 @@ body {
   color: inherit;
 }
 
-.mac-finder-row:nth-child(even) {
+/* Striping is driven by an attribute rather than :nth-child because the ARCHIVE
+   divider splits the rows into two lists, and nth-child would restart the
+   parity below it. The Finder stripes the folder, not each group in it. */
+.mac-finder-row[data-alt] {
   background: #f0eee9;
 }
 
-.mac-finder-row:not(:disabled) {
+/* Only a case study is a button, so only a case study takes a pointer and a
+   selection highlight. An archive entry is a row, not a dead control. */
+button.mac-finder-row {
   cursor: pointer;
 }
 
-.mac-finder-row:not(:disabled):hover {
+button.mac-finder-row:hover,
+button.mac-finder-row:focus-visible {
   background: #cdd2f0;
 }
 
-.mac-finder-row:disabled {
-  color: #8a8a8a;
+/* The ARCHIVE divider. A Finder group header: full width, the same chrome face
+   as the column heads, and rules top and bottom so the eye reads a break in the
+   list rather than another file. */
+.mac-finder-divider {
+  padding: 6px 10px;
+  background: var(--mac-face);
+  border-top: 1px solid var(--mac-line);
+  border-bottom: 1px solid var(--mac-line);
+  font-family: var(--mac-chrome);
+  font-size: var(--type-chrome-sm);
+  line-height: var(--leading-flat);
+  letter-spacing: 0.04em;
+  color: var(--mac-ink-soft);
 }
 
 .mac-finder-name {
