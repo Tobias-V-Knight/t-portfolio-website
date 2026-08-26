@@ -57,6 +57,7 @@ redacted.
 | `extracted/career.md` | Career extraction (issue #5) | Role, employer, dates and one line per position, every claim citing the file it came from. Resolved the "AC Surety Delivery Associates" ambiguity: two employers, and two names in the repo were mis-transcriptions. Wired into `resume.experience` on 2026-08-26 |
 | `extracted/msba.md` | MSBA coursework extraction (issue #6) | Every course found in the two iCloud coursework folders: code, name, what the work shows, a 3 to 5 item stack, and the file each fact came from. Four are on the site, the rest are staged here. Read before editing `msba` in `data/content.ts` |
 | `extracted/nlp-material-classifier.md` | Material classifier extraction (issue #4) | The full accuracy table from that repo, every figure cited by path, blanks left as `[ not recorded ]`. The source for the NLP case study window |
+| `extracted/eda-6411.md` | The two EDA 6411 live cases (issue #47) | 4mativ GPS fleet analytics and the GED Testing Service segmentation, one file because they share a course and a folder. Method, architecture and T's role in full; both clients' performance figures withheld and cited by path, because both were real engagements and this repo is public. Answers the causal inference question with a no. Carries the proposed `projects` entry for the GED case, which is the missing sixth case study |
 
 ### `src/`
 
@@ -92,6 +93,7 @@ one before writing project copy, never instead of it.
 | File | What it is | What it does |
 |---|---|---|
 | `nlp-material-classifier.md` | The marquee technical project | Walked from `~/dev/nlp-material-classifier` on 2026-08-25. The problem quantified, the hand adjudicated gold set, the five lane accuracy table, the two versions of the eval harness, the lessons, and the nine charts worth generating with what produces each. Three lanes have real numbers, three are blank on purpose |
+| `eda-6411.md` | The two live cases from MSBA 6411 | Walked from the EDA 6411 and MSBA Student Consultant folders in iCloud on 2026-08-26. **Read its publishing line before copying any number out of it:** these were paid client engagements, this repo is public, and every performance figure for either client is deliberately withheld and cited by path instead. What is in it is method, architecture, dataset scale, findings stated as relative gaps, and T's role where a document names him. Ends with the proposed `projects` values for the GED entry and six questions only T can answer |
 
 ### `public/`
 

@@ -167,12 +167,58 @@ Things T has decided he wants but has deliberately parked.
 | Q-10 | Employer names | **Answered by the extraction, 2026-08-25, issue #5. Needs T's yes, then a wire up ticket.** It is two employers, and the documents call them Accenture and Delivery Associates. "Formative Technologies" is 4MATIV Technologies, which is how 4MATIV sounds spoken aloud. Neither "AC Surety" nor "Formative Technologies" appears anywhere in `04_career`, while 4MATIV and Accenture are in every resume and CV in it. Titles, dates and the sources are in `docs/extracted/career.md`. It stays an identification until T confirms, because there is no document string to match "AC Surety" against |
 | Q-11 | LinkedIn URL | The contact window has a dashed placeholder where the link goes |
 | Q-08 | Every blank in the copy | Thirteen project articles now exist with every unknown marked as a visible yellow slot. Each one is a question with a specific answer only T has |
+| Q-15 | **Can the 4mativ and GED Testing Service work be published, and to what depth** | Both were real client engagements and this repo is public, so `docs/extracted/eda-6411.md` withheld every performance figure for either client and cited the path instead. 4mativ's vendor scores and fleet completion levels, GEDTS's credential rates and its named counties and boroughs. The method, the architecture and the findings stated as relative gaps are all in the file and are safe. This is the same call T made for CSI on 2026-08-23 and it gates most of both case studies. Nothing else in that file can be wired in until he rules |
+| Q-13 | Three skills on the public list that no project backs | `CAUSAL INFERENCE`, `DIFFERENCE IN DIFFERENCES` and `EXPERIMENTAL DESIGN` sit in `content.ts` line 663. Issue #47 searched both EDA live cases for them and found nothing: no design, no counterfactual, no test. Both projects go further and explicitly disclaim causation, which is good method and is not evidence of the skill. MSBA 6441 backs all three as coursework at line 558. Leave it, move the three into the coursework section where the evidence is, or go find the 6441 project, which would be a better sixth case study than either of these if it exists |
+| Q-14 | T's role on 4mativ | Nothing in the delivered folder attributes a layer, a script or a chart to any individual, and no script header carries an author. Five person team. `role: 'Team project'` is the whole of what the documents support. Contrast the GED case, where an R Markdown header names him outright |
+| Q-16 | The GED entry: title, one liner, status, categories, role | `docs/extracted/eda-6411.md` proposes all five with the reasoning and the alternatives. They are facts about his work, so they stay proposals. The entry was deliberately not created |
+| Q-17 | 4mativ is named after one of its four layers | Both the slug and the `oneLiner` say anomaly detection. The knowledge transfer document frames the project as telling a broken GPS device apart from a driver who skipped the route, which is better and is what the architecture is actually for. Rename, or widen the copy and leave the slug |
 | Q-07 | The category taxonomy is too generous | AI / ML currently returns 10 of 13 projects, so the chip barely filters. the client project, Pickleball IQ and CSI are tagged both product and AI / ML. T should decide whether a project gets one primary category or many |
 
 ## Log
 
 Closed tickets keep their row above rather than moving to an archive file. The
 board is short by design and a second file would only split the history.
+
+**2026-08-26, issue #47.** Extractor, both MSBA 6411 live cases in one file,
+`docs/extracted/eda-6411.md`. 4mativ GPS fleet analytics, which is already a
+`projects` entry with every prose field blank, and the GED Testing Service
+segmentation, which is not an entry at all and is why PORTFOLIO lists five case
+studies rather than six. `content.ts` untouched and the GED entry deliberately
+not created, per the issue: a title and a status are facts about T's work.
+
+The issue asked for an explicit answer on causal inference and the answer is no.
+Every `.md`, `.py`, `.R`, `.Rmd`, `.txt`, `.sh` and `.ipynb` file in both project
+folders, searched for difference in differences, counterfactual, randomised,
+experimental design, instrumental variable, regression discontinuity, treatment
+effect and control group. Six hits, none of them a method that was run: three are
+the teams stopping to say the finding is associational rather than causal, and
+three are the interim GED deck proposing a propensity model and A/B tests as
+future work. So `CAUSAL INFERENCE`, `DIFFERENCE IN DIFFERENCES` and
+`EXPERIMENTAL DESIGN` are live on the public skills list with nothing but MSBA
+6441 coursework behind them. Q-13.
+
+Three things worth carrying forward. **The publishing line is the real finding,
+Q-15.** Both of these are real client engagements and this repo is public, so
+the file withholds every performance figure for either client and cites the path
+instead: 4mativ's vendor scores and fleet completion levels, GEDTS's credential
+rates and its named counties. Method, architecture, dataset scale and findings
+stated as relative gaps are all in and are safe. It reads better than expected,
+because in both projects the strongest beats are judgement rather than numbers:
+the 4mativ team found its own headline completion figure was inflated by depot
+pings and corrected it downward in front of the client, shipped an unvalidated
+on time component at 2% weight with the reason written down, and named the thing
+that could invalidate its own detour finding. **T is named on the GED project and
+nowhere on 4mativ.** `mar_21_credential_analysis.Rmd` carries
+`author: "Tobias Knight"` and it is the logistic regression and weighted prep
+score that the whole segmentation runs on, plus the geocoding writeup is in his
+first person. The 4mativ folder attributes nothing to anybody, Q-14. **And two
+delivered 4mativ handoff documents disagree about the project's headline
+number**, two days apart, with the later one and the plan file agreeing against
+the earlier one. Anyone reusing the stale file quotes the wrong figure.
+
+No PDF tooling on this machine, so neither final deck was read, nor the client
+kickoff, nor the data dictionaries. What the decks say and no markdown repeats is
+not in the file, and the file says so.
 
 **2026-08-26, issue #33.** At a glance, ADR-0001 section 2, the four cell panel
 under the hero. PROBLEM, APPROACH, OUTPUT, EVIDENCE, in that fixed order, drawn
