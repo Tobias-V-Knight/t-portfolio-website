@@ -77,7 +77,7 @@ redacted.
 | `windows/Work.tsx` | PORTFOLIO and ARCHIVE | Finder list view (Name / Date Modified / Kind / Size). PORTFOLIO lists the case studies plus one ARCHIVE folder row; ARCHIVE opens its own window listing everything else, and nothing in it opens |
 | `components/ZoomRect.tsx` | The zoom rectangle | The classic Mac open and close animation: an outlined rectangle stepping from an icon out to a window and back. Its effect is mount only, and the comment in it explains why that is load bearing rather than lazy |
 | `components/Boot.tsx` | Boot sequence | A full screen ML training run: the import stack, then epochs with a jittering loss, then a prompt that waits for Enter. Plays once per session, skips on any key, homepage only. Never blocks content, because the desktop is already mounted underneath it |
-| `windows/Project.tsx` | Project window | The twelve section project template. Sections render only when the data has them, which is how Gravl stays outcome only |
+| `windows/Project.tsx` | Project window | The twelve section project template. Sections render only when the data has them, which is how the client project stays outcome only |
 | `windows/Photos.tsx` | Photo gallery, parked | Built, then taken off the desktop on 2026-08-25 (P2-03) because `public/photos/` has nothing real in it. Unreferenced by design; one entry in `windowDefs` puts it back |
 | `styles/system.css` | The entire visual language | Palette tokens, bevels, window chrome, menu bar, type scale, focus states, and the mobile layout. Every colour in the codebase comes from here |
 
@@ -125,8 +125,8 @@ one before writing project copy, never instead of it.
 | Path | What it is |
 |---|---|
 | `04_career/05_portfolio_site/2026-08-23_tk-portfolio-spec_v1.md` (iCloud) | The design document. 1070 lines. The source of truth for visual direction, information architecture and the mobile rules |
-| `04_career/05_portfolio_site/2026-08-23_tk-portfolio-handoff_v1.md` (iCloud) | The brief. Constraints, the Gravl stealth posture, the DNS record, and the traps |
-| `~/dev/gravl/README.md` | The custom domain writeup. Read before touching DNS |
+| `04_career/05_portfolio_site/2026-08-23_tk-portfolio-handoff_v1.md` (iCloud) | The brief. Constraints, the the client project stealth posture, the DNS record, and the traps |
+| `~/dev/the client project/README.md` | The custom domain writeup. Read before touching DNS |
 
 ---
 

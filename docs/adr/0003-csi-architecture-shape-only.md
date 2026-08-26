@@ -9,9 +9,9 @@ Supersedes: Q-06, open since 2026-08-23
 CSI is the flagship project and the first row in the PORTFOLIO window. ADR-0001
 puts an architecture diagram in every case study.
 
-But CSI is bid intelligence for asphalt paving contractors and Gravl is pre bid
+But CSI is bid intelligence for asphalt paving contractors and the client project is pre bid
 intelligence for construction. A detailed CSI system description is adjacent
-enough to describe Gravl's mechanism by proxy, and the Gravl constraint in
+enough to describe the client's mechanism by proxy, and the the client project constraint in
 CLAUDE.md exists precisely to prevent that: architecture, pipeline stages,
 corpus size, unit or marginal compute cost, model details, the five work
 product method, the phase and gate table and the pit and haul insight were all
@@ -44,10 +44,10 @@ internals, the corpus, cost per unit, model choices, the method, the gates.
 ## Consequences
 
 CSI gets a diagram, deliberately generic and concise, and the flagship is
-unblocked without touching the Gravl constraint, which stands unchanged.
+unblocked without touching the the client project constraint, which stands unchanged.
 
 The diagram must be reviewed against this rule before it ships. The test is
-specific: **could a competitor build something meaningfully closer to Gravl
+specific: **could a competitor build something meaningfully closer to the client project
 having seen this?** If the answer is anything but a confident no, cut detail
 until it is.
 

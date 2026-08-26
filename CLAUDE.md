@@ -65,29 +65,34 @@ site**, framed as: the highway contractor, what was built, the architecture,
 and never the code.
 
 **Further cleared 2026-08-24.** CSI told T he may post the work publicly to get
-jobs, no NDA was signed, and the Gravl code is a clean room. So CSI and Gravl
-work can be featured by outcome and role. The Gravl constraint below still
+jobs, no NDA was signed, and the a client project code is a clean room. So CSI and a client project
+work can be featured by outcome and role. The a client project constraint below still
 stands, to protect the company from competitors reading its internals here.
 
 One narrower question is still open and the CSI architecture section stays
 empty until T answers it. CSI is bid intelligence for asphalt paving
-contractors. Gravl is pre bid intelligence for construction. A detailed CSI
-system description is adjacent enough that it may describe Gravl's mechanism
-by proxy, which is the exact thing the Gravl constraint below exists to
+contractors. a client project is pre bid intelligence for construction. A detailed CSI
+system description is adjacent enough that it may describe a client project's mechanism
+by proxy, which is the exact thing the a client project constraint below exists to
 prevent. Tracked as Q-06 in `TICKETS.md`.
 
-## Gravl constraint. Not negotiable without T saying so.
+## Client confidentiality. Not negotiable without T saying so.
 
-The Gravl window is **outcome only**. What it is, who it serves, what changed,
-screenshots of gravl-ai.com, and a link out.
+Client work on this site is **outcome only**: what it is, who it serves, what
+changed, screenshots of anything already public, and a link out where one
+exists.
 
-Never publish on this site: architecture, pipeline stages, corpus size, unit
-or marginal compute cost, model details, the five work product method, the
-phase and gate table, or the pit and haul insight. All of that was
-deliberately removed from the company site over 2026-08-20 and 21. A personal
-site is exactly where competitors look for what the company site withholds.
+Never publish a client system's mechanism. ADR-0003 draws the line: the
+**shape** of a pipeline is generic to its category and safe; the **mechanism**
+is stage internals, corpus size, unit or marginal compute cost, model details
+and method, and is not.
 
-Every other project on this site can be as technically open as T likes.
+The reason is specific rather than paranoid. Where a client's own public site
+deliberately withholds its internals, a personal site is exactly where a
+competitor looks for what the company site does not say. Anything a client took
+off their own site does not go on this one.
+
+Every non client project can be as technically open as T likes.
 
 ## How work reaches the live site (2026-08-26)
 
@@ -150,7 +155,7 @@ reopening a decision. See `docs/agents/domain.md`.
 4. **Work through `TICKETS.md`.** Nothing gets built that is not a ticket.
    Tickets marked AFK close themselves. Tickets marked HITL stop and ask T.
 5. **Show, do not describe.** Anything visual gets a screenshot before it is
-   called done. On the Gravl build T caught a slider whose headline number
+   called done. On the a client project build T caught a slider whose headline number
    never moved and a timeline broken by a CSS name collision. Neither was
    found by reading code.
 6. **Verify in a browser.** Load it, screenshot it, check the console. Test at
@@ -178,7 +183,7 @@ reopening a decision. See `docs/agents/domain.md`.
 ## Traps that already bit this stack
 
 * **The two Pages traps below no longer apply to this repo** (Cloudflare since
-  2026-08-25) and are kept because Gravl is still on GitHub Pages and will hit
+  2026-08-25) and are kept because a client project is still on GitHub Pages and will hit
   them during its own migration.
   * Client side routing on GitHub Pages needs `public/404.html` mirroring
     `index.html`, or every deep link 404s on refresh. Cloudflare solves this
@@ -186,8 +191,8 @@ reopening a decision. See `docs/agents/domain.md`.
     `wrangler.toml`, so no mirror file is needed here.
   * A custom domain on Pages needs `public/CNAME`, and shipping that file
     before DNS resolves redirects the working `github.io` URL at once. This
-    took gravl-ai.com down for two minutes on 2026-08-21. The full record is in
-    `~/dev/gravl/README.md` under *The custom domain*.
+    took a client site down for two minutes on 2026-08-21. The full record is in
+    `~/dev/a client project/README.md` under *The custom domain*.
 * **Cloudflare refuses to overwrite existing DNS records** when you attach a
   custom domain to a Worker. The imported registrar records (a parking A record
   and a `www` CNAME) have to be deleted by hand first, or the dialog just

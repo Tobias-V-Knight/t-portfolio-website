@@ -17,8 +17,8 @@ concise. Every visual choice is judged against these + spec §25 ("more like an 
 computer, or just more complicated?"). Now also written into `CLAUDE.md`.
 
 ## Provenance clearance (resolved 2026-08-24) — important
-**CSI + Gravl work CAN be shown publicly.** No NDA was signed; the Gravl code is a clean room; CSI
-explicitly said Tobias may post the work publicly to get jobs. So the classifier, CSI.APP, and Gravl can
+**CSI + the client project work CAN be shown publicly.** No NDA was signed; the the client project code is a clean room; CSI
+explicitly said Tobias may post the work publicly to get jobs. So the classifier, CSI.APP, and the client project can
 be featured by outcome/role. Still: no client's private bid data, and keep to what was built, not raw code.
 
 ---
@@ -177,13 +177,13 @@ The recurring pattern: **go through a project, review + run the code, pull the s
    on purpose, and the wire up waits on T confirming two employer names.*
 3. **MSBA extractor** — walk the MSBA folder, list every class taken, rough outline + key topics per
    course. Tobias fills gaps.
-4. **Per-project reviewers + screenshot agent** — PB IQ, RoleRadar, 4mativ, Gravl, CSI.APP: run locally,
+4. **Per-project reviewers + screenshot agent** — PB IQ, RoleRadar, 4mativ, the client project, CSI.APP: run locally,
    screenshot the real UI, save to a labelled folder. Some (iOS) can't run headless.
 
 ## Open decisions (need Tobias) — ASK tickets
 - **Resume download gate:** how to capture name+email (form service vs small backend vs Google Form).
 - **Portfolio cleanup:** confirm remove PickleTrack, dogs-vs-cats, fig-viewer, this-website; keep 4mativ;
-  add Gravl.
+  add the client project.
 - **PB IQ:** link `https://www.pbiq.ai/` in + extract photos; one-liner "a pickleball app for players and
   coaches to …".
 
@@ -191,7 +191,7 @@ The recurring pattern: **go through a project, review + run the code, pull the s
 
 ## Reference links
 - Charlie Dean's "about this website" (the model): https://charliedean.com/about-this-website
-- Gravl: https://gravl-ai.com/
+- the client project: https://a client site/
 - Pickleball IQ: https://www.pbiq.ai/
 - Databricks workspace: https://dbc-8a8f9500-4a79.cloud.databricks.com/ (knigh618@umn.edu)
 - Mac OS 9 Figma UI kit: https://www.figma.com/community/file/966779730364082883/mac-os-9-ui-kit
