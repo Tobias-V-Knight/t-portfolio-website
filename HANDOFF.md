@@ -77,18 +77,35 @@ Cloudflare and the GitHub Pages machinery is retired.
 config). Priority labels P0 to P3 and backlog, with #63 carrying the dependency
 order.
 
-## Next, in order
+## Next, in order — T's sequence for the next session
 
-**#64 is P0 and is the next thing.** The worker can queue two tickets that
+**1. Grill before building.** `grilling` was written on 2026-08-26 and is now
+installed at `~/.claude/skills/grilling/`. `grill-with-docs` delegates to it.
+Two things are worth grilling before any code: the ordering below, and #64's
+design, because `OWNS:` is one answer to the collision problem and not
+obviously the best one.
+
+**2. #64, the collision guard. P0.** The worker can queue two tickets that
 rewrite the same file. It pulls fresh `main` before each ticket, but merging is
 human gated, so ticket two branches from a `main` without ticket one. Both PRs
-come back green and only one can merge. This cost a completed ticket. The fix
-is `OWNS:` declarations checked across the whole queue before any agent starts.
+come back green and only one can merge. **This already cost a completed
+ticket.**
 
-**The four case studies (#56 to #59) are the batch that would collide** — all
-four rewrite `content.ts`. Do not queue them together until #64 lands.
+**3. Worktrees, for parallel tracks.** Once collisions are impossible by
+construction, running non colliding tickets at once is safe. The worker is a
+serial `for` loop today: a four ticket batch took roughly 40 minutes of wall
+clock that could have been 12. **Order matters here** — worktrees before the
+guard would ship isolation that does not fix the actual bug, since this was a
+stale base rather than a concurrent write.
 
-Then P1: #36 the CSI diagram, #9 `resume.pdf`, #7 the ABOUT copy.
+**4. Re-prioritise the whole board**, after the two above land. 24 issues, and
+the P0 to P3 labels were assigned before the case study system existed. #63
+carries the current dependency order and should be rewritten rather than
+patched.
+
+**Then the content**, which is the actual goal: #56 to #59, the four case
+studies. All `agent-ready`, all following CSI's shape. **All four rewrite
+`content.ts`, so they are exactly the batch #64 exists to protect.**
 
 ## Blocked on T, and these gate real work
 
