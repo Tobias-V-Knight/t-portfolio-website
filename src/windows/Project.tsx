@@ -157,12 +157,12 @@ export function ProjectPanel({ project }: { project: Project }) {
         </>
       )}
 
-      {project.results && (
+      {project.evidence && (
         <>
-          <h2>RESULTS</h2>
+          <h2>EVIDENCE</h2>
           <ul>
-            {project.results.map((r) => (
-              <li key={r}>{withBlanks(r)}</li>
+            {project.evidence.map((e) => (
+              <li key={e}>{withBlanks(e)}</li>
             ))}
           </ul>
         </>
