@@ -297,7 +297,12 @@ export default function App() {
                   </Suspense>
                 </ErrorBoundary>
               )}
-              {w.def.kind === 'archive' && <ArchivePanel onStatus={handleArchiveStatus} />}
+              {w.def.kind === 'archive' && (
+                <ArchivePanel
+                  onOpenProject={(slug) => openZoomed(`project:${slug}`)}
+                  onStatus={handleArchiveStatus}
+                />
+              )}
               {w.def.kind === 'work' && (
                 <WorkPanel
                   onOpenProject={(slug) => openZoomed(`project:${slug}`)}
