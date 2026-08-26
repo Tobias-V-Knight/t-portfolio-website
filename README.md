@@ -61,6 +61,7 @@ redacted.
 |---|---|---|
 | `main.tsx` | Entry point | Mounts the app inside a `BrowserRouter`. Every route renders the same desktop, because the desktop has to survive the navigation |
 | `App.tsx` | The desktop | Owns the five desktop icons, builds the menus, renders the open windows, and runs the menu bar clock |
+| `.github/workflows/ci.yml` | CI | Install, typecheck, build, on every PR and push to main. The `verify` job is the required check on the protected `main` branch |
 | `scripts/mini-worker.sh` | The Mac Mini worker | Pulls `agent-ready` issues off GitHub, works one per branch, opens a PR, comments on the issue. Never touches main. Run it inside tmux |
 | `data/content.ts` | All copy and data | Every word on the site. Split three ways since 2026-08-25: `home` (professional), `about` (the person), `cv` (the record), plus `stack` (the four skill buckets) and `capabilities` (the long form). Placeholder copy is flagged here and the flag renders on screen |
 | `system/windows.ts` | Window manager | The window registry and the hook that reconciles open windows with the URL. The routing model is documented in `CLAUDE.md` and in the file itself |

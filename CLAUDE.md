@@ -89,6 +89,31 @@ site is exactly where competitors look for what the company site withholds.
 
 Every other project on this site can be as technically open as T likes.
 
+## How work reaches the live site (2026-08-26)
+
+**`main` is production.** Cloudflare deploys it within a minute of a merge.
+`main` is protected: no direct pushes from anyone, including Tobias and
+including any agent. Every change goes branch, PR, green CI, merge.
+
+```
+feat/<issue>-<slug>   or   issue-<n> from the Mac Mini worker
+        v  PR
+CI: npm ci, tsc -b --noEmit, npm run build     must be green
+        v  merge
+main  ->  tobiasknight.dev
+```
+
+This exists because it did not, and on 2026-08-25 an unsupported number reached
+the live site inside a minute of being written. The protection is not about
+distrusting the agent, which already could not touch `main`. It is about the
+fact that the human had no gate at all.
+
+* CI is `.github/workflows/ci.yml`. The required check is the `verify` job.
+* Reviews are not required, so a solo PR can be merged by its author. The gate
+  is CI, not a second pair of eyes that does not exist.
+* Cloudflare builds non production branches too, so **every PR has a live
+  preview URL**. That is how a `show` labelled ticket gets looked at.
+
 ## Rules for working
 
 1. **No dashes in prose.** Not in this repo's docs, not in site copy, not in
