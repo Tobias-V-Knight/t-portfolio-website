@@ -1,203 +1,127 @@
-# HANDOFF — tobiasknight.dev (portfolio site)
+# HANDOFF — tobiasknight.dev
 
-**Read this first on any resume.** It is the map: what the site is, what state it's in, where every
-file lives, and what's queued. Deepest rules live in `CLAUDE.md`; the work board is `TICKETS.md`;
-the 1070-line design spec lives in iCloud (see CLAUDE.md "Source of truth"). Last updated 2026-08-25.
+**Read this first on any resume.** Rewritten at the end of each session, so it
+describes the state now rather than the history.
 
-## What this is
-A personal portfolio for Tobias Knight (`tobiasknight.dev`), built as a **classic Macintosh desktop**.
-Static **Vite + React + TypeScript**, React Router, deployed to **Cloudflare Workers**, live at `tobiasknight.dev` since 2026-08-25. Projects, photos, a movie,
-and personal artifacts live on the desktop as files/windows. Run: `npm run dev` (→ localhost:5173).
-Verify a change: `npx tsc --noEmit && npm run build`.
+Read order: `CLAUDE.md`, this file, `README.md` → Taxonomy, `CONTEXT.md`, then
+`gh issue list --label P0,P1`. Cross-repo conventions are in
+`~/dev/AGENT_RULES.md`, §6 and §7 especially.
 
-## The three Cs (design north star — added 2026-08-24)
-**Continuity · Consistency · Conciseness.** Charlie Dean's site is the reference: natural editorial
-colors, photos centered and right-sized (never overwhelming), one consistent font system, prose that is
-concise. Every visual choice is judged against these + spec §25 ("more like an interesting person's old
-computer, or just more complicated?"). Now also written into `CLAUDE.md`.
-
-## Provenance clearance (resolved 2026-08-24) — important
-**CSI + the client project work CAN be shown publicly.** No NDA was signed; the the client project code is a clean room; CSI
-explicitly said Tobias may post the work publicly to get jobs. So the classifier, CSI.APP, and the client project can
-be featured by outcome/role. Still: no client's private bid data, and keep to what was built, not raw code.
+Last rewritten **2026-08-26**.
 
 ---
 
-## Session 2026-08-25 — contract positioning + the Pass 2 bug sweep
+## State
 
-Two threads. **Positioning:** the site never answered "what would I hire him for", so there is now a
-`capabilities` model in `content.ts` (five blocks, each with buyer-language copy, technique chips and a
-`proof` field naming the project behind it) rendered in BACKGROUND, plus a short `focus` label strip on
-HOME and an availability chip that opens CONTACT. The data model separates three altitudes that were
-mixed in the first draft: **capability** (what a buyer buys), **technique** (`evidence[]`), **tool**
-(`runsOn`). Clustering, KNN and EDA were deliberately cut, and CI/version control demoted from headline
-to one sentence, with the reasoning written into the file so nobody re-adds them.
+**Live at `tobiasknight.dev`**, Cloudflare Workers, deploying on every merge to
+`main`. `main` is protected: no direct push from anyone including T, PR plus
+green CI. `main` is at `52c3a94`, 48 commits, working tree clean, **no open
+PRs**.
 
-**Still open on Tobias, both marked in `content.ts`:** the capability *order* (a positioning bet;
-evaluation currently leads) and the availability line, left as a visible blank because it is his voice.
+Static Vite + React + TypeScript. The site is a classic Macintosh desktop.
 
-**Bugs:** P2-01…05 all fixed, see above.
+**What a visitor sees:** a boot sequence typing out a real NLP training script,
+then a desktop. HOME is professional only. ABOUT is the person. RESUME is the
+record. PORTFOLIO lists five case studies plus an ARCHIVE folder that opens its
+own window; every row in both opens, and window depth follows how much material
+the entry has.
 
-## Where the work lives (2026-08-25) — read this before looking for a queue
+**CSI is the finished reference case study.** The other four follow its shape.
 
-**GitHub Issues are the board.** `TICKETS.md` is now the index and the history.
-Open work: `gh issue list` or the repo's Issues tab.
+## Where the work happens
 
 ```
-LAPTOP (Tobias in the loop)     spec, scope, design, docs
+LAPTOP (T in the loop)     spec, grill, decide
         v  gh issue create
-GITHUB ISSUES                   the handoff medium
-        v  gh issue list --label agent-ready
-MAC MINI (AFK)                  pulls, works, opens a PR
-        v
-LAPTOP                          Tobias reviews and merges
+GITHUB ISSUES              the board. TICKETS.md is history, not a queue
+        v  --label agent-ready
+MAC MINI (AFK)             one issue per branch, opens a PR
+        v  CI green, a human looks
+LAPTOP                     review, merge
 ```
 
-Nothing goes to the Mini until it is specced on the laptop. **Branch and PR,
-never main**, no exceptions: a bad commit on main is live on the site until
-somebody notices.
+The Mini is `tmaxxx@10.0.11.125`, key auth working, repo cloned at
+`~/dev/t-portfolio-website`. Worker is `scripts/mini-worker.sh`, run inside
+tmux. **It has no browser**, so anything visual is verified on the laptop.
 
-**The Mac Mini** is `tmaxxx@10.0.11.125`, key auth working as of 2026-08-25, all
-tooling installed and authed (Claude Code, gh, tmux, node, brew, ollama), the
-full iCloud workspace synced and materialised, and `sleep 0` already set. The
-one gotcha that wasted time: a non-interactive `ssh host 'cmd'` does not read
-`~/.zprofile`, so Homebrew is not on PATH and every tool reports as missing.
-Export `PATH=/opt/homebrew/bin:$PATH` in anything you send it. Machine details
-in `~/dev/MAC_MINI_HANDOFF.md`; the operating principle there still stands, so
-system level changes are Tobias's to make.
+Setting this up in another repo: `~/dev/REPO_BOOTSTRAP.md`.
 
-Worker: `scripts/mini-worker.sh`, run inside tmux.
+## What changed this session
 
-## The three way split (2026-08-25) — read before touching copy
+Twenty-one PRs merged. The ones that matter:
 
-**HOME is professional. ABOUT is the person. CV is the record.** T's call, and the reason the earlier
-single ABOUT window read as neither one thing nor the other.
+**Structure.** HOME / ABOUT / RESUME split three ways (the word CV is gone
+everywhere). Skills became two levels: eight discipline groups plus a separate
+TOOLBOX. PORTFOLIO curated to five case studies plus an ARCHIVE folder.
 
-- **HOME** — name, positioning, status, the availability chip, one line of prose, and the four stack
-  rows in short form. No history, no hobbies.
-- **ABOUT** — Minneapolis, hobbies, endurance, photographs. `/about`.
-- **CV** — capabilities long form, the full skills table, work history, education, the PDF. `/cv`, its
-  own icon and its own menu title so a visitor can tell it apart from ABOUT before clicking.
+**The case study system.** ADR-0001's eleven part template, built across #31 to
+#38 and #65. Hero chips, the at a glance panel, the editorial grid, ML
+decisions, contribution chips, a collapsed deep dive. **CSI is complete and
+live.**
 
-**The stack model.** Four buckets: CAPABILITIES (what he gets hired to build), TOOLS (what he builds it
-with), TECHNIQUES (what is under the hood), SHIPPING IT (what puts it in production). The fourth exists
-because nginx, cron, CI/CD, hosted Postgres and hosted Chroma fit none of the other three, and because
-most analytics graduates never touch them. **One array per group, favourites first.** HOME slices the
-first `HOME_TAGS`, CV renders all: never fork these into two lists.
+**Content.** Six extractions in `docs/extracted/`, every claim cited by path:
+career, MSBA, NLP classifier, PB IQ, RoleRadar, EDA 6411. These are what the
+remaining case studies get written from.
 
-## File map — what this session touched
-The **canonical, always-current file index is `README.md` → Taxonomy** (update it every session; that is
-the rule). The table below is just the record of what the 2026-08-24 session changed, so the next agent
-knows where the recent work landed. `★` = created/edited this session.
+**Two employer names on the live site were wrong.** "Formative Technologies"
+was 4MATIV Technologies and "AC Surety" was Accenture. Fixed, and the two most
+recent roles added.
 
-**Root**
-| Path | Purpose |
+**A client project was removed entirely**, site and repo, 40 mentions across 9
+files. T's call: it should not appear anywhere.
+
+**Infrastructure.** CI on every PR. Branch protection. The domain moved to
+Cloudflare and the GitHub Pages machinery is retired.
+
+**Docs.** `CONTEXT.md` (the vocabulary), four ADRs, `docs/agents/` (skill
+config). Priority labels P0 to P3 and backlog, with #63 carrying the dependency
+order.
+
+## Next, in order
+
+**#64 is P0 and is the next thing.** The worker can queue two tickets that
+rewrite the same file. It pulls fresh `main` before each ticket, but merging is
+human gated, so ticket two branches from a `main` without ticket one. Both PRs
+come back green and only one can merge. This cost a completed ticket. The fix
+is `OWNS:` declarations checked across the whole queue before any agent starts.
+
+**The four case studies (#56 to #59) are the batch that would collide** — all
+four rewrite `content.ts`. Do not queue them together until #64 lands.
+
+Then P1: #36 the CSI diagram, #9 `resume.pdf`, #7 the ABOUT copy.
+
+## Blocked on T, and these gate real work
+
+| | |
 |---|---|
-| `CLAUDE.md` | Working rules (read before touching anything). ★ rules + three Cs added |
-| `TICKETS.md` | The board (AFK/SHOW/ASK modes). ★ queue below added |
-| `HANDOFF.md` | This file — the map. ★ new |
-| `package.json` · `vite.config.ts` · `tsconfig*.json` | build config |
-| `assets_src/` | ★ raw source media (gitignored); converted copies live in `public/` |
+| **The LoRA eval** | One run of `src/eval_lora.py` in `~/dev/nlp-material-classifier`. The strongest technical project's marquee row reads `[ not recorded ]`. Best recorded macro F1 on the site is 0.546 |
+| **#9** | `public/resume.pdf`. The document a recruiter came for renders as a blank |
+| **#7** | Three ABOUT lines. What he likes about Minneapolis, a hobby that is not endurance sport or a computer |
+| **#60** | Five field questions before the GED entry can be created. That is why PORTFOLIO shows five case studies, not six |
+| **Repo private?** | The client name is scrubbed from the working tree and sits in **15 commits of public history**. One command, and he wanted private anyway |
 
-**`src/`**
-| Path | Purpose |
-|---|---|
-| `main.tsx` | React root; ★ wrapped in `ErrorBoundary` so no component can blank the whole app |
-| `App.tsx` | The desktop: menu bar, desktop icons (left=professional / right=fun), window rendering, zoom, clock. ★ menu→nav, icons split, PORTFOLIO rename, MSBA + video render, ErrorBoundary |
-| `components/Boot.tsx` | ★ Boot screen: imports type out char-by-char, then a fake train.py run; one Enter to enter |
-| `components/ErrorBoundary.tsx` | ★ new — catches a component crash, shows a message instead of blanking |
-| `components/VideoJsPlayer.tsx` | ★ new — Video.js player (StrictMode-safe), used by the LUFFY.MOV window |
-| `components/Icons.tsx` | SVG desktop icons. ★ OG-Mac redraws: FolderIcon, floppy DiskIcon, ridged TrashIcon, new FilmIcon |
-| `components/MenuBar.tsx` | ★ now supports dropdown menus AND direct nav actions (Portfolio/About/Contact) |
-| `components/Window.tsx` | Mac window chrome (title bar, close/zoom boxes, resize) |
-| `components/ZoomRect.tsx` | icon→window zoom animation |
-| `system/windows.ts` | ★ window manager + window defs. PORTFOLIO rename + larger project windows + MSBA def + LUFFY non-routed auto-open (`video` kind) |
-| `data/content.ts` | ALL copy + project data (single source of truth). ★ `msba` object, `media.src` real images, CSI photo entry |
-| `windows/Work.tsx` | ★ PORTFOLIO window — rewritten as a Finder list (Name/Date/Kind/Size + icons) |
-| `windows/Project.tsx` | project case-study pages. ★ real-image `media` support |
-| `windows/Panels.tsx` | About / Anime / Contact / Zippy / Intro panels. ★ new `MsbaPanel` |
-| `windows/Photos.tsx` | photos window (queued for removal — see TICKETS) |
-| `styles/system.css` | ALL styles. ★ Mac scrollbar (lavender thumb + arrows), Finder list, Video.js fill, HOME position, boot sizing |
+## Known and deliberately not fixed
 
-**`public/`** (served assets)
-| Path | Purpose |
-|---|---|
-| `luffy.mp4` · `ice.mp4` | ★ the movie clips (B&W applied by player CSS), cycled in the order set by `moviePlaylist` in `data/content.ts` |
-| `csi-team.jpeg` | ★ CSI ELP team photo (on the CSI.APP page) |
-| `home-bg.jpg` | the Porsche behind the HOME window |
-| `wallpaper.jpg` · `favicon.svg` · `og.png` · `t-profile.jpg` · `zippy*.png` | desktop + branding |
-| `photos/` | photo-window images (window queued for removal) |
+- **#62** the team photo renders 756x567 at 1900px and dominates the page.
+  Against rule 11, and the photo ordering it belongs to is case study work.
+- **#43** a deep link to `/work/archive` opens the folder with no PORTFOLIO
+  behind it. The routing model maps one URL to one window and a nested folder
+  is the first thing wanting two.
+- **Three skills have nothing on the site backing them.** `CAUSAL INFERENCE`,
+  `DIFFERENCE IN DIFFERENCES` and `EXPERIMENTAL DESIGN`. An extraction searched
+  both EDA 6411 projects for eleven related terms: six hits, none a method that
+  was run. T's call: leave them, the site need not evidence every skill.
+- **Mobile is on the backlog.** T 2026-08-26: it is fine, it is a resize job,
+  the Mac OS 8 feel stays.
 
----
+## Two rules that cost time to learn
 
-## Next up (queued work) — details in `TICKETS.md`
-### Bugs (SHOW) — all five fixed 2026-08-25, sitting in `review`
-P2-01 through P2-05 are built and verified in a browser; they stay `review` until Tobias looks.
-Per-ticket detail and root causes are in `TICKETS.md`. The two worth knowing about:
+**The knowledge base is in iCloud, the code is in `~/dev`.** An extraction
+ticket names both or gets half an answer. `04_career` in particular holds T
+describing his own work, and it answered a question that had blocked a ticket
+for a day.
 
-- **P2-01 (pinstripes) was not cosmetic.** Stripes paint on the active window, and HOME and LUFFY could
-  never *become* active: `focus()` returned early for both, so clicking them did nothing. They were not
-  really windows. Fixed with a `raised` state in `useWindowManager`.
-- **P2-04 (mobile) was worse than reported.** LUFFY is top of the stack, and on mobile every window is
-  fixed and full bleed, so **the phone site opened on a full screen silent cartoon** covering HOME and
-  every icon. LUFFY is desktop scenery now and never opens below 768px.
-
-### Bugs still open
-None from Pass 2. New ones go on GitHub Issues, with the record in `TICKETS.md`.
-
-**Issue #1 (fixed, in `review`).** HOME opened inactive on `/`: the default
-window order made LUFFY the top of the stack, and the top of that stack is both
-the front of the z order and the active window, so the movie held focus on the
-one screen everybody lands on. Order is LUFFY, HOME, routed stack now. If you
-touch `openWindows` in `src/system/windows.ts`, that ordering is load bearing.
-
-### Enhancements (SHOW / ASK)
-- **MSBA window stack tags** — render each course's stack as tag/hashtag/code blocks (like the placeholder
-  "your favorite idea" blocks), more scannable than prose.
-- ~~**Add `ice.mp4` to a multi-clip LUFFY loop**~~ built 2026-08-25 (issue #3). The player cycles
-  `moviePlaylist` in `content.ts`; a new clip is one entry there plus the converted file in `public/`.
-- **Article/typography pass** toward Charlie Dean (the three Cs) — fonts, centered right-sized photos.
-- **Explore the Mac OS 9 Figma UI kit** (link below) for authentic chrome/icons.
-- **Mac Mini AFK** — set up background jobs (tmux + `claude -p`). Operating principle: **Tobias hooks up
-  the machine manually**; the agent proposes exact commands, never autonomously installs/reconfigures.
-  See `~/dev/MAC_MINI_HANDOFF.md`.
-
-### Agents to build (context/portfolio/background/scrapers) — ASK to launch
-The recurring pattern: **go through a project, review + run the code, pull the stack, and TAKE SCREENSHOTS
-(point-and-shoot from localhost) into a labelled folder**, then we talk. Launch list:
-1. **Material classifier extractor** (marquee) — `~/dev/nlp-material-classifier`: key lessons, the full
-   accuracy table (keyword / TF-IDF / attention-from-scratch / LoRA-Qwen / the deployed CSI model), the
-   **eval-harness** story (what V2 is building), and generate the real chart images. It's the spinoff of
-   CSI Bid Intelligence — "could I build my own model from scratch and beat it?" Get images.
-2. **Resume + About extractor** — read `04_career/00_Resume and Cover Letter/` (final copies) + `pbiq.ai`,
-   produce a clean LinkedIn-style About + the HOME **skills / current stack / key projects** snapshot.
-   NOT a verbatim resume — the essence.
-   *Work history half done 2026-08-25 (issue #5): `docs/extracted/career.md` has every role, employer and
-   date with sources, and it answers Q-10. The About/voice half is still open. `content.ts` is untouched
-   on purpose, and the wire up waits on T confirming two employer names.*
-3. **MSBA extractor** — walk the MSBA folder, list every class taken, rough outline + key topics per
-   course. Tobias fills gaps.
-4. **Per-project reviewers + screenshot agent** — PB IQ, RoleRadar, 4mativ, the client project, CSI.APP: run locally,
-   screenshot the real UI, save to a labelled folder. Some (iOS) can't run headless.
-
-## Open decisions (need Tobias) — ASK tickets
-- **Resume download gate:** how to capture name+email (form service vs small backend vs Google Form).
-- **Portfolio cleanup:** confirm remove PickleTrack, dogs-vs-cats, fig-viewer, this-website; keep 4mativ;
-  add the client project.
-- **PB IQ:** link `https://www.pbiq.ai/` in + extract photos; one-liner "a pickleball app for players and
-  coaches to …".
-
----
-
-## Reference links
-- Charlie Dean's "about this website" (the model): https://charliedean.com/about-this-website
-- the client project: https://a client site/
-- Pickleball IQ: https://www.pbiq.ai/
-- Databricks workspace: https://dbc-8a8f9500-4a79.cloud.databricks.com/ (knigh618@umn.edu)
-- Mac OS 9 Figma UI kit: https://www.figma.com/community/file/966779730364082883/mac-os-9-ui-kit
-
-## Rules
-Full working rules: **`CLAUDE.md`** (this repo) + **`~/dev/AGENT_RULES.md`** (cross-project). Non-negotiables:
-read docs first, no redundant files (check the file map above before creating anything, archive don't
-accumulate), TDD, wayfinder + grill (AskUserQuestion often), test-with-Tobias, Matt-Pocock-clean code,
-the three Cs, honest measurement, client-data confidentiality.
+**Git history is evidence of presence, never of absence.** A ticket once told
+an agent to settle who built what on a joint venture from commit counts. Two of
+three repos belong to the co-founder and T had done substantial work offline.
+The counts understated him, and that run was killed before it published.
