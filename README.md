@@ -33,6 +33,7 @@ that gets consulted before a new file is ever created.
 | `CLAUDE.md` | Working rules | Decisions taken, constraints, traps, and the rules for how work happens here. The first thing any session reads |
 | `HANDOFF.md` | The map | State, what changed last session, next-up (bugs/enhancements/agents), open decisions, links. Read after CLAUDE.md |
 | `TICKETS.md` | The board | Every unit of work, its mode (AFK, SHOW, ASK) and its status. Also the list of what is blocked on T |
+| `JOURNAL.md` | The running log | Dated, append only. Why things are the way they are, including the reversals and what broke. Doubles as the source for a case study about the site itself. HANDOFF says what is true now; this says how it got there |
 | `CONTEXT.md` | The vocabulary | What this repo means by case study, archive entry, evidence, the shape, the measure, set dressing, blank. Read before writing copy or naming a component |
 | `docs/agents/` | Skill configuration | Where issues live, how the triage labels map, and the domain doc layout. Written by `setup-matt-pocock-skills`; the engineering skills read these |
 | `docs/adr/` | Decisions, with reasoning | One file per architectural decision: what was chosen, why, and what was rejected on what grounds. Numbered, append only, not edited after acceptance |
