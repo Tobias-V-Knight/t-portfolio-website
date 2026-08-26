@@ -6,7 +6,7 @@ import { PlaceholderTag, withBlanks } from './Panels'
 // stays on the outside, everything inside is editorial: Inter, real line
 // height, real measure. No pixel font touches a paragraph in this file.
 //
-// Sections render only when the data has them. Gravl is missing architecture
+// Sections render only when the data has them. A project may be missing architecture
 // and stack on purpose. Read the constraint note in content.ts before adding
 // anything to it.
 
@@ -30,8 +30,8 @@ function HeroMeta({ project }: { project: Project }) {
   // and the values already say what they are.
   //
   // An empty field renders no chip rather than an empty one. No project with a
-  // window has an empty one today, so this is a guard and not a fix: Gravl is
-  // the one with a deliberately empty `role`, and Gravl has no window.
+  // window has an empty one today, so this is a guard rather than a fix: a
+  // project may carry a deliberately empty `role`.
   const fields = [
     { key: 'year', value: project.year },
     { key: 'role', value: project.role },

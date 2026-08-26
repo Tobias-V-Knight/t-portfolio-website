@@ -73,7 +73,7 @@ export interface Project {
 
 export const projects: Project[] = [
   // -------------------------------------------------------------------------
-  // Flagship. T moved CSI ahead of Gravl on 2026-08-23: the site's job is
+  // Flagship, T's call on 2026-08-23: the site's job is
   // getting hired, and a named client with an architecture he can draw serves
   // that better than a startup that has to stay vague.
   // -------------------------------------------------------------------------
@@ -98,7 +98,7 @@ export const projects: Project[] = [
       '[ what did the contractor actually get handed at the end: a dashboard, a report, a spreadsheet? ]',
     ],
     architecture:
-      '[ Draw the path from a PDF landing in the system to an estimator reading an answer. Name the retrieval approach, the model, and where the structured output lands. Q-06 in TICKETS.md: keep this at the level of what was built, not how Gravl works. ]',
+      '[ Draw the path from a PDF landing in the system to an estimator reading an answer. Name the retrieval approach, the model, and where the structured output lands. ADR-0003: the shape only, never the mechanism. ]',
     stack: ['Python', '[ retrieval and vector store ]', '[ model, and why that one ]', '[ how it was served ]'],
     media: [
       { caption: 'The CSI ELP team, Alexandria MN', tone: 'screenshot', src: 'csi-team.jpeg' },
@@ -115,7 +115,7 @@ export const projects: Project[] = [
       '[ The domain lesson. What did you learn about paving contracts that no model would have told you? ]',
     ],
     constraint:
-      'T cleared this for the site on 2026-08-23, overriding the hold in the handoff, on the condition that it shows what was built and never the code. The architecture section stays a blank prompt until T rules on Q-06: CSI is adjacent enough to Gravl that a detailed system description may describe Gravl by proxy.',
+      'T cleared this for the site on 2026-08-23, overriding the hold in the handoff, on the condition that it shows what was built and never the code. Per ADR-0003 the architecture carries the pipeline shape only, never stage internals, corpus size, cost per unit, model choices or method. Client confidentiality, and not negotiable without T saying so.',
   },
   {
     slug: 'pickleball-iq',
@@ -431,28 +431,6 @@ export const projects: Project[] = [
     constraint:
       'Shared with a city council representative by role only. T confirmed on 2026-08-24 that the official is not to be named on the public site: this is an advocacy page about a named intersection, and the person on the other side of it did not choose to be part of it.',
   },
-  // -------------------------------------------------------------------------
-  // Gravl, deliberately last and deliberately without a window.
-  //
-  // T's call on 2026-08-23: the site's job is getting hired, and a prominent
-  // startup reads to a hiring manager as someone who will leave. It stays as
-  // one row so the 2026 timeline has no unexplained gap. Flip this the day the
-  // goal becomes raising money instead of getting hired.
-  // -------------------------------------------------------------------------
-  {
-    slug: 'gravl',
-    title: 'Gravl',
-    windowTitle: 'GRAVL.APP',
-    oneLiner: 'Pre bid intelligence for construction.',
-    role: '',
-    status: '2026 to now',
-    year: '2026',
-    categories: ['product'],
-    copyState: 'PLACEHOLDER',
-    hasWindow: false,
-    constraint:
-      'OUTCOME ONLY, and as of 2026-08-23 not even that: no window, no founder title, one row. Never add architecture, pipeline stages, corpus size, unit or marginal compute cost, model details, the five work product method, the phase and gate table, or the pit and haul insight. See CLAUDE.md.',
-  },
 ]
 
 // `hasWindow` is the one switch. Flip it and a project changes group, gains or
@@ -766,7 +744,8 @@ export const capabilities: Capability[] = [
 export const home = {
   name: 'TOBIAS KNIGHT',
   // Was 'technical founder / builder / applied AI'. The founder half came off
-  // on 2026-08-23 for the same reason Gravl lost its window.
+  // on 2026-08-23: the site's job is getting hired, and a prominent founder
+  // title reads to a hiring manager as someone who will leave.
   positioning: 'builder / applied AI',
   location: 'MINNEAPOLIS, MN',
   copyState: 'PLACEHOLDER' as Placeholder,

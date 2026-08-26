@@ -16,7 +16,7 @@ down, the entry reads `[ not recorded ]`, which is itself a finding.
 
 ## What it is
 
-CSI and Gravl read highway bid documents and have to decide what material every
+CSI and the client project read highway bid documents and have to decide what material every
 line item is, because those categories add up into the tonnage totals a paving
 contractor bids on. This project replaces the hand tuned keyword list that made
 that call with a model trained on the labels, scored honestly against a test set

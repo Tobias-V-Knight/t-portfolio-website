@@ -61,7 +61,7 @@ it is in every vendor's marketing, and publishing it reveals nothing.
 internals, the corpus, the cost per unit, the model choices, the method.
 
 CSI may publish its shape. It may never publish its mechanism, because CSI's
-mechanism describes Gravl's by proxy and Gravl's is withheld deliberately.
+mechanism describes the client's by proxy and the client's is withheld deliberately.
 
 ## Measure
 
