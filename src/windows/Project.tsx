@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react'
 import { atAGlancePrompts, categories, type AtAGlance, type Project } from '../data/content'
 import { PlaceholderTag, withBlanks } from './Panels'
 
@@ -9,6 +10,8 @@ import { PlaceholderTag, withBlanks } from './Panels'
 // Sections render only when the data has them. A project may be missing architecture
 // and stack on purpose. Read the constraint note in content.ts before adding
 // anything to it.
+
+type Media = NonNullable<Project['media']>[number]
 
 // The hero, ADR-0001 section 1. Name, one sentence, the metadata row, then the
 // ways out, and nothing else above the fold.
@@ -104,7 +107,7 @@ function AtAGlancePanel({ project }: { project: Project }) {
   // A description list is what this is: four terms, four definitions. The div
   // per pair is valid inside a dl and it is what makes each pair one grid cell.
   return (
-    <dl className="mac-glance">
+    <dl className="mac-glance mac-doc-full">
       {GLANCE_CELLS.map(({ key, label }) => {
         const value = project.atAGlance?.[key]?.trim()
         return (
@@ -118,10 +121,214 @@ function AtAGlancePanel({ project }: { project: Project }) {
   )
 }
 
-export function ProjectPanel({ project }: { project: Project }) {
+// One picture, one caption. Was three inline style objects repeated per media
+// item; it is a class now because the same figure is drawn in two different
+// slots (the side column and the full width diagram band) and an inline style
+// cannot be told which slot it is in.
+function Figure({ item }: { item: Media }) {
   return (
-    <article className="mac-doc">
-      <header className="mac-hero">
+    <figure className="mac-figure">
+      {item.src ? (
+        <img className="mac-sunken" src={`${import.meta.env.BASE_URL}${item.src}`} alt={item.caption} />
+      ) : (
+        <div className="mac-sunken mac-figure-box" data-tone={item.tone}>
+          <span className="mac-meta">{item.tone === 'diagram' ? 'DIAGRAM' : 'SCREENSHOT'}</span>
+        </div>
+      )}
+      <figcaption>{item.caption}</figcaption>
+    </figure>
+  )
+}
+
+interface Block {
+  key: string
+  node: ReactNode
+}
+
+// The editorial grid, ADR-0004 and issue #34.
+//
+// The rule is that the measure wins and the grid is how it is achieved. Running
+// text stays capped at --measure at every width, and the grid puts the
+// visuals and the metadata in the space that cap frees rather than letting the
+// prose stretch into it. At 1600 a text column at "55 percent of the window"
+// would set about 100 characters to the line, which is the bug P2-08 fixed.
+//
+// The arrangement is done here rather than in CSS because CSS can only place
+// what the markup gives it. Three kinds of block go into one flat grid:
+//
+//   .mac-doc-text   running text, column one, capped at the measure
+//   .mac-doc-side   a visual or a metadata panel, column two, beside the text
+//   .mac-doc-full   spans both columns: the hero, at a glance, the diagrams
+//
+// A side block lands beside a text block because it is emitted immediately
+// after it and grid auto placement puts an explicitly placed column two item on
+// the row the cursor is already on. That pairing is the reason this zips two
+// lists together instead of rendering two long columns: two independent columns
+// need the markup to be two containers, and two containers on a phone means the
+// pictures all end up below the prose. One flat list collapses into one column
+// in source order, so narrow gets picture, prose, picture, prose, which is the
+// same page rather than a second one. Acceptance criterion: one layout, not two.
+export function ProjectPanel({ project }: { project: Project }) {
+  const media = project.media ?? []
+  // Diagrams are not visuals in the same sense as a screenshot. ADR-0004 says
+  // they take the full width, because a system diagram squeezed into a 260px
+  // rail communicates nothing.
+  const diagrams = media.filter((m) => m.tone === 'diagram')
+  const shots = media.filter((m) => m.tone !== 'diagram')
+
+  // Column one, in the order ADR-0001 sets.
+  const text: Block[] = []
+
+  if (project.problem) {
+    text.push({
+      key: 'problem',
+      node: (
+        <>
+          <h2>THE PROBLEM</h2>
+          <p>{withBlanks(project.problem)}</p>
+        </>
+      ),
+    })
+  }
+
+  if (project.built) {
+    text.push({
+      key: 'built',
+      node: (
+        <>
+          <h2>WHAT WAS BUILT</h2>
+          <ul>
+            {project.built.map((b) => (
+              <li key={b}>{withBlanks(b)}</li>
+            ))}
+          </ul>
+        </>
+      ),
+    })
+  }
+
+  if (project.architecture) {
+    text.push({
+      key: 'architecture',
+      node: (
+        <>
+          <h2>ARCHITECTURE</h2>
+          <p>{withBlanks(project.architecture)}</p>
+        </>
+      ),
+    })
+  }
+
+  if (project.evidence) {
+    text.push({
+      key: 'evidence',
+      node: (
+        <>
+          <h2>EVIDENCE</h2>
+          <ul>
+            {project.evidence.map((e) => (
+              <li key={e}>{withBlanks(e)}</li>
+            ))}
+          </ul>
+        </>
+      ),
+    })
+  }
+
+  if (project.lessons) {
+    text.push({
+      key: 'lessons',
+      node: (
+        <>
+          <h2>WHAT I LEARNED</h2>
+          <ul>
+            {project.lessons.map((l) => (
+              <li key={l}>{withBlanks(l)}</li>
+            ))}
+          </ul>
+        </>
+      ),
+    })
+  }
+
+  // Column two. Screenshots first, so a picture sits beside the opening prose
+  // rather than at the foot of the page, and the stack last, which is roughly
+  // where ADR-0001 puts it.
+  const side: Block[] = shots.map((m, i) => ({ key: `shot-${i}`, node: <Figure item={m} /> }))
+
+  if (project.stack?.length) {
+    // ADR-0001 section 9: chips, reusing the toolbox styling so the tools on a
+    // project page are drawn the same way as the tools in the skills taxonomy.
+    // It was one line of dot separated prose, which is readable across a whole
+    // window and unreadable down a 260px rail.
+    side.push({
+      key: 'stack',
+      node: (
+        <>
+          <h3 className="mac-doc-side-label">STACK</h3>
+          <div className="mac-stack-tags">
+            {project.stack.map((s) => (
+              <span className="mac-stack-tag" key={s}>
+                {withBlanks(s)}
+              </span>
+            ))}
+          </div>
+        </>
+      ),
+    })
+  }
+
+  const diagramBand = diagrams.length ? (
+    <div className="mac-doc-full mac-doc-diagrams" key="diagrams">
+      {diagrams.map((m) => (
+        <Figure item={m} key={m.caption} />
+      ))}
+    </div>
+  ) : null
+
+  const hasArchitecture = text.some((t) => t.key === 'architecture')
+  const flow: ReactNode[] = []
+
+  text.forEach((t, i) => {
+    flow.push(
+      <section className="mac-doc-text" key={t.key}>
+        {t.node}
+      </section>,
+    )
+
+    // The side block goes immediately after its text block, which is what puts
+    // the two on the same grid row. Anything between them costs the pairing.
+    const s = side[i]
+    if (s) {
+      flow.push(
+        <aside className="mac-doc-side" key={s.key}>
+          {s.node}
+        </aside>,
+      )
+    }
+
+    // The diagram belongs under the paragraph that describes the system, so it
+    // is placed after ARCHITECTURE rather than in a section of its own.
+    if (t.key === 'architecture' && diagramBand) flow.push(diagramBand)
+  })
+
+  // More pictures than sections. They stack down column two on their own rows
+  // rather than being dropped, which is not beautiful but is honest: the fix is
+  // to write the missing sections, not to hide the material.
+  side.slice(text.length).forEach((s) => {
+    flow.push(
+      <aside className="mac-doc-side" key={s.key}>
+        {s.node}
+      </aside>,
+    )
+  })
+
+  // A project with diagrams and no ARCHITECTURE paragraph still shows them.
+  if (diagramBand && !hasArchitecture) flow.push(diagramBand)
+
+  return (
+    <article className="mac-doc mac-doc-grid">
+      <header className="mac-hero mac-doc-full">
         <h1>{project.title}</h1>
         <p className="mac-lede">{withBlanks(project.oneLiner)}</p>
 
@@ -131,96 +338,18 @@ export function ProjectPanel({ project }: { project: Project }) {
 
       <AtAGlancePanel project={project} />
 
-      {project.problem && (
-        <>
-          <h2>THE PROBLEM</h2>
-          <p>{withBlanks(project.problem)}</p>
-        </>
-      )}
-
-      {project.built && (
-        <>
-          <h2>WHAT WAS BUILT</h2>
-          <ul>
-            {project.built.map((b) => (
-              <li key={b}>{withBlanks(b)}</li>
-            ))}
-          </ul>
-        </>
-      )}
-
-      {project.architecture && (
-        <>
-          <h2>ARCHITECTURE</h2>
-          <p>{withBlanks(project.architecture)}</p>
-        </>
-      )}
-
-      {project.stack && (
-        <>
-          <h2>STACK</h2>
-          <p className="mac-meta">{withBlanks(project.stack.join('  ·  '))}</p>
-        </>
-      )}
-
-      {project.media && (
-        <>
-          <h2>SCREENS</h2>
-          <div style={{ display: 'grid', gap: 10 }}>
-            {project.media.map((m) => (
-              <figure key={m.caption} style={{ margin: 0 }}>
-                {m.src ? (
-                  <img
-                    className="mac-sunken"
-                    src={`${import.meta.env.BASE_URL}${m.src}`}
-                    alt={m.caption}
-                    style={{ display: 'block', width: '100%', height: 'auto' }}
-                  />
-                ) : (
-                  <div
-                    className="mac-sunken"
-                    style={{ height: m.tone === 'diagram' ? 132 : 168, display: 'grid', placeItems: 'center' }}
-                  >
-                    <span className="mac-meta">{m.tone === 'diagram' ? 'DIAGRAM' : 'SCREENSHOT'}</span>
-                  </div>
-                )}
-                <figcaption className="mac-meta" style={{ marginTop: 6 }}>
-                  {m.caption}
-                </figcaption>
-              </figure>
-            ))}
-          </div>
-        </>
-      )}
-
-      {project.evidence && (
-        <>
-          <h2>EVIDENCE</h2>
-          <ul>
-            {project.evidence.map((e) => (
-              <li key={e}>{withBlanks(e)}</li>
-            ))}
-          </ul>
-        </>
-      )}
-
-      {project.lessons && (
-        <>
-          <h2>WHAT I LEARNED</h2>
-          <ul>
-            {project.lessons.map((l) => (
-              <li key={l}>{withBlanks(l)}</li>
-            ))}
-          </ul>
-        </>
-      )}
+      {flow}
 
       {/* There is no LINKS section at the foot any more. The same links are the
           action chips in the hero, and printing them twice on one page is a
           worse answer to "where do I go next" than printing them once, high up,
           where somebody who is not going to scroll can still see them. */}
 
-      {project.copyState === 'PLACEHOLDER' && <PlaceholderTag />}
+      {project.copyState === 'PLACEHOLDER' && (
+        <div className="mac-doc-text">
+          <PlaceholderTag />
+        </div>
+      )}
     </article>
   )
 }
