@@ -174,6 +174,47 @@ Things T has decided he wants but has deliberately parked.
 Closed tickets keep their row above rather than moving to an archive file. The
 board is short by design and a second file would only split the history.
 
+**2026-08-26, issue #46.** RoleRadar extractor. `docs/extracted/roleradar.md`,
+walked read only out of the MSBA 6511 final project folder in iCloud. Nothing is
+wired into the site, per the issue: `content.ts` was deliberately not touched.
+
+The finding is the agent architecture itself. RoleRadar builds four AutoGen
+objects, a `UserProxyAgent` orchestrator plus JobScraperAgent, FuzzyMatchAgent
+and ResumeAnalysisAgent, assembles them into a `GroupChat` with a
+`GroupChatManager`, and then never starts a conversation. `self.groupchat` is
+assigned once and never read; there is no `initiate_chat` anywhere; and no tool
+is registered with any agent, so the system prompts that say "you call the
+scrape_company tool" describe a binding that does not exist. What actually runs
+is a fixed function pipeline calling deterministic Python, and exactly one agent
+reaches a model, through the plain Azure OpenAI SDK rather than through AutoGen.
+The code says all of this in its own comments, so it was documented rather than
+hidden.
+
+That matters here because RoleRadar is what backs Agent Orchestration and Tool
+Calling on the skills list and the AGENTIC WORKFLOWS capability. The honest
+framing is a positioning strength, deterministic where determinism is correct
+and generative only where judgement is needed, and the extraction argues for
+writing it that way rather than for the phrase "multi agent". A technical
+interviewer can open the repo and check.
+
+Two lines of current copy do not survive the walk. `content.ts` line 282 says
+the matcher scores roles against a profile: it scores titles against thirteen
+keywords, and the resume is only used later, per posting, on demand. And Azure
+AI Foundry is stubbed, with the project's own README telling users to leave the
+connection string blank, so "Azure OpenAI" is the accurate phrase. Also worth
+carrying forward: nothing in that project was ever evaluated, no test file, no
+gold set, no rating of any model output, which is a sharp contrast to the
+material classifier and reads well as a lesson rather than a gap.
+
+Two bugs were found by reading rather than by running, and both are flagged as
+unexecuted in the file: the location normaliser matches aliases by substring, so
+`"la"` sends Atlanta, Dallas and Portland to Los Angeles and `"uk"` marks
+Milwaukee as not US based, which the default US only filter then hides. Same
+shape as the silent miss the classifier project built a metric for. Seven open
+threads for T at the bottom of the file, including whether the case study may
+name his target companies. They are redacted to a count here, because this repo
+is public and the list is a live job search.
+
 **2026-08-26, issue #33.** At a glance, ADR-0001 section 2, the four cell panel
 under the hero. PROBLEM, APPROACH, OUTPUT, EVIDENCE, in that fixed order, drawn
 as a table on the window face rather than as chips, because four labelled values
