@@ -177,8 +177,12 @@ reopening a decision. See `docs/agents/domain.md`.
     The visual north star. Charlie Dean's site is the reference: natural
     editorial colours, photos centred and right sized (never overwhelming), one
     consistent font system, concise prose. Judge every visual choice against these.
-12. **Read `HANDOFF.md` right after this file.** Cross-project agent rules live
-    in `~/dev/AGENT_RULES.md`. The full file index is the taxonomy in `README.md`.
+12. **Read `HANDOFF.md` right after this file.** It is rewritten every session
+    and describes the state now, not the history. Then `README.md` for the file index
+    and `CONTEXT.md` for the vocabulary.
+13. **Cross-repo conventions live in `~/dev/AGENT_RULES.md`**, sections 6 and 7:
+    how the AFK pipeline works, and how a session hands off to the next one.
+    `~/dev/REPO_BOOTSTRAP.md` is the checklist for setting this up elsewhere.
 
 ## Traps that already bit this stack
 
