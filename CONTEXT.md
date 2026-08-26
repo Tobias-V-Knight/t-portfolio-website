@@ -26,29 +26,21 @@ Not a synonym for "project". Most projects are not case studies.
 
 ## Archive entry
 
-A project that appears as a row in the PORTFOLIO window and opens nothing. It
-has a name, a focus, a year and a status, and that is all.
+A project that appears in the ARCHIVE folder rather than in the PORTFOLIO list.
+**It still opens.** Clicking it opens a project window like any other; that
+window is simply shorter, because the entry has less material in it.
 
-The distinction exists because a Finder list puts every row at equal visual
-weight, so eight coursework projects sitting beside CSI drag CSI down. An
-archive entry is not a demotion for being bad; it is an admission that not
-every piece of work needs eight sections.
+The distinction is prominence, not access. A Finder list makes a promise on
+every row, and a file that does nothing when clicked reads as broken rather
+than as unimportant.
 
-## At a glance
+Depth is decided by the data. `ProjectPanel` renders a section only when the
+project has it, so a thin entry produces a short window without a second
+template existing anywhere.
 
-The four cell panel under the hero of a case study: PROBLEM, APPROACH, OUTPUT,
-EVIDENCE, one short phrase each. Built for issue #33,
-[ADR-0001](docs/adr/0001-case-study-template.md) section 2.
-
-**The order is the argument**, so it is fixed in the component and a project
-cannot change it or drop a cell: what hurt, what was done about it, what exists,
-why anyone should believe it.
-
-A cell nobody has written renders its prompt as a blank, see **Blank** below,
-rather than collapsing. The panel is the centerpiece of the page, and a centerpiece that
-disappears when the data is thin is missing from the pages that need it most.
-
-Not running text, so it takes the full width and the measure does not apply.
+The grouping exists because a Finder list puts every row at equal visual
+weight, so eight coursework projects beside CSI drag CSI down. That is a
+statement about billing, not about worth.
 
 ## Evidence
 

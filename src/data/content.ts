@@ -86,9 +86,11 @@ export interface Project {
   year: string
   categories: Category[]
   copyState: Placeholder
-  // Whether this project opens a full case study window, or is only a row in
-  // the WORK list.
-  hasWindow: boolean
+  // Whether this project is one of the case studies, which decides which
+  // Finder list it appears in and how much material it has. It does NOT decide
+  // whether it opens: every project opens. A file you cannot open is a broken
+  // file, and the Finder metaphor makes that promise on every row.
+  caseStudy: boolean
   // ADR-0001 section 2. Partial on purpose: a case study renders all four cells
   // whatever is here, and a field left out falls back to its prompt in
   // `atAGlancePrompts`. Omitting the whole object is a valid state and it is
@@ -130,7 +132,7 @@ export const projects: Project[] = [
     year: '2026',
     categories: ['data', 'ai-ml'],
     copyState: 'PLACEHOLDER',
-    hasWindow: true,
+    caseStudy: true,
     // Two of these are written and two are blanks, deliberately.
     //
     // PROBLEM and APPROACH restate what the prose below already says, so they
@@ -188,7 +190,7 @@ export const projects: Project[] = [
     year: '2025 to now',
     categories: ['product', 'ai-ml'],
     copyState: 'PLACEHOLDER',
-    hasWindow: true,
+    caseStudy: true,
     problem:
       'Coaching feedback in pickleball is memory based. A coach watches a match, remembers three moments, and the other two hundred rallies are gone. Players get impressions instead of evidence, and the same mistake survives for a season because nobody can point at it.',
     built: [
@@ -225,7 +227,7 @@ export const projects: Project[] = [
     year: '2026',
     categories: ['ai-ml'],
     copyState: 'PLACEHOLDER',
-    hasWindow: true,
+    caseStudy: true,
     problem:
       'Bid items in construction documents are written by humans in a hurry, so the same material appears a dozen different ways across a dozen contractors. Anything that wants to compare prices, estimate quantities or spot an unusual line first has to agree on what the line actually is, and that agreement does not exist in the source data.',
     built: [
@@ -254,7 +256,7 @@ export const projects: Project[] = [
     year: '2026',
     categories: ['data'],
     copyState: 'PLACEHOLDER',
-    hasWindow: true,
+    caseStudy: true,
     problem:
       '[ What was the operational problem, and who was feeling it? Anomaly detection is a method, not a problem, and the article needs the problem. ]',
     built: ['[ What did you build and hand over? ]'],
@@ -274,7 +276,7 @@ export const projects: Project[] = [
     year: '2026',
     categories: ['ai-ml', 'tools'],
     copyState: 'PLACEHOLDER',
-    hasWindow: true,
+    caseStudy: true,
     problem:
       'Job boards optimise for volume, and a job search optimises for fit. Searching by keyword returns a hundred roles that share a word and none that share a shape, so the work of a search is mostly reading postings to reject them.',
     built: [
@@ -304,7 +306,7 @@ export const projects: Project[] = [
     year: '2025',
     categories: ['ai-ml'],
     copyState: 'PLACEHOLDER',
-    hasWindow: false,
+    caseStudy: false,
     problem:
       'Shot accuracy is the number every player wants and nobody measures, because measuring it by hand means watching the same rally four times with a notepad. The data exists in every phone video ever shot from the fence, it is just locked in pixels.',
     built: [
@@ -336,7 +338,7 @@ export const projects: Project[] = [
     year: '2026',
     categories: ['ai-ml'],
     copyState: 'PLACEHOLDER',
-    hasWindow: false,
+    caseStudy: false,
     problem:
       '[ Every recommender demo looks the same. What made this one worth building: the dataset, the approach, or the question you were testing? ]',
     built: ['[ Collaborative filtering, content based, or a hybrid? ]'],
@@ -356,7 +358,7 @@ export const projects: Project[] = [
     year: '2026',
     categories: ['ai-ml'],
     copyState: 'PLACEHOLDER',
-    hasWindow: false,
+    caseStudy: false,
     problem:
       '[ Product recommendation with an ingredient constraint is a more interesting problem than film recommendation. Was that the angle? ]',
     built: ['[ What did it recommend on: ingredients, reviews, skin type? ]'],
@@ -376,7 +378,7 @@ export const projects: Project[] = [
     year: '2026',
     categories: ['ai-ml'],
     copyState: 'PLACEHOLDER',
-    hasWindow: false,
+    caseStudy: false,
     problem:
       'The canonical first computer vision problem, which makes it a fair test of technique rather than of novelty. Everyone has the same data, so the only variable is what you do with it.',
     built: ['[ Trained from scratch, fine tuned a pretrained backbone, or both? ]'],
@@ -396,7 +398,7 @@ export const projects: Project[] = [
     year: '2026',
     categories: ['hardware'],
     copyState: 'PLACEHOLDER',
-    hasWindow: false,
+    caseStudy: false,
     problem:
       'Training a model on a laptop means the laptop is gone for the afternoon, and renting a GPU for every experiment means paying to find out an idea was bad. A machine that sits in the corner and takes jobs solves both, and it is cheaper than either over a year.',
     built: [
@@ -420,7 +422,7 @@ export const projects: Project[] = [
     year: '2026',
     categories: ['tools'],
     copyState: 'PLACEHOLDER',
-    hasWindow: false,
+    caseStudy: false,
     problem:
       'Matplotlib opens every figure in its own window and gives you no way to step between them. Anyone who has generated forty plots in a loop has then closed forty windows one at a time. Spyder solved this years ago and nothing outside Spyder did.',
     built: ['A viewer that collects the figures and lets you arrow through them.'],
@@ -441,7 +443,7 @@ export const projects: Project[] = [
     year: '2026',
     categories: ['tools'],
     copyState: 'PLACEHOLDER',
-    hasWindow: false,
+    caseStudy: false,
     problem:
       'A portfolio has about fifteen seconds to be worth reading, and every portfolio looks the same, so the fifteen seconds go to whoever is memorable rather than whoever is best. The risk in solving that with a gimmick is that the gimmick becomes the thing people remember instead of the work.',
     built: [
@@ -468,7 +470,7 @@ export const projects: Project[] = [
     year: '2026',
     categories: ['data', 'tools'],
     copyState: 'PLACEHOLDER',
-    hasWindow: false,
+    caseStudy: false,
     problem:
       'The intersection of 15th and 28th has no crosswalk and a lot of traffic moving faster than it should. Everyone on the street knows it. Nobody can prove it, and "the neighbours think it is dangerous" is the weakest possible thing to bring to a city that has to prioritise between a hundred streets making the same claim.',
     built: [
@@ -494,14 +496,16 @@ export const projects: Project[] = [
   },
 ]
 
-// `hasWindow` is the one switch. Flip it and a project changes group, gains or
-// loses its route, and starts or stops being clickable. There is deliberately
-// no second list to keep in step with this one.
-export const caseStudyProjects = projects.filter((p) => p.hasWindow)
-export const archiveProjects = projects.filter((p) => !p.hasWindow)
+// `caseStudy` is the one switch, and it decides grouping only. Every project
+// opens a window; the depth of that window is decided by how much material the
+// entry actually has, because the panel renders a section only when its data
+// exists. A thin project produces a thin window without needing a second
+// template to maintain.
+export const caseStudyProjects = projects.filter((p) => p.caseStudy)
+export const archiveProjects = projects.filter((p) => !p.caseStudy)
 
-// Kept as an alias so nothing that imported the old name breaks silently.
-export const windowProjects = caseStudyProjects
+// Every project is routed and openable.
+export const windowProjects = projects
 
 export interface Role {
   org: string
