@@ -33,6 +33,8 @@ that gets consulted before a new file is ever created.
 | `CLAUDE.md` | Working rules | Decisions taken, constraints, traps, and the rules for how work happens here. The first thing any session reads |
 | `HANDOFF.md` | The map | State, what changed last session, next-up (bugs/enhancements/agents), open decisions, links. Read after CLAUDE.md |
 | `TICKETS.md` | The board | Every unit of work, its mode (AFK, SHOW, ASK) and its status. Also the list of what is blocked on T |
+| `CONTEXT.md` | The vocabulary | What this repo means by case study, archive entry, evidence, the shape, the measure, set dressing, blank. Read before writing copy or naming a component |
+| `docs/adr/` | Decisions, with reasoning | One file per architectural decision: what was chosen, why, and what was rejected on what grounds. Numbered, append only, not edited after acceptance |
 | `assets_src/` | Raw source media | Original videos/photos (gitignored); the converted, served copies live in `public/` |
 | `docs/` | Extractor output | Raw material gathered from other repos, one file per project. See its own section below |
 | `index.html` | Page shell | Title, description, the Open Graph tags that drive the LinkedIn preview, and the Google Fonts link for Silkscreen and Inter |
