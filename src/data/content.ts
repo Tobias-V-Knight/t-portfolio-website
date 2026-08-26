@@ -59,7 +59,11 @@ export interface Project {
   // `src` is a real image in /public; without it the tile renders as a labelled
   // placeholder box (screenshot/diagram) until a real screen exists.
   media?: { caption: string; tone: 'screenshot' | 'diagram'; src?: string }[]
-  results?: string[]
+  // The name is the decision, and it is not a synonym for the one it replaced
+  // on 2026-08-26: this section asks what the strongest proof is that the work
+  // was real, so a deployment fact or a screenshot belongs here. Do not rename
+  // it back. See CONTEXT.md, Evidence.
+  evidence?: string[]
   lessons?: string[]
   links?: ProjectLink[]
   // Renders nothing to the visitor. It exists so the next agent reads it
@@ -101,7 +105,7 @@ export const projects: Project[] = [
       { caption: 'Bid item extraction', tone: 'screenshot' },
       { caption: 'Document to answer path', tone: 'diagram' },
     ],
-    results: [
+    evidence: [
       '[ How much estimator time did this take out of a bid? ]',
       '[ What did the contractor say, or do differently, after using it? ]',
       '[ Any accuracy number you are willing to stand behind ]',
@@ -140,7 +144,7 @@ export const projects: Project[] = [
       { caption: 'Ingestion to analytics path', tone: 'diagram' },
       { caption: 'Coaching dashboard', tone: 'screenshot' },
     ],
-    results: [
+    evidence: [
       '[ How many matches have gone through it? ]',
       '[ What changed for the coaches actually using it? ]',
     ],
@@ -171,7 +175,7 @@ export const projects: Project[] = [
       'Detection runs frame by frame with YOLOv8. A homography maps the detected court corners onto a known court geometry, so every detection becomes a position in feet rather than pixels. Shot events come out of the position and velocity series, and the analytics run on those events.',
     stack: ['Python', 'YOLOv8', 'OpenCV', '[ anything else worth naming ]'],
     media: [{ caption: 'Tracked rally with court overlay', tone: 'screenshot' }],
-    results: [
+    evidence: [
       '[ Detection accuracy, and on what footage ]',
       '[ What it got wrong, and where it broke down ]',
     ],
@@ -203,7 +207,7 @@ export const projects: Project[] = [
     architecture:
       'Everything runs locally on a Mac mini rather than in a hosted environment, which was a constraint worth accepting: it forced the model small enough to be practical and made the whole thing reproducible on one machine.',
     stack: ['Python', 'PyTorch', 'DistilBERT', 'Trained locally on a Mac mini'],
-    results: [
+    evidence: [
       '[ Accuracy from scratch versus fine tuned, and on how many classes ]',
       '[ Where the from scratch version held up, and where it did not ]',
     ],
@@ -232,7 +236,7 @@ export const projects: Project[] = [
     architecture:
       'Built on AutoGen with Azure AI Foundry behind it. Splitting the work across agents rather than one long prompt was the design decision: a scanner that fails is a different failure from a judge that is wrong, and keeping them apart makes it obvious which one broke.',
     stack: ['Python', 'AutoGen', 'Azure AI Foundry'],
-    results: [
+    evidence: [
       '[ Did it actually surface roles you would have missed? ]',
       '[ How many companies have you run it against? ]',
     ],
@@ -257,7 +261,7 @@ export const projects: Project[] = [
     built: ['[ What did you build and hand over? ]'],
     architecture: '[ What detected the anomalies, and how were they surfaced? ]',
     stack: ['[ language and libraries ]'],
-    results: ['[ What did it catch? ]'],
+    evidence: ['[ What did it catch? ]'],
     lessons: ['[ The interesting part ]'],
     links: [{ label: 'GitHub', href: 'https://github.com/Tobias-V-Knight/4mativ-anomaly-detection' }],
   },
@@ -277,7 +281,7 @@ export const projects: Project[] = [
     built: ['[ Collaborative filtering, content based, or a hybrid? ]'],
     architecture: '[ How were recommendations generated and served? ]',
     stack: ['Python', '[ libraries ]'],
-    results: ['[ Evaluation metric and score ]'],
+    evidence: ['[ Evaluation metric and score ]'],
     lessons: ['[ What surprised you ]'],
     links: [{ label: 'GitHub', href: 'https://github.com/Tobias-V-Knight/film-recommender' }],
   },
@@ -297,7 +301,7 @@ export const projects: Project[] = [
     built: ['[ What did it recommend on: ingredients, reviews, skin type? ]'],
     architecture: '[ How were recommendations generated? ]',
     stack: ['Python', '[ libraries ]'],
-    results: ['[ Evaluation metric and score ]'],
+    evidence: ['[ Evaluation metric and score ]'],
     lessons: ['[ What surprised you ]'],
     links: [{ label: 'GitHub', href: 'https://github.com/Tobias-V-Knight/skin-care-recommender' }],
   },
@@ -317,7 +321,7 @@ export const projects: Project[] = [
     built: ['[ Trained from scratch, fine tuned a pretrained backbone, or both? ]'],
     architecture: '[ Model architecture and augmentation strategy ]',
     stack: ['Python', 'Jupyter', '[ framework ]'],
-    results: ['[ Leaderboard score and placement ]'],
+    evidence: ['[ Leaderboard score and placement ]'],
     lessons: ['[ What moved the score most ]'],
     links: [{ label: 'GitHub', href: 'https://github.com/Tobias-V-Knight/dogs-v-cats_kaggle_comp' }],
   },
@@ -342,7 +346,7 @@ export const projects: Project[] = [
     architecture: '[ Network, storage and service layout. This one deserves a diagram. ]',
     stack: ['[ OS, container runtime, anything orchestrating it ]'],
     media: [{ caption: 'The machine, in situ', tone: 'screenshot' }],
-    results: ['[ What it has actually run. The NLP classifier trained on it, what else? ]'],
+    evidence: ['[ What it has actually run. The NLP classifier trained on it, what else? ]'],
     lessons: ['[ What you would do differently on the next build ]'],
   },
   {
@@ -360,7 +364,7 @@ export const projects: Project[] = [
       'Matplotlib opens every figure in its own window and gives you no way to step between them. Anyone who has generated forty plots in a loop has then closed forty windows one at a time. Spyder solved this years ago and nothing outside Spyder did.',
     built: ['A viewer that collects the figures and lets you arrow through them.'],
     stack: ['Python', 'Matplotlib'],
-    results: ['[ Do you still use it? That is the only metric a tool like this has. ]'],
+    evidence: ['[ Do you still use it? That is the only metric a tool like this has. ]'],
     lessons: [
       'The smallest tools are the ones you actually keep, because they solve a problem you hit weekly rather than a problem you found interesting once.',
     ],
@@ -415,7 +419,7 @@ export const projects: Project[] = [
     architecture:
       '[ How does a frame become a speed? Two line crossings and a timestamp, or something learned? Worth writing up, because it is the part that decides whether anyone believes the numbers. ]',
     stack: ['[ camera and mount ]', 'Python', '[ detection and tracking ]', '[ how the site is served ]'],
-    results: [
+    evidence: [
       '[ How many vehicles measured so far, and over how many days ]',
       '[ The number that matters: what share are over the limit, and how far over ]',
       '[ What the city said when it was shared with them ]',
