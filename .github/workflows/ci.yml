@@ -1,0 +1,45 @@
+# CI, added 2026-08-26.
+#
+# The gate that did not exist. Until now the only thing standing between a
+# broken commit and tobiasknight.dev was somebody remembering to run the checks
+# by hand, and Cloudflare deploys main within a minute of a push. A wrong
+# number reached the live site the same evening this was written.
+#
+# It runs on every PR and on main. Nothing here is clever: install, typecheck,
+# build. The point is that it runs every time, not that it runs deeply.
+name: ci
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+# A new push to the same branch cancels the run still going for the old one.
+# The Mac Mini pushes fixups to a branch while iterating, and there is no value
+# in finishing a build for a commit nobody will merge.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+
+      # ci, not install: it installs exactly what package-lock.json says and
+      # fails if the lockfile and package.json disagree. On a laptop that
+      # difference rarely shows up; in CI it is the difference between testing
+      # what will ship and testing something adjacent to it.
+      - run: npm ci
+
+      - name: typecheck
+        run: npx tsc -b --noEmit
+
+      - name: build
+        run: npm run build
