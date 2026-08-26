@@ -172,6 +172,9 @@ The recurring pattern: **go through a project, review + run the code, pull the s
 2. **Resume + About extractor** — read `04_career/00_Resume and Cover Letter/` (final copies) + `pbiq.ai`,
    produce a clean LinkedIn-style About + the HOME **skills / current stack / key projects** snapshot.
    NOT a verbatim resume — the essence.
+   *Work history half done 2026-08-25 (issue #5): `docs/extracted/career.md` has every role, employer and
+   date with sources, and it answers Q-10. The About/voice half is still open. `content.ts` is untouched
+   on purpose, and the wire up waits on T confirming two employer names.*
 3. **MSBA extractor** — walk the MSBA folder, list every class taken, rough outline + key topics per
    course. Tobias fills gaps.
 4. **Per-project reviewers + screenshot agent** — PB IQ, RoleRadar, 4mativ, Gravl, CSI.APP: run locally,

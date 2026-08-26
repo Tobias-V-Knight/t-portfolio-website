@@ -42,9 +42,18 @@ that gets consulted before a new file is ever created.
 
 ### `docs/`
 
+Extraction output. Facts pulled out of the source material in iCloud and in
+other repos, so that `content.ts` can be filled in from a document rather than
+from memory. Nothing in here is rendered by the site, and nothing in here is
+private career material: this repo is public, so salary, offers, rejections and
+interview content stay out, and named recruiters and target companies are
+redacted.
+
 | File | What it is | What it does |
 |---|---|---|
-| `extracted/msba.md` | The MSBA coursework extraction (issue #6) | Every course found in the two iCloud coursework folders: code, name, what the work shows, a 3 to 5 item stack, and the file each fact came from. Four of them are on the site, the rest are staged here. Read it before editing `msba` in `data/content.ts` |
+| `extracted/career.md` | Career extraction (issue #5) | Role, employer, dates and one line per position, every claim citing the file it came from. Resolved the "AC Surety Delivery Associates" ambiguity: two employers, and two names in the repo were mis-transcriptions. Wired into `resume.experience` on 2026-08-26 |
+| `extracted/msba.md` | MSBA coursework extraction (issue #6) | Every course found in the two iCloud coursework folders: code, name, what the work shows, a 3 to 5 item stack, and the file each fact came from. Four are on the site, the rest are staged here. Read before editing `msba` in `data/content.ts` |
+| `extracted/nlp-material-classifier.md` | Material classifier extraction (issue #4) | The full accuracy table from that repo, every figure cited by path, blanks left as `[ not recorded ]`. The source for the NLP case study window |
 
 ### `src/`
 
