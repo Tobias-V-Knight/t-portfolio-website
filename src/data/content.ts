@@ -21,6 +21,43 @@ export interface ProjectLink {
 }
 
 // ---------------------------------------------------------------------------
+// At a glance
+//
+// ADR-0001 section 2, and the centerpiece of a case study rather than the
+// architecture diagram: every project can be summarised in four phrases, and
+// not every project has a diagram worth drawing.
+//
+// Each field is one short phrase, not a sentence. If it reads as a sentence it
+// is too long, and a panel of four sentences is prose, which is what the
+// section under it is for.
+//
+// The order PROBLEM, APPROACH, OUTPUT, EVIDENCE is fixed and it is the whole
+// contract: it is the shape of every claim on this site, from what hurt, to
+// what was done, to what exists, to why anyone should believe it.
+// ---------------------------------------------------------------------------
+
+export interface AtAGlance {
+  problem: string
+  approach: string
+  output: string
+  evidence: string
+}
+
+// What a cell says when nobody has written it yet. A case study always renders
+// four cells, so an unwritten one has to be a visible question rather than an
+// empty box: an empty box reads as a layout bug, and a collapsed panel hides
+// the fact that the most scannable part of the page is missing.
+//
+// These are questions aimed at T, in the same square bracket convention as
+// every other blank in this file.
+export const atAGlancePrompts: AtAGlance = {
+  problem: '[ who hurts, and how much ]',
+  approach: '[ what the system does about it ]',
+  output: '[ what somebody ends up in front of ]',
+  evidence: '[ the strongest proof it was real ]',
+}
+
+// ---------------------------------------------------------------------------
 // Categories
 //
 // The filter chips in the WORK window, from the fabiodicec.ca reference T sent
@@ -52,6 +89,11 @@ export interface Project {
   // Whether this project opens a full case study window, or is only a row in
   // the WORK list.
   hasWindow: boolean
+  // ADR-0001 section 2. Partial on purpose: a case study renders all four cells
+  // whatever is here, and a field left out falls back to its prompt in
+  // `atAGlancePrompts`. Omitting the whole object is a valid state and it is
+  // what four of the five case studies do today.
+  atAGlance?: Partial<AtAGlance>
   problem?: string
   built?: string[]
   architecture?: string
@@ -89,6 +131,25 @@ export const projects: Project[] = [
     categories: ['data', 'ai-ml'],
     copyState: 'PLACEHOLDER',
     hasWindow: true,
+    // Two of these are written and two are blanks, deliberately.
+    //
+    // PROBLEM and APPROACH restate what the prose below already says, so they
+    // are safe. APPROACH names the pipeline shape and stops there, which is
+    // what ADR-0003 permits: ingestion, retrieval and agents is the shape every
+    // system in this category has, and the stage internals are the mechanism.
+    //
+    // OUTPUT and EVIDENCE stay blanks because the file already admits it does
+    // not know them. `built` asks what the contractor was handed, so writing a
+    // deliverable here would contradict a question two fields down. And the
+    // status says Delivered while HOME says CSI is being put into production;
+    // those are different claims and T is the only one who can say which is the
+    // true one.
+    atAGlance: {
+      problem: 'Hundreds of pages per bid package',
+      approach: 'Document ingestion, retrieval and agents',
+      output: '[ what the estimator ends up in front of ]',
+      evidence: '[ delivered, or running in production at the client? ]',
+    },
     problem:
       'A paving contractor bids on highway work from document packages that run to hundreds of pages. Estimators cannot read all of it, so they read the parts experience says matter and accept the risk in the rest. The result is that the decision setting the margin on a multi million dollar job is made on a fraction of the available information, under time pressure, every time.',
     built: [

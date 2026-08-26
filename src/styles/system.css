@@ -1693,3 +1693,71 @@ body {
     padding: 0 16px;
   }
 }
+
+/* --- At a glance (ADR-0001 section 2, issue #33) ------------------------- */
+/* Four cells directly under the hero, and the one part of the page that has to
+   survive a visitor who never scrolls. It is a panel rather than four
+   paragraphs because four labelled phrases side by side can be taken in at
+   once, and the same four as prose cannot.
+
+   Drawn as a table rather than as four chips: a chip is one label, and these
+   are four labelled values that have to line up as a set. The rules between
+   them are the 1px grid gap showing the black ground through, which is the
+   cheapest way to get hairlines that never double up at a join. */
+
+.mac-glance {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  background: var(--mac-line);
+  border: 1px solid var(--mac-line);
+  margin: 0 0 8px;
+  /* ADR-0004. The measure is for running text. This is a table, and a table
+     that stops at 66ch in a 1440px window is a table with a hole beside it. */
+  max-width: none;
+}
+
+.mac-glance-cell {
+  background: var(--mac-face);
+  padding: 10px 12px 11px;
+  /* A grid column will not shrink below its longest word without this, and one
+     long word in one cell would push the other three off the panel. */
+  min-width: 0;
+  overflow-wrap: break-word;
+}
+
+.mac-glance-label {
+  font-family: var(--mac-chrome);
+  font-size: var(--type-chrome-sm);
+  line-height: var(--leading-flat);
+  letter-spacing: 0.04em;
+  color: var(--mac-ink-soft);
+  margin: 0 0 7px;
+}
+
+.mac-glance-value {
+  font-family: var(--mac-body);
+  font-size: var(--type-body);
+  line-height: var(--leading-tight);
+  color: var(--mac-ink);
+  /* dd carries a 40px indent by default, which in a 220px cell is a third of
+     the cell. */
+  margin: 0;
+  max-width: none;
+}
+
+/* A cell is often a whole blank rather than a phrase with one in it, and the
+   default blank is 12px type on 1.9 leading, which in a short cell reads as a
+   paragraph. Same correction the hero chips make, same reason. */
+.mac-glance .mac-blank {
+  line-height: var(--leading-tight);
+  padding: 1px 5px;
+}
+
+@media (max-width: 768px) {
+  /* Two by two rather than stacked. Four cells down the page is a list, and a
+     list is read one item at a time, which is the opposite of at a glance. Two
+     by two keeps it one object that fits above the fold on a phone next to the
+     hero. */
+  .mac-glance { grid-template-columns: repeat(2, 1fr); }
+}
