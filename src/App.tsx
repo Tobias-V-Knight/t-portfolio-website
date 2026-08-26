@@ -35,7 +35,7 @@ import {
   ZippyPanel,
 } from './windows/Panels'
 import { ProjectPanel } from './windows/Project'
-import { WorkPanel } from './windows/Work'
+import { ArchivePanel, WorkPanel } from './windows/Work'
 import './styles/system.css'
 
 // Five desktop objects, which is the middle of the four to six the spec asks
@@ -84,6 +84,7 @@ function titleIconFor(id: string, kind: string) {
   const byId: Record<string, () => React.JSX.Element> = {
     intro: () => <HomeIcon className="mac-title-art" />,
     work: () => <FolderIcon className="mac-title-art" />,
+    archive: () => <FolderIcon className="mac-title-art" />,
     about: () => <DocIcon className="mac-title-art" />,
     msba: () => <DocIcon className="mac-title-art" />,
     resume: () => <DocIcon className="mac-title-art" />,
@@ -128,6 +129,7 @@ export default function App() {
   const [zoom, setZoom] = useState<{ from: Rect; to: Rect; key: number } | null>(null)
   const zoomKey = useRef(0)
   const [workStatus, setWorkStatus] = useState('')
+  const [archiveStatus, setArchiveStatus] = useState('')
 
   // Functional nav, Charlie Dean style: an Apple dropdown (About Tobias / View
   // Resume) plus Portfolio / About / Contact that open their window on click.
@@ -208,6 +210,7 @@ export default function App() {
   )
 
   const handleWorkStatus = useCallback((s: string) => setWorkStatus(s), [])
+  const handleArchiveStatus = useCallback((s: string) => setArchiveStatus(s), [])
 
   return (
     <>
@@ -272,6 +275,8 @@ export default function App() {
               status={
                 w.def.kind === 'work'
                   ? workStatus
+                  : w.def.kind === 'archive'
+                    ? archiveStatus
                   : w.def.kind === 'project' && project
                     ? `${project.status}`
                     : undefined
@@ -292,9 +297,11 @@ export default function App() {
                   </Suspense>
                 </ErrorBoundary>
               )}
+              {w.def.kind === 'archive' && <ArchivePanel onStatus={handleArchiveStatus} />}
               {w.def.kind === 'work' && (
                 <WorkPanel
                   onOpenProject={(slug) => openZoomed(`project:${slug}`)}
+                  onOpenArchive={() => openZoomed('archive')}
                   onStatus={handleWorkStatus}
                 />
               )}
