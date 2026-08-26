@@ -263,6 +263,35 @@ name his target companies. They are redacted to a count here, because this repo
 is public and the list is a live job search.
 >>>>>>> main
 
+**2026-08-26, issue #34.** The editorial grid, ADR-0004. A case study was one
+column using about two thirds of a 1440px window, which is what made it read as
+too long and too empty at the same time. It is a two column grid now: running
+text stays capped at `--measure`, and the grid spends the space that cap frees
+on the screenshots and the stack instead of widening the prose into it. The hero,
+the at a glance panel and the diagrams span both columns.
+
+Three decisions worth carrying forward. **Container queries, not media
+queries**: a case study window is resizable, so a layout that asks the viewport
+how wide the window is answers confidently and wrongly, and the container is
+`.mac-window-body` on project windows only. **The threshold is arithmetic, not
+taste**: at 1440 the window is 922px, which leaves the body about 905px, and 66ch
+of Inter plus the padding and the gutter leaves a side column near 270px, so 860
+is where the second column stops being able to hold a picture. **One flat list,
+not two columns of markup**: `Project.tsx` zips a list of text blocks against a
+list of side blocks and emits them interleaved, because two container elements
+would put every picture below every paragraph on a phone. The flat list collapses
+into one column in source order, so narrow reads prose, picture, prose, picture.
+That is the "one layout, not two" criterion.
+
+Two things came off the page on the way. `SCREENS` and `STACK` lost their `h2`
+headings: the screenshots are captioned figures in the side column now and no
+longer form a block for a heading to name, and `STACK` became the chips
+ADR-0001 section 9 asks for rather than a line of dot separated prose, which is
+readable across a window and unreadable down a 270px rail. Not verified in a
+browser, the Mini has no browser tool, so 1900, 1440 and 390 screenshots are
+owed on the PR, and the one measurement that matters is a paragraph at 1440 and
+at 1900 staying at the measure.
+
 **2026-08-26, issue #33.** At a glance, ADR-0001 section 2, the four cell panel
 under the hero. PROBLEM, APPROACH, OUTPUT, EVIDENCE, in that fixed order, drawn
 as a table on the window face rather than as chips, because four labelled values

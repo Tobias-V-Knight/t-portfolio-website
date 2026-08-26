@@ -1761,3 +1761,136 @@ body {
      hero. */
   .mac-glance { grid-template-columns: repeat(2, 1fr); }
 }
+
+/* --- The editorial grid (ADR-0004, issue #34) ---------------------------- */
+/* The case study was a single column using about 65 percent of a 1440px window,
+   which is why it read as too long and too empty at the same time. This is the
+   fix, and the rule it follows is ADR-0004: the measure wins and the grid is
+   how it is achieved. Running text stays capped at --measure at every width,
+   and the grid spends the space that cap frees on visuals and metadata rather
+   than letting the prose widen into it. A text column at "55 percent of the
+   window" sets about 100 characters to the line at 1600, which is exactly the
+   bug P2-08 fixed.
+
+   Container queries, not media queries. A case study window is resizable: it
+   opens at 0.64 of the viewport, but the grow box can take it anywhere, so a
+   layout that asks the viewport how wide the window is will answer confidently
+   and wrongly. The container is the window body.
+
+   The threshold, worked out rather than picked. At a 1440 viewport the window
+   is round(1440 * 0.64) = 922px; take off two borders and a 15px scrollbar and
+   the body measures about 905px. Take off the 52px of document padding and the
+   34px gutter, and 66ch of Inter at 15px (roughly 550px) leaves a side column
+   near 270px, which holds a screenshot. 860 keeps 1440 clear of the edge with
+   slack for a wider glyph than that estimate. Below it the side column gets too
+   thin to hold a picture, so the whole thing collapses to one column instead of
+   shipping a squeezed one.
+
+   A browser without container query support gets the one column layout, which
+   is the same page rather than a broken one. */
+
+/* Scoped to the project window so no other window pays for the containment. */
+.mac-window[data-kind='project'] .mac-window-body {
+  container-type: inline-size;
+  container-name: mac-doc;
+}
+
+.mac-doc-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  column-gap: 34px;
+  row-gap: 26px;
+  align-content: start;
+}
+
+/* A grid track will not shrink below its longest word without this, and one
+   long URL in one block would push the other column off the page. */
+.mac-doc-grid > * { min-width: 0; }
+
+/* Vertical rhythm belongs to the grid now. The section headings carry a 28px
+   top margin of their own, and grid items do not collapse margins with their
+   neighbours, so leaving those in place would count the spacing twice and would
+   drop every side block 28px below the heading it is meant to sit beside. */
+.mac-doc-grid > * > :first-child { margin-top: 0; }
+.mac-doc-grid > * > :last-child { margin-bottom: 0; }
+.mac-doc-grid > .mac-hero,
+.mac-doc-grid > .mac-glance { margin-bottom: 0; }
+
+/* A picture is as tall as it is. Stretching it to the height of the paragraph
+   beside it is the one thing a side column must never do. */
+.mac-doc-side { align-self: start; }
+
+.mac-doc-side-label {
+  font-family: var(--mac-chrome);
+  font-size: var(--type-chrome-sm);
+  line-height: var(--leading-flat);
+  letter-spacing: 0.04em;
+  color: var(--mac-ink-soft);
+  margin: 0 0 9px;
+}
+
+/* Two changes to the toolbox chip, both the same ones the hero chips make and
+   for the same reasons. Background: these sit on paper rather than on a
+   photograph, so the translucent white would all but vanish. Wrapping: a chip
+   that refuses to wrap inside a 270px column is a chip that overflows it. */
+.mac-doc-side .mac-stack-tag {
+  background: var(--mac-face);
+  white-space: normal;
+  overflow-wrap: break-word;
+}
+
+.mac-doc-diagrams {
+  display: grid;
+  gap: 16px;
+}
+
+@container mac-doc (min-width: 860px) {
+  .mac-doc-grid {
+    grid-template-columns: minmax(0, var(--measure)) minmax(0, 1fr);
+  }
+
+  .mac-doc-full { grid-column: 1 / -1; }
+  .mac-doc-text { grid-column: 1; }
+
+  /* Column two is placed explicitly, and Project.tsx emits a side block
+     immediately after the text block it belongs to, so auto placement lands it
+     on the row the cursor is already on. Put anything between the two and the
+     pairing is lost. */
+  .mac-doc-side { grid-column: 2; }
+}
+
+/* --- Figures ------------------------------------------------------------- */
+/* One picture, one caption, drawn the same way in the side column and in the
+   full width diagram band. */
+
+.mac-figure { margin: 0; }
+
+.mac-figure img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* A picture that does not exist yet is a labelled box rather than nothing, so
+   the page shows where the evidence is going to go. */
+.mac-figure-box {
+  display: grid;
+  place-items: center;
+  min-height: 168px;
+}
+
+/* A diagram box is taller than a screenshot box because it is the only one that
+   spans both columns, and the 132px it used to get reads as a strip rather than
+   as a diagram once it is a thousand pixels wide. */
+.mac-figure-box[data-tone='diagram'] { min-height: 200px; }
+
+/* A caption is a readout under a picture, the same register as a tag, and not a
+   section heading. At chrome-lg in a 270px side column it sets three words to
+   the line and outweighs the thing it is describing. */
+.mac-figure figcaption {
+  font-family: var(--mac-chrome);
+  font-size: var(--type-chrome-sm);
+  line-height: 1.45;
+  color: var(--mac-ink-soft);
+  margin-top: 7px;
+}
