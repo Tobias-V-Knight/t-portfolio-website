@@ -1605,3 +1605,91 @@ body {
   background: var(--mac-paper);
   opacity: 0.88;
 }
+
+/* --- Case study hero (ADR-0001 section 1, issue #32) --------------------- */
+/* Name, one sentence, FOCUS / YEAR / ROLE / STATUS, then the ways out. The
+   metadata was comma separated prose, which made four separate facts read as
+   one sentence nobody parses. Same chip as the toolbox, because the site gets
+   one way of drawing a set of short labels and this is it. */
+
+.mac-hero {
+  margin: 0 0 22px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.14);
+}
+
+/* Tighter than a standalone lede: here the chips finish the thought, so the
+   sentence and the row under it are one block rather than two. */
+.mac-hero .mac-lede { margin-bottom: 12px; }
+
+.mac-hero-meta,
+.mac-hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 5px;
+}
+
+.mac-hero-actions { margin-top: 10px; }
+
+/* Two changes to the toolbox chip, both forced by where it now sits.
+   Background: these chips are on paper rather than on a photograph, so the
+   translucent white would all but vanish, the same reason the CV rows override
+   it. Wrapping: a role runs longer than a tool name, and a nowrap chip holding
+   "Graduate ELP team, ..." at 390px pushes the whole window sideways. */
+.mac-hero-meta .mac-stack-tag {
+  background: var(--mac-face);
+  white-space: normal;
+}
+
+/* CSI's ROLE is half an unanswered blank, so a blank has to fit inside a chip
+   rather than stretch it. It stays a highlight, it just stops being 12px type
+   with 1.9 leading inside an 11px chip. */
+.mac-hero-meta .mac-blank {
+  font-size: var(--type-chrome-sm);
+  line-height: var(--leading-flat);
+  padding: 0 4px;
+}
+
+/* The action chip is a chip that is pressable, so it takes the bevel every
+   other control on the site takes: face, light from the top left, inverted on
+   press. Accent ink is what says link. */
+.mac-doc .mac-hero-action {
+  font-family: var(--mac-chrome);
+  font-size: var(--type-chrome-sm);
+  line-height: var(--leading-flat);
+  display: inline-flex;
+  align-items: center;
+  min-height: 26px;
+  padding: 0 10px;
+  color: var(--mac-accent);
+  background: var(--mac-face);
+  border: 1px solid var(--mac-line);
+  box-shadow: inset 1px 1px 0 var(--mac-hi), inset -1px -1px 0 var(--mac-lo);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.mac-doc a.mac-hero-action:active {
+  box-shadow: inset 1px 1px 0 var(--mac-lo), inset -1px -1px 0 var(--mac-hi);
+}
+
+/* A link nobody has supplied yet is not a button. It loses the bevel so it
+   cannot be mistaken for one. */
+.mac-doc .mac-hero-action[data-blank='true'] {
+  color: var(--mac-ink);
+  background: none;
+  border-style: dashed;
+  box-shadow: none;
+  white-space: normal;
+}
+
+@media (max-width: 768px) {
+  /* An 11px chip is a 22px tap target. Every other control on the phone layout
+     goes to a thumb sized minimum and a link out is no exception. */
+  .mac-doc .mac-hero-action {
+    font-size: var(--type-chrome-md);
+    min-height: 44px;
+    padding: 0 16px;
+  }
+}

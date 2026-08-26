@@ -174,6 +174,18 @@ Things T has decided he wants but has deliberately parked.
 Closed tickets keep their row above rather than moving to an archive file. The
 board is short by design and a second file would only split the history.
 
+**2026-08-26, issue #32.** The case study hero, ADR-0001 section 1. The
+metadata was two lines of `mac-meta` prose and is now a chip row in a fixed
+order, FOCUS then YEAR then ROLE then STATUS, reusing the toolbox chip so the
+site keeps one way of drawing a set of short labels. FOCUS reads the project's
+own `categories`, so it inherits Q-07: CSI is tagged both data and AI / ML and
+shows two chips today, and the day T rules on one primary category per project
+the hero narrows on its own with no code change. The `links` a project already
+has became action chips in the hero, and the LINKS section at the foot came out
+rather than printing the same two links twice on one page. Not verified in a
+browser: this ran on the Mini with no browser tool, so the screenshots at 1440
+and 390 that the `show` label requires are still owed on the PR.
+
 **2026-08-25.** Pass 2 bug sweep: P2-01 through P2-05 all in `review`, plus
 P2-15 (contract verticals) and P2-16 (the HOME focus snapshot). Verified in a
 browser at 1440 and 390, and at 1000x290 for the icon wrap specifically. Two
