@@ -28,7 +28,7 @@ import {
   AboutPanel,
   AnimePanel,
   ContactPanel,
-  CvPanel,
+  ResumePanel,
   IntroPanel,
   MsbaPanel,
   TrashPanel,
@@ -55,7 +55,7 @@ const desktopItems = [
   { id: 'project:csi-bid-intelligence', label: 'CSI.APP', Art: RoadIcon, side: 'left' },
   { id: 'project:pickleball-iq', label: 'PICKLEBALL_IQ', Art: PaddleIcon, side: 'left' },
   { id: 'msba', label: 'MSBA.TXT', Art: DocIcon, side: 'left' },
-  { id: 'cv', label: 'CV.TXT', Art: DocIcon, side: 'left' },
+  { id: 'resume', label: 'RESUME.TXT', Art: DocIcon, side: 'left' },
   { id: 'about', label: 'ABOUT_ME.TXT', Art: DocIcon, side: 'left' },
   { id: 'contact', label: 'CONTACT', Art: MailIcon, side: 'left' },
   { id: 'anime', label: 'ANIME', Art: TvIcon, side: 'right' },
@@ -86,7 +86,7 @@ function titleIconFor(id: string, kind: string) {
     work: () => <FolderIcon className="mac-title-art" />,
     about: () => <DocIcon className="mac-title-art" />,
     msba: () => <DocIcon className="mac-title-art" />,
-    cv: () => <DocIcon className="mac-title-art" />,
+    resume: () => <DocIcon className="mac-title-art" />,
     contact: () => <MailIcon className="mac-title-art" />,
     anime: () => <TvIcon className="mac-title-art" />,
     trash: () => <TrashIcon className="mac-title-art" />,
@@ -137,20 +137,20 @@ export default function App() {
         title: 'APPLE',
         items: [
           { label: 'About Tobias…', onSelect: () => open('about') },
-          { label: 'Curriculum Vitae…', onSelect: () => open('cv') },
+          { label: 'Resume…', onSelect: () => open('resume') },
           {
             label: 'View Resume',
             onSelect: () => {
               const r = home.resume
               if (r?.present && r.file)
                 window.open(`${import.meta.env.BASE_URL}${r.file}`, '_blank')
-              else open('cv')
+              else open('resume')
             },
           },
         ],
       },
       { title: 'Portfolio', onSelect: () => open('work') },
-      { title: 'CV', onSelect: () => open('cv') },
+      { title: 'Resume', onSelect: () => open('resume') },
       { title: 'About', onSelect: () => open('about') },
       { title: 'Contact', onSelect: () => open('contact') },
       // Sits last, and only once there is something to close, so it never
@@ -279,7 +279,7 @@ export default function App() {
             >
               {w.def.kind === 'intro' && <IntroPanel onOpen={openZoomed} />}
               {w.def.kind === 'text' && <AboutPanel />}
-              {w.def.kind === 'cv' && <CvPanel />}
+              {w.def.kind === 'resume' && <ResumePanel />}
               {w.def.kind === 'msba' && <MsbaPanel />}
               {w.def.kind === 'trash' && <TrashPanel />}
               {w.def.kind === 'anime' && <AnimePanel />}

@@ -522,7 +522,7 @@ export const msba = {
 //   HOME    purely professional. What he does, what he uses, and that he is
 //           available. A snapshot, not a document.
 //   ABOUT   the person. Minneapolis, hobbies, endurance, photographs.
-//   CV      the record. History, education, the full skills table, the PDF.
+//   RESUME  the record. History, education, the full skills table, the PDF.
 //
 // Four groups, because T's first list mixed them and could not be ordered:
 //
@@ -539,7 +539,7 @@ export const msba = {
 // get their own row rather than being scattered into the others.
 //
 // ONE list per group, ordered favourites first. HOME renders the first
-// `HOME_TAGS` of each and CV renders all of them, so the short version can
+// `HOME_TAGS` of each and RESUME renders all of them, so the short version can
 // never drift from the long one. Reorder to change what HOME shows.
 // ---------------------------------------------------------------------------
 
@@ -551,109 +551,144 @@ export interface StackGroup {
   items: string[]
 }
 
-export const HOME_TAGS = 6
+export const HOME_TAGS = 5
 
-export const stack: StackGroup[] = [
+// LEVEL ONE. What he can do, grouped by discipline.
+//
+// Replaced the four bucket model (capabilities / tools / techniques /
+// shipping) on 2026-08-26. That model kept failing the same way: a tool and a
+// capability are different kinds of claim, and mixing them meant `Python` and
+// `RAG` competed for the same six slots on HOME. The split is now vertical,
+// skills here and named technologies in TOOLBOX below, so neither crowds the
+// other out.
+export const skills: StackGroup[] = [
   {
-    id: 'capabilities',
-    label: 'CAPABILITIES',
-    note: 'what I get hired to build',
+    id: 'languages',
+    label: 'LANGUAGES',
+    note: '',
+    items: ['Python', 'SQL', 'R', 'TypeScript'],
+  },
+  {
+    id: 'machine-learning',
+    label: 'MACHINE LEARNING',
+    note: '',
+    items: [
+      'Supervised Learning',
+      'Unsupervised Learning',
+      'Feature Engineering',
+      'NLP / Text Classification',
+      'Recommender Systems',
+      'Evaluation',
+    ],
+  },
+  {
+    id: 'applied-ai',
+    label: 'APPLIED AI / AGENTIC AI',
+    note: '',
     items: [
       'RAG',
-      'agent orchestration',
-      'human in the loop',
-      'evaluation harnesses',
-      'document extraction',
-      'knowledge bases',
-      'open source fine tuning',
-      'feature engineering',
-      'predictive modelling',
-      'client discovery + scoping',
+      'Agent Orchestration',
+      'Tool Calling',
+      'Open-Source Fine-Tuning',
+      'Embeddings',
+      'Semantic Search',
+      'Human-in-the-Loop',
+      'Knowledge Bases',
+      'LLM / Agent Evaluation',
     ],
   },
   {
-    id: 'tools',
-    label: 'TOOLS',
-    note: 'what I build it with',
+    id: 'statistics',
+    label: 'STATISTICS & EXPERIMENTATION',
+    note: '',
+    items: ['Statistical Modeling', 'Causal Inference', 'Experimental Design', 'A/B Testing'],
+  },
+  {
+    id: 'data-systems',
+    label: 'DATA SYSTEMS',
+    note: '',
     items: [
-      'Python',
-      'SQL',
-      'Databricks',
-      'FastAPI',
-      'Streamlit',
-      'Anthropic API',
-      'ChromaDB',
-      'Swift (iOS)',
-      'R',
-      'TypeScript',
-      'Azure AI Foundry',
-      'Supabase',
-      // MongoDB, Pinecone and Firebase came off 2026-08-25. ChromaDB and
-      // Supabase are what actually runs in production, and listing three more
-      // datastores used once each says there is no default, which is the
-      // opposite of what someone hiring for a data problem wants to hear.
-      'AWS',
-      'Spark / Hadoop',
-      'Tableau',
-      'Plotly',
+      'Data Modeling',
+      'Data Pipelines',
+      'ETL / ELT',
+      'Relational Databases',
+      'Vector Databases',
+      'Distributed Computing',
     ],
   },
   {
-    id: 'techniques',
-    label: 'TECHNIQUES',
-    note: 'what is under the hood',
-    // Trimmed and sharpened 2026-08-25. Out: logistic regression, KNN and
-    // 'statistical analysis'. The first two are stats 101 and signal
-    // coursework; the third was the worse problem, because a generic label is
-    // a claim anyone can make.
-    //
-    // In: the named methods that replaced it. 'Causal inference' and
-    // 'difference in differences' say something specific and checkable in a
-    // way that 'statistical analysis' never did, and they are the half of T's
-    // training that the applied AI framing was hiding.
+    id: 'software',
+    label: 'SOFTWARE ENGINEERING',
+    note: '',
     items: [
-      'XGBoost',
-      'causal inference',
-      'difference in differences',
-      'time series forecasting',
-      'prompt engineering',
-      'prompt evaluation',
-      'clustering / k means',
-      'A/B testing',
-      'matrix factorization',
-      'scikit-learn',
-      // Ordered last on purpose so it never surfaces on HOME, which shows the
-      // first HOME_TAGS of each group. These are public claims about what T
-      // can do, so rule 9 applies: he names them, nobody names them for him.
-      '[ the other advanced stats you have actually done ]',
+      'Backend Development',
+      'System Integration',
+      'Data Applications',
+      'Workflow Automation',
     ],
   },
   {
-    id: 'shipping',
-    label: 'SHIPPING IT',
-    note: 'what puts it in production',
-    // On prem leads as of 2026-08-25, the day CSI went live on the client's
-    // own Windows Server and became reachable across their network. Shipping
-    // to somebody else's infrastructure, on their terms, is a harder and rarer
-    // claim than any managed platform on this list, so it goes first.
+    id: 'deployment',
+    label: 'DEPLOYMENT & INFRASTRUCTURE',
+    note: '',
     items: [
-      'on prem deployment',
-      'Windows Server services',
+      'Cloud Deployment',
+      'On-Prem Deployment',
+      'Containerization',
       'CI/CD',
-      'nginx',
-      'cron jobs',
-      'hosted Postgres (Supabase)',
-      'hosted ChromaDB',
-      'git',
-      'ETL pipelines',
+      'Scheduled / Batch Jobs',
     ],
+  },
+  {
+    id: 'visualization',
+    label: 'VISUALIZATION & DATA APPS',
+    note: '',
+    items: ['Data Visualization', 'Dashboarding', 'Interactive Data Apps'],
   },
 ]
+
+// LEVEL TWO. The named technologies, visually separate.
+//
+// This is the answer to the MongoDB question. Those tools are real, they are
+// just PB IQ's rather than CSI's, and a flat list could not say so. Here they
+// are plainly a toolbox rather than a claim about what he specialises in, so a
+// tool used on one project stops reading as padding.
+export const toolbox: StackGroup[] = [
+  {
+    id: 'libraries',
+    label: 'LIBRARIES & ML',
+    note: '',
+    items: ['PyTorch', 'Transformers', 'PEFT', 'scikit-learn', 'XGBoost', 'pandas', 'NumPy'],
+  },
+  {
+    id: 'applications',
+    label: 'APPLICATIONS',
+    note: '',
+    items: ['FastAPI', 'Streamlit', 'Plotly', 'Matplotlib'],
+  },
+  {
+    id: 'platforms',
+    label: 'DATA & PLATFORMS',
+    note: '',
+    items: ['Databricks', 'Spark', 'PostgreSQL', 'SQLite', 'Supabase', 'ChromaDB'],
+  },
+  {
+    id: 'infrastructure',
+    label: 'INFRASTRUCTURE & ANALYTICS',
+    note: '',
+    items: ['AWS', 'Azure', 'Docker', 'Nginx', 'Power BI', 'Tableau', 'Git'],
+  },
+]
+
+// HOME shows a short slice of the level one groups only. The toolbox lives in
+// RESUME: a visitor fifteen seconds in wants to know what he does, not which
+// charting library he uses.
+export const homeSkills = ['applied-ai', 'machine-learning', 'statistics', 'deployment']
 
 // ---------------------------------------------------------------------------
 // Capabilities, the long version
 //
-// Five blocks, in CV rather than on HOME: HOME is a snapshot and these are
+// Five blocks, in RESUME rather than on HOME: HOME is a snapshot and these are
 // paragraphs. Order is a positioning bet, not a ranking. Whichever sits first
 // is what T gets called about, and evaluation leads because it is the thing
 // most people selling AI work skip. T owns this order, see P2-15.
@@ -735,7 +770,7 @@ export const home = {
 // ABOUT. The person, and deliberately not the resume.
 //
 // The split T asked for on 2026-08-25: a visitor who wants the record clicks
-// CV, and a visitor who wants to know who they would be working with clicks
+// RESUME, and a visitor who wants to know who they would be working with clicks
 // ABOUT. Putting both in one window was why neither read as either.
 // ---------------------------------------------------------------------------
 
@@ -761,27 +796,51 @@ export const about = {
 }
 
 // ---------------------------------------------------------------------------
-// CV. The record.
+// RESUME. The record.
 // ---------------------------------------------------------------------------
 
-export const cv = {
+export const resume = {
   copyState: 'PLACEHOLDER' as Placeholder,
 
+  // Extracted from 04_career on 2026-08-25 (issue #5) and confirmed by T on
+  // 2026-08-26. Two employer names in this file were wrong and had been live:
+  // "Formative Technologies" was 4MATIV Technologies, and "AC Surety" was
+  // Accenture. The phrase heard in an early session as "AC Surety Delivery
+  // Associates" was two employers said back to back, and "Formative" is how
+  // 4MATIV sounds out loud. Neither wrong string appears in any career
+  // document; both real names appear in all four.
+  //
+  // Newest first, because every resume runs newest first and this one used to
+  // run oldest first for no reason anyone recorded.
   experience: [
-    { org: 'Formative Technologies', role: '[ title ]', when: '[ dates ]' },
-    // T said "AC Surety Delivery Associates" in one breath. Left as two
-    // entries because it is not clear whether that is one employer or two.
-    { org: 'AC Surety', role: '[ title ]', when: '[ dates ]' },
-    { org: 'Delivery Associates', role: '[ title ]', when: '[ dates ]' },
+    {
+      org: 'Carlson Analytics Lab',
+      role: 'Forward Deployed Engineer, Graduate Consultant',
+      when: 'Oct 2025 to now',
+    },
+    { org: 'Pickleball IQ', role: 'Co-Founder & AI Engineer', when: 'May 2025 to now' },
+    {
+      org: 'Delivery Associates',
+      role: 'Solutions Delivery Consultant',
+      when: 'Sept 2023 to May 2025',
+    },
+    { org: 'Accenture', role: 'Technology Strategy Consultant', when: 'Feb 2022 to Aug 2023' },
+    {
+      org: '4MATIV Technologies',
+      role: 'Founding Solutions Lead',
+      when: 'Dec 2018 to Dec 2021',
+    },
   ] as Role[],
 
   education: [
     {
       org: 'University of Minnesota, Carlson',
-      role: 'MS Business Analytics',
+      // Every career document says "Candidate for" and the Aug 2026 date has
+      // now passed, so whether this is conferred is a fact only T has.
+      role: 'MS Business Analytics [ conferred, or still candidate? ]',
       when: 'Aug 2026',
     },
-    { org: 'University of St. Thomas', role: '[ degree ]', when: '[ years ]' },
+    { org: 'University of St. Thomas', role: 'BA Finance', when: 'May 2018' },
   ] as Role[],
 }
 
