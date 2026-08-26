@@ -30,22 +30,26 @@ const SPEED = 1
 const TYPE_MS = 6
 const RUN_DELAY_MS = 320
 
-// train.py's imports: stdlib, data, sklearn, then the TensorFlow/Keras half
-// (transfer learning on ResNet50 + callbacks). Blank strings are group breaks.
+// train.py's imports, verbatim from T on 2026-08-26. The old set was a Keras
+// ResNet50 image pipeline, which was fiction: it advertised computer vision on
+// the front page of a site whose marquee project is a fine tuned text
+// classifier. This is the actual stack, torch plus transformers plus peft, so
+// the boot sequence and the work now agree. Blank strings are group breaks.
 const SOURCE = [
-  'import os',
+  'import sqlite3',
+  '',
   'import numpy as np',
   'import pandas as pd',
-  'import matplotlib.pyplot as plt',
+  '',
+  'import torch',
+  'import torch.nn as nn',
   '',
   'from sklearn.model_selection import train_test_split',
-  'from sklearn.metrics import log_loss',
+  'from sklearn.feature_extraction.text import TfidfVectorizer',
+  'from sklearn.metrics import accuracy_score, f1_score',
   '',
-  'import tensorflow as tf',
-  'from tensorflow import keras',
-  'from tensorflow.keras import layers',
-  'from tensorflow.keras.applications.resnet50 import ResNet50, preprocess_input',
-  'from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateau, ModelCheckpoint',
+  'from transformers import AutoTokenizer, AutoModelForSequenceClassification',
+  'from peft import LoraConfig, get_peft_model',
 ]
 const SOURCE_TEXT = SOURCE.join('\n')
 
@@ -252,7 +256,7 @@ export function Boot({ onDone }: { onDone: () => void }) {
               <div className="mac-boot-line">&nbsp;</div>
               {runHead.map((l, i) => (
                 <div className="mac-boot-line" key={`head-${i}`} data-dim={i > 0}>
-                  {l}
+                  {l || <>&nbsp;</>}
                 </div>
               ))}
 
@@ -273,7 +277,12 @@ export function Boot({ onDone }: { onDone: () => void }) {
                 </div>
               )}
 
-              {runDone && <div className="mac-boot-line" data-dim>converged. checkpoint saved.</div>}
+              {runDone &&
+                RUN_TAIL.map((l, i) => (
+                  <div className="mac-boot-line" key={`tail-${i}`} data-dim>
+                    {l || <>&nbsp;</>}
+                  </div>
+                ))}
             </>
           )}
         </div>
@@ -289,9 +298,36 @@ export function Boot({ onDone }: { onDone: () => void }) {
 
 const RUN_HEAD = [
   '$ python train.py',
-  'loading weights ......... ok',
-  'mounting MACINTOSH_HD ... ok',
-  `training: ${EPOCHS} epochs, batch 32, lr 3e-4`,
+  '',
+  'MOUNTING MACINTOSH_HD ........ OK',
+  'LOADING DATASET .............. OK',
+  'TOKENIZING TEXT .............. OK',
+  'LOADING MODEL WEIGHTS ........ OK',
+  '',
+  `FINE-TUNING: ${EPOCHS} EPOCHS, BATCH 32, LR 3E-4`,
+]
+
+// What prints once the run finishes.
+//
+// The F1 is ILLUSTRATIVE, not measured. T's call on 2026-08-26: the boot is a
+// simulated training run and the numbers are set dressing chosen to look like
+// the work he actually does, which is fine for an animation of a run that is
+// not happening.
+//
+// It is flagged here because a comment in this file previously claimed 0.914
+// was the real number, and it is not. The material classifier's best RECORDED
+// macro F1 is 0.546 (TF-IDF plus logistic regression, gold set n=331); the
+// LoRA lane has never been scored. See docs/extracted/nlp-material-classifier.md.
+//
+// The rule this sits under: a number here is atmosphere and may be invented. A
+// number in a case study window is a claim about T's work and may not.
+const RUN_TAIL = [
+  '',
+  'EVALUATING CHECKPOINT ........ OK',
+  'F1 SCORE ..................... 0.914',
+  'BASELINE ..................... BEAT',
+  '',
+  'CONVERGED. CHECKPOINT SAVED.',
 ]
 
 // Whether the boot should be drawn at all.

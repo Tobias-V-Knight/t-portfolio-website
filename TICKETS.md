@@ -211,3 +211,19 @@ only T can fill: the ABOUT personal lines (what he likes about Minneapolis, a
 hobby that is not endurance sport and not a computer), the photograph
 selection, every job title and date in CV, the St Thomas degree, and
 `public/resume.pdf` itself.
+
+**2026-08-25, issue #4.** First extractor run. Walked
+`~/dev/nlp-material-classifier` read only and wrote
+`docs/extracted/nlp-material-classifier.md`, which starts a new folder for
+extractor output. Nothing is wired into the site: that is a separate ticket once
+T has read it. Three of the five accuracy rows are real numbers from the repo
+(keyword 0.308, TF-IDF 0.628, attention 0.396, all on the 331 row gold set) and
+three are `[ not recorded ]`, which turned out to be the finding rather than a
+gap in the walk. The LoRA adapter exists and has never been scored, and nothing
+from that repo is deployed to CSI: `serve.py` is specced in `SPEC.md` and does
+not exist, so what runs in CSI production is still the keyword matcher the
+project set out to replace. There is also no plotting code in that repo at all,
+so the chart list names what produces each number and what still has to be
+written to produce each image. Worth carrying forward: the extractor's value was
+mostly in what it refused to fill in, and five open threads for T are listed at
+the bottom of the file.

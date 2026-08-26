@@ -1586,3 +1586,22 @@ body {
 }
 
 .mac-course .mac-stack-tag { background: var(--mac-face); }
+
+/* --- TOOLBOX: level two of the skills model ------------------------------ */
+/* Visually separate from core skills, because they are different kinds of
+   claim. Skills are what he can do; the toolbox is what he does it with, and a
+   tool used on one project should not read as a specialism. Sunken ground and
+   a lighter chip say "reference list" rather than "headline". */
+
+.mac-toolbox {
+  background: var(--mac-face-dim);
+  border: 1px solid var(--mac-line);
+  box-shadow: inset 1px 1px 0 var(--mac-lo), inset -1px -1px 0 var(--mac-hi);
+  padding: 12px 14px 4px;
+  margin: 0 0 18px;
+}
+
+.mac-stack-tag[data-tool='true'] {
+  background: var(--mac-paper);
+  opacity: 0.88;
+}

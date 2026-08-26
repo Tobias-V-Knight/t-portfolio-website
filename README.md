@@ -34,6 +34,7 @@ that gets consulted before a new file is ever created.
 | `HANDOFF.md` | The map | State, what changed last session, next-up (bugs/enhancements/agents), open decisions, links. Read after CLAUDE.md |
 | `TICKETS.md` | The board | Every unit of work, its mode (AFK, SHOW, ASK) and its status. Also the list of what is blocked on T |
 | `assets_src/` | Raw source media | Original videos/photos (gitignored); the converted, served copies live in `public/` |
+| `docs/` | Extractor output | Raw material gathered from other repos, one file per project. See its own section below |
 | `index.html` | Page shell | Title, description, the Open Graph tags that drive the LinkedIn preview, and the Google Fonts link for Silkscreen and Inter |
 | `vite.config.ts` | Build config | Sets the base path from `VITE_BASE`, which is what differs between the custom domain and the github.io preview URL |
 | `package.json` | Manifest | React 19, React Router 7, Vite 8, TypeScript. No UI library and no CSS framework |
@@ -41,15 +42,18 @@ that gets consulted before a new file is ever created.
 
 ### `docs/`
 
-Extraction output. Facts pulled out of the source material in iCloud so that
-`content.ts` can be filled in from a document rather than from memory. Nothing
-in here is rendered by the site, and nothing in here is private career material:
-this repo is public, so salary, offers, rejections and interview content stay
-out, and named recruiters and target companies are redacted.
+Extraction output. Facts pulled out of the source material in iCloud and in
+other repos, so that `content.ts` can be filled in from a document rather than
+from memory. Nothing in here is rendered by the site, and nothing in here is
+private career material: this repo is public, so salary, offers, rejections and
+interview content stay out, and named recruiters and target companies are
+redacted.
 
 | File | What it is | What it does |
 |---|---|---|
-| `extracted/career.md` | Career extraction (issue #5) | Role, employer, dates and one line per position, every claim citing the file it came from. Resolves the "AC Surety Delivery Associates" ambiguity: two employers, and the three names in `cv.experience` are mis-transcriptions. Seeds `cv.experience` and `cv.education`; the wire up is a separate ticket |
+| `extracted/career.md` | Career extraction (issue #5) | Role, employer, dates and one line per position, every claim citing the file it came from. Resolved the "AC Surety Delivery Associates" ambiguity: two employers, and two names in the repo were mis-transcriptions. Wired into `resume.experience` on 2026-08-26 |
+| `extracted/msba.md` | MSBA coursework extraction (issue #6) | Every course found in the two iCloud coursework folders: code, name, what the work shows, a 3 to 5 item stack, and the file each fact came from. Four are on the site, the rest are staged here. Read before editing `msba` in `data/content.ts` |
+| `extracted/nlp-material-classifier.md` | Material classifier extraction (issue #4) | The full accuracy table from that repo, every figure cited by path, blanks left as `[ not recorded ]`. The source for the NLP case study window |
 
 ### `src/`
 
@@ -72,6 +76,18 @@ out, and named recruiters and target companies are redacted.
 | `windows/Project.tsx` | Project window | The twelve section project template. Sections render only when the data has them, which is how Gravl stays outcome only |
 | `windows/Photos.tsx` | Photo gallery, parked | Built, then taken off the desktop on 2026-08-25 (P2-03) because `public/photos/` has nothing real in it. Unreferenced by design; one entry in `windowDefs` puts it back |
 | `styles/system.css` | The entire visual language | Palette tokens, bevels, window chrome, menu bar, type scale, focus states, and the mobile layout. Every colour in the codebase comes from here |
+
+### `docs/extracted/`
+
+One markdown file per project walked in another repo. These are **not site
+copy**. They are the evidence a case study window gets written from: every
+number cited by path back to the source repo, and anything that was never
+recorded written as a visible `[ not recorded ]` rather than reconstructed. Read
+one before writing project copy, never instead of it.
+
+| File | What it is | What it does |
+|---|---|---|
+| `nlp-material-classifier.md` | The marquee technical project | Walked from `~/dev/nlp-material-classifier` on 2026-08-25. The problem quantified, the hand adjudicated gold set, the five lane accuracy table, the two versions of the eval harness, the lessons, and the nine charts worth generating with what produces each. Three lanes have real numbers, three are blank on purpose |
 
 ### `public/`
 

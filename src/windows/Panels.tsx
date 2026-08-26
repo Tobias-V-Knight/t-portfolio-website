@@ -6,11 +6,13 @@ import {
   capabilitiesCopyState,
   capabilitiesLede,
   contact,
-  cv,
+  resume,
   home,
   HOME_TAGS,
+  homeSkills,
   msba,
-  stack,
+  skills,
+  toolbox,
   type Role,
 } from '../data/content'
 
@@ -49,7 +51,7 @@ export function withBlanks(text: string) {
 export function IntroPanel({ onOpen }: { onOpen: (id: string) => void }) {
   const buttons: { label: string; id?: string; blank?: boolean }[] = [
     { label: 'PORTFOLIO', id: 'work' },
-    { label: 'CV', id: 'cv' },
+    { label: 'RESUME', id: 'resume' },
     { label: 'ABOUT', id: 'about' },
     { label: 'CONTACT', id: 'contact' },
   ]
@@ -82,7 +84,7 @@ export function IntroPanel({ onOpen }: { onOpen: (id: string) => void }) {
         <p className="mac-home-line">{home.line}</p>
 
         {/* The snapshot. Labels only, first `HOME_TAGS` of each group, because
-            HOME is a desk and not a document. CV renders the same lists in
+            HOME is a desk and not a document. RESUME renders the same lists in
             full, which is what stops the two from drifting apart. */}
         <StackSnapshot />
 
@@ -110,9 +112,16 @@ export function IntroPanel({ onOpen }: { onOpen: (id: string) => void }) {
 // can skip a row it does not care about, which is the whole reason these are
 // grouped rather than being one long wall of tags.
 export function StackSnapshot() {
+  // Four of the eight level one groups, and a short slice of each. HOME is a
+  // desk, not a document: the full eight groups and the toolbox are one click
+  // away in RESUME.
+  const shown = homeSkills
+    .map((id) => skills.find((g) => g.id === id))
+    .filter((g): g is (typeof skills)[number] => Boolean(g))
+
   return (
     <div className="mac-stack">
-      {stack.map((g) => (
+      {shown.map((g) => (
         <div className="mac-stack-row" key={g.id}>
           <p className="mac-stack-label">{g.label}</p>
           <div className="mac-stack-tags">
@@ -154,7 +163,7 @@ export function MsbaPanel() {
 
       {/* P2-06. A course is a header, a line and a stack, and the stack is
           tags: it is a list, and prose is the wrong shape for a list. Same
-          chip as the HOME and CV stack rows, deliberately, so the site has one
+          chip as the HOME and RESUME stack rows, deliberately, so the site has one
           way of showing "these are the things it was built with". */}
       <h2>COURSEWORK</h2>
       <ul className="mac-courses">
@@ -196,7 +205,7 @@ export function MsbaPanel() {
   )
 }
 
-// WHAT I CONTRACT IN. Lives in CV, not on HOME: these are paragraphs and HOME
+// WHAT I CONTRACT IN. Lives in RESUME, not on HOME: these are paragraphs and HOME
 // is a snapshot. The four stack rows are the HOME version of this idea.
 export function CapabilityList() {
   return (
@@ -221,7 +230,7 @@ export function CapabilityList() {
 // ABOUT. The person.
 //
 // Split off from the resume on 2026-08-25. A visitor who wants the record
-// clicks CV; a visitor who wants to know who they would be working with clicks
+// clicks RESUME; a visitor who wants to know who they would be working with clicks
 // ABOUT. One window trying to be both was why it read as neither.
 export function AboutPanel() {
   return (
@@ -267,9 +276,9 @@ export function AboutPanel() {
   )
 }
 
-// CV. The record: what he contracts in, the full skills table, the history,
+// RESUME. The record: what he contracts in, the full skills table, the history,
 // and the PDF a recruiter came for.
-export function CvPanel() {
+export function ResumePanel() {
   return (
     <div className="mac-doc">
       <h1>{home.name}</h1>
@@ -278,14 +287,13 @@ export function CvPanel() {
       <h2>WHAT I CONTRACT IN</h2>
       <CapabilityList />
 
-      {/* The full lists. HOME shows the first few of each; this is the same
-          arrays rendered whole, so the short version cannot drift. */}
-      <h2>TECHNICAL SKILLS</h2>
-      {stack.map((g) => (
+      {/* Two levels, visually separate. Core skills are what he can do;
+          the toolbox is what he does it with. Keeping them apart is what stops
+          `Python` and `RAG` competing for the same slot. */}
+      <h2>CORE SKILLS</h2>
+      {skills.map((g) => (
         <div className="mac-stack-full" key={g.id}>
-          <p className="mac-stack-label">
-            {g.label} <span className="mac-stack-note">{g.note}</span>
-          </p>
+          <p className="mac-stack-label">{g.label}</p>
           <div className="mac-stack-tags">
             {g.items.map((item) => (
               <span className="mac-stack-tag" key={item}>
@@ -296,11 +304,27 @@ export function CvPanel() {
         </div>
       ))}
 
+      <h2>TOOLBOX</h2>
+      <div className="mac-toolbox">
+        {toolbox.map((g) => (
+          <div className="mac-stack-full" key={g.id}>
+            <p className="mac-stack-label">{g.label}</p>
+            <div className="mac-stack-tags">
+              {g.items.map((item) => (
+                <span className="mac-stack-tag" data-tool="true" key={item}>
+                  {item}
+                </span>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+
       <h2>PROFESSIONAL BACKGROUND</h2>
-      <RoleList rows={cv.experience} />
+      <RoleList rows={resume.experience} />
 
       <h2>EDUCATION</h2>
-      <RoleList rows={cv.education} />
+      <RoleList rows={resume.education} />
 
       <h2>RESUME</h2>
       {home.resume.present ? (
@@ -313,7 +337,7 @@ export function CvPanel() {
         <p>{withBlanks(`[ drop resume.pdf into public/ and flip present to true ]`)}</p>
       )}
 
-      {cv.copyState === 'PLACEHOLDER' && <PlaceholderTag />}
+      {resume.copyState === 'PLACEHOLDER' && <PlaceholderTag />}
     </div>
   )
 }

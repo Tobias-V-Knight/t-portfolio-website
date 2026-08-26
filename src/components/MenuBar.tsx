@@ -114,7 +114,7 @@ export function MenuBar({ menus, clock }: { menus: Menu[]; clock: Clock }) {
 
       <div className="mac-menubar-right">
         {/* Two spans, not one string. The bar cannot wrap without breaking the
-            illusion, and adding the CV title pushed the clock off the right
+            illusion, and adding the RESUME title pushed the clock off the right
             edge on a phone. Splitting the date off means the narrow rule can
             drop it and keep the time, which is the half anyone reads. */}
         <span className="mac-menubar-optional">{clock.date}</span>
