@@ -307,9 +307,20 @@ const RUN_HEAD = [
   `FINE-TUNING: ${EPOCHS} EPOCHS, BATCH 32, LR 3E-4`,
 ]
 
-// What prints once the run finishes. The F1 is the real number from the
-// material classifier, so it is a claim the NLP case study has to keep
-// matching. If that number changes, change it here too.
+// What prints once the run finishes.
+//
+// The F1 is ILLUSTRATIVE, not measured. T's call on 2026-08-26: the boot is a
+// simulated training run and the numbers are set dressing chosen to look like
+// the work he actually does, which is fine for an animation of a run that is
+// not happening.
+//
+// It is flagged here because a comment in this file previously claimed 0.914
+// was the real number, and it is not. The material classifier's best RECORDED
+// macro F1 is 0.546 (TF-IDF plus logistic regression, gold set n=331); the
+// LoRA lane has never been scored. See docs/extracted/nlp-material-classifier.md.
+//
+// The rule this sits under: a number here is atmosphere and may be invented. A
+// number in a case study window is a claim about T's work and may not.
 const RUN_TAIL = [
   '',
   'EVALUATING CHECKPOINT ........ OK',
