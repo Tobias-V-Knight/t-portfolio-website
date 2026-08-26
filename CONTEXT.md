@@ -34,6 +34,22 @@ weight, so eight coursework projects sitting beside CSI drag CSI down. An
 archive entry is not a demotion for being bad; it is an admission that not
 every piece of work needs eight sections.
 
+## At a glance
+
+The four cell panel under the hero of a case study: PROBLEM, APPROACH, OUTPUT,
+EVIDENCE, one short phrase each. Built for issue #33,
+[ADR-0001](docs/adr/0001-case-study-template.md) section 2.
+
+**The order is the argument**, so it is fixed in the component and a project
+cannot change it or drop a cell: what hurt, what was done about it, what exists,
+why anyone should believe it.
+
+A cell nobody has written renders its prompt as a blank, see **Blank** below,
+rather than collapsing. The panel is the centerpiece of the page, and a centerpiece that
+disappears when the data is thin is missing from the pages that need it most.
+
+Not running text, so it takes the full width and the measure does not apply.
+
 ## Evidence
 
 The section that replaced RESULTS on 2026-08-26.

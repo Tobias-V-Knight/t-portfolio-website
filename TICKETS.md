@@ -174,6 +174,26 @@ Things T has decided he wants but has deliberately parked.
 Closed tickets keep their row above rather than moving to an archive file. The
 board is short by design and a second file would only split the history.
 
+**2026-08-26, issue #33.** At a glance, ADR-0001 section 2, the four cell panel
+under the hero. PROBLEM, APPROACH, OUTPUT, EVIDENCE, in that fixed order, drawn
+as a table on the window face rather than as chips, because four labelled values
+have to line up as a set. It renders on every case study whether the data exists
+or not: a cell nobody has written falls back to a prompt in
+`atAGlancePrompts` and shows as a yellow blank, since a panel that vanishes when
+the data is thin is missing on exactly the pages that need it. Four columns on
+desktop, two by two at 768 and below, chosen over stacked because four cells
+down a phone is a list and a list is read one item at a time.
+
+CSI is the only project with real content, per the issue, and only two of its
+four cells are written. OUTPUT and EVIDENCE stayed blanks on purpose. `built`
+already asks what the contractor was handed, so naming a deliverable in OUTPUT
+would have contradicted an open question in the same file. And EVIDENCE ran into
+something worth carrying forward: the project says `status: 'Delivered'` while
+HOME says CSI is being put into production. Those are two different claims about
+the same work and only T can say which is true, so the cell asks him. Not
+verified in a browser, the Mini has no browser tool, so 1440 and 390 screenshots
+are owed on the PR.
+
 **2026-08-26, issue #32.** The case study hero, ADR-0001 section 1. The
 metadata was two lines of `mac-meta` prose and is now a chip row in a fixed
 order, FOCUS then YEAR then ROLE then STATUS, reusing the toolbox chip so the

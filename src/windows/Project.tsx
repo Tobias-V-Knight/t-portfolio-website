@@ -1,4 +1,4 @@
-import { categories, type Project } from '../data/content'
+import { atAGlancePrompts, categories, type AtAGlance, type Project } from '../data/content'
 import { PlaceholderTag, withBlanks } from './Panels'
 
 // Spec section 7. The homepage is world-building, the project page is
@@ -84,6 +84,40 @@ function HeroActions({ project }: { project: Project }) {
   )
 }
 
+// At a glance, ADR-0001 section 2. Four cells, and a visitor who reads nothing
+// else on the page still knows what the project was.
+//
+// The order is fixed here rather than driven by the data, because the order is
+// the argument: what hurt, what was done about it, what exists, why anyone
+// should believe it. A project cannot reorder it and a project cannot drop a
+// cell, which is why this renders unconditionally and falls back to the prompts
+// in content.ts. An at a glance panel that disappears when the data is thin is
+// a panel that is missing on exactly the pages that need it most.
+const GLANCE_CELLS: { key: keyof AtAGlance; label: string }[] = [
+  { key: 'problem', label: 'PROBLEM' },
+  { key: 'approach', label: 'APPROACH' },
+  { key: 'output', label: 'OUTPUT' },
+  { key: 'evidence', label: 'EVIDENCE' },
+]
+
+function AtAGlancePanel({ project }: { project: Project }) {
+  // A description list is what this is: four terms, four definitions. The div
+  // per pair is valid inside a dl and it is what makes each pair one grid cell.
+  return (
+    <dl className="mac-glance">
+      {GLANCE_CELLS.map(({ key, label }) => {
+        const value = project.atAGlance?.[key]?.trim()
+        return (
+          <div className="mac-glance-cell" key={key}>
+            <dt className="mac-glance-label">{label}</dt>
+            <dd className="mac-glance-value">{withBlanks(value || atAGlancePrompts[key])}</dd>
+          </div>
+        )
+      })}
+    </dl>
+  )
+}
+
 export function ProjectPanel({ project }: { project: Project }) {
   return (
     <article className="mac-doc">
@@ -94,6 +128,8 @@ export function ProjectPanel({ project }: { project: Project }) {
         <HeroMeta project={project} />
         <HeroActions project={project} />
       </header>
+
+      <AtAGlancePanel project={project} />
 
       {project.problem && (
         <>
