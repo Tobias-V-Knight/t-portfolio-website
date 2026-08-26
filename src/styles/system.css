@@ -1761,3 +1761,91 @@ body {
      hero. */
   .mac-glance { grid-template-columns: repeat(2, 1fr); }
 }
+
+/* --- My contribution (ADR-0001 section 8, issue #37) --------------------- */
+/* The same chip as the toolbox and the hero, because the site gets one way of
+   drawing a set of short labels. The opaque face is the same correction the CV
+   rows and the hero make: the default chip is translucent white, which is meant
+   for a chip sitting on a photograph and all but vanishes on paper. */
+
+.mac-contribution { margin: 0 0 12px; }
+
+.mac-doc .mac-contribution .mac-stack-tag { background: var(--mac-face); }
+
+@media (max-width: 768px) {
+  /* A chip here is not pressable, so it does not need a 44px target, but 11px
+     Silkscreen on a phone is below the floor the rest of the mobile layout
+     holds to. */
+  .mac-doc .mac-contribution .mac-stack-tag { font-size: var(--type-chrome-md); }
+}
+
+/* --- Deep dive (ADR-0001 section 10, issue #37) --------------------------- */
+/* Collapsed by default, which is the only reason the default view can hold to
+   700 words without the page going shallow. It is a panel rather than a bare
+   heading so that closed, it reads as a drawer with something in it.
+
+   The triangle is drawn in CSS borders rather than set as a character. Silkscreen
+   is a pixel font with narrow coverage and a missing glyph renders as a box, so
+   nothing in the chrome depends on a symbol being in the font. */
+
+.mac-details {
+  margin: 22px 0 12px;
+  border: 1px solid var(--mac-line);
+  background: var(--mac-face-dim);
+  box-shadow: inset 1px 1px 0 var(--mac-hi), inset -1px -1px 0 var(--mac-lo);
+  padding: 0 14px;
+}
+
+.mac-details > summary {
+  display: flex;
+  align-items: center;
+  min-height: 34px;
+  margin: 0 -14px;
+  padding: 0 14px;
+  font-family: var(--mac-chrome);
+  font-size: var(--type-chrome-lg);
+  line-height: var(--leading-flat);
+  letter-spacing: 0.04em;
+  color: var(--mac-ink-soft);
+  cursor: default;
+  /* Both are needed: the standard property and the WebKit pseudo element that
+     predates it. Without them the browser draws its own marker beside ours. */
+  list-style: none;
+}
+
+.mac-details > summary::-webkit-details-marker { display: none; }
+
+.mac-details > summary::before {
+  content: '';
+  flex: 0 0 auto;
+  width: 0;
+  height: 0;
+  margin-right: 9px;
+  border-left: 6px solid var(--mac-ink-soft);
+  border-top: 4px solid transparent;
+  border-bottom: 4px solid transparent;
+}
+
+.mac-details[open] > summary::before { transform: rotate(90deg); }
+
+.mac-details[open] > summary {
+  border-bottom: 1px solid var(--mac-line);
+  margin-bottom: 4px;
+}
+
+.mac-details-part { padding: 10px 0 2px; }
+
+.mac-doc .mac-details-part h3 {
+  font-family: var(--mac-chrome);
+  font-size: var(--type-chrome-md);
+  line-height: var(--leading-tight);
+  letter-spacing: 0.04em;
+  color: var(--mac-ink-soft);
+  margin: 0 0 7px;
+}
+
+@media (max-width: 768px) {
+  /* The one control in this section, so it takes the thumb sized minimum every
+     other control on the phone layout takes. */
+  .mac-details > summary { min-height: 44px; }
+}

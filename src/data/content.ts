@@ -108,6 +108,21 @@ export interface Project {
   // was real, so a deployment fact or a screenshot belongs here. Do not rename
   // it back. See CONTEXT.md, Evidence.
   evidence?: string[]
+  // ADR-0001 section 5. Omitted entirely where there is no model, because an ML
+  // heading over a project that never trained anything is worse than no heading.
+  // This is where a reader finds out he did not simply wire APIs together.
+  mlDecisions?: string[]
+  // ADR-0001 section 8. Chips for what T personally owned, plus one line naming
+  // the team. Read the contribution chip entry in CONTEXT.md before editing
+  // this on any project: a chip is a first person claim, so `RETRIEVAL` on a
+  // team project says he built the retrieval, not that the team had one. The
+  // test a chip has to pass is a reference call.
+  contribution?: { owned: string[]; team: string }
+  // ADR-0001 section 10. Collapsed, and the reason the default view can hold to
+  // 700 words without the page being shallow. Data prep, failed approaches,
+  // evaluation method, deployment: the things one reader in ten wants and the
+  // other nine should not have to scroll past.
+  deepDive?: { heading: string; body: string }[]
   lessons?: string[]
   links?: ProjectLink[]
   // Renders nothing to the visitor. It exists so the next agent reads it
@@ -127,58 +142,119 @@ export const projects: Project[] = [
     windowTitle: 'CSI.APP',
     oneLiner:
       'An AI agent platform that reads bid documents for a highway paving contractor and tells them what the job actually contains.',
-    role: 'Graduate ELP team, [ your specific role on it ]',
-    status: 'Delivered',
+    // From T's own resume header for this project, in
+    // 04_career/2026-07-13_resume-bullets_CSI-PBIQ_consolidated.md. The exact
+    // ELP title is still open in the framing doc's section 6, question 5, so
+    // this says what he did rather than inventing a title nobody has agreed.
+    role: 'AI and data scientist on a graduate ELP team',
+    // Was 'Delivered', which sat oddly beside HOME saying CSI was being put
+    // into production. 2026-08-25 settled it: it runs on the client's own
+    // server. Deliberately not the words "in production", per the framing doc's
+    // own test, which reserves those for a system with ongoing real users.
+    status: 'Deployed at the client',
     year: '2026',
     categories: ['data', 'ai-ml'],
+    // Stays PLACEHOLDER until T confirms MY CONTRIBUTION. Every fact below is
+    // sourced, but the contribution split is a first person claim drafted from a
+    // document about him rather than one he wrote for this site, and the
+    // difference matters: it is the section a former teammate could contradict.
     copyState: 'PLACEHOLDER',
     caseStudy: true,
-    // Two of these are written and two are blanks, deliberately.
+    // All four are written now. OUTPUT and EVIDENCE were blanks because nobody
+    // had answered them; both were answered on 2026-08-26, OUTPUT from the
+    // project's own inventory and EVIDENCE from the deployment record.
     //
-    // PROBLEM and APPROACH restate what the prose below already says, so they
-    // are safe. APPROACH names the pipeline shape and stops there, which is
-    // what ADR-0003 permits: ingestion, retrieval and agents is the shape every
+    // APPROACH names the pipeline shape and stops there, which is exactly what
+    // ADR-0003 permits: ingestion, retrieval and agents is the shape every
     // system in this category has, and the stage internals are the mechanism.
-    //
-    // OUTPUT and EVIDENCE stay blanks because the file already admits it does
-    // not know them. `built` asks what the contractor was handed, so writing a
-    // deliverable here would contradict a question two fields down. And the
-    // status says Delivered while HOME says CSI is being put into production;
-    // those are different claims and T is the only one who can say which is the
-    // true one.
     atAGlance: {
-      problem: 'Hundreds of pages per bid package',
+      problem: 'Hundreds of bid packages a year, 100 to 280 pages each',
       approach: 'Document ingestion, retrieval and agents',
-      output: '[ what the estimator ends up in front of ]',
-      evidence: '[ delivered, or running in production at the client? ]',
+      output: 'A one page bid brief, and an agent to ask about the rest',
+      evidence: "Running on the client's own server since August 2026",
     },
     problem:
-      'A paving contractor bids on highway work from document packages that run to hundreds of pages. Estimators cannot read all of it, so they read the parts experience says matter and accept the risk in the rest. The result is that the decision setting the margin on a multi million dollar job is made on a fraction of the available information, under time pressure, every time.',
+      "A paving contractor bids highway work from document packages that run from 100 to 280 pages. It reviews hundreds of them a year and bids on roughly a quarter. Estimators cannot read all of it, so they read what experience says matters and carry the risk in the rest. The cost of that shows up in the pricing: an earlier analysis of the contractor's own bid history put the money left on the table by winning work at too low a price at $22.3 million. That is the stake the system was built against, not something it recovered. The decision that sets the margin on a multi million dollar job is made on a fraction of the available information, on a deadline, every time.",
     built: [
-      'A document ingestion pipeline that turns a bid package into structured, queryable content.',
-      'Agents that pull the bid items, the specifications and the risk language out of that content and put them somewhere an estimator can actually use.',
-      'A risk analysis layer that flags the clauses and conditions that historically cost money.',
-      '[ what did the contractor actually get handed at the end: a dashboard, a report, a spreadsheet? ]',
+      'A document pipeline that turns a bid package into structured, queryable content, with the page it came from and a confidence score on every extracted field.',
+      'A risk pass over the same package for the clauses and site conditions that historically cost money, split into what changes the decision and what only changes the price.',
+      "An agent that answers questions across the plan set, the bid history and a partner team's competitor model, and carries an estimator's correction into the rest of the conversation.",
+      'A one page bid brief assembled from all of it and exportable, so a session ends in a document somebody can take into a meeting rather than a chat log.',
     ],
+    // ADR-0003 in one paragraph, and the paragraph is deliberate: a reader who
+    // wonders why the flagship project is thin on internals gets the reason
+    // rather than the impression that there were none.
     architecture:
-      '[ Draw the path from a PDF landing in the system to an estimator reading an answer. Name the retrieval approach, the model, and where the structured output lands. ADR-0003: the shape only, never the mechanism. ]',
-    stack: ['Python', '[ retrieval and vector store ]', '[ model, and why that one ]', '[ how it was served ]'],
+      "The shape is the one every document intelligence system has. A bid PDF comes in, gets parsed and chunked, retrieval finds the parts that bear on a given field, an agent reasons over what comes back, and the result lands as structured output an estimator reads in the product. The stage internals are missing on purpose: a detailed description of this system would describe a client's by proxy.",
+    mlDecisions: [
+      'Extraction is scored against a hand labelled golden set rather than read and eyeballed. That harness is what made it safe to change the pipeline: without one, every change is a guess about whether anything got better.',
+      'The prediction side was split into two questions rather than one, does a job get bid at all and does a bid on it win at a price worth having, because those are different populations and a single model over both is right about the wrong thing.',
+      'Every feature in both models had to be knowable before the bid went in. That rules out most of what a bid history contains, and it is the only real guard against a model that scores beautifully by reading the answer.',
+      'Moving the extraction corpus onto a batch API with prompt caching cut its cost by roughly seventy percent, which is what makes rerunning everything after a change affordable rather than a decision.',
+      '[ the baseline. What did the first version score, and what beat it? ]',
+    ],
+    stack: [
+      'Python',
+      'FastAPI',
+      'Next.js and React',
+      'TypeScript',
+      'ChromaDB',
+      'Anthropic Claude',
+      'scikit-learn',
+      'Streamlit',
+      'Deployed on Windows Server',
+    ],
     media: [
       { caption: 'The CSI ELP team, Alexandria MN', tone: 'screenshot', src: 'csi-team.jpeg' },
-      { caption: 'Bid item extraction', tone: 'screenshot' },
+      // Issue #36. The tile is the visible slot for the shape diagram, drawn to
+      // ADR-0003's test rather than to the real pipeline. A product screenshot
+      // is deliberately not here: the running app shows live bid data and what
+      // can be shown of it is T's call, not an agent's.
       { caption: 'Document to answer path', tone: 'diagram' },
     ],
     evidence: [
-      '[ How much estimator time did this take out of a bid? ]',
-      '[ What did the contractor say, or do differently, after using it? ]',
-      '[ Any accuracy number you are willing to stand behind ]',
+      "Live on the client's own Windows Server since 25 August 2026, running as services that survive a reboot and reachable from any machine on their network. That is a deployment fact rather than a metric, and it is the strongest one this project has: they can use it with nobody from the team present.",
+      'It runs on their real bid documents rather than on a sample set.',
+      '[ the measured number, if one exists. Estimator hours per bid, or extraction accuracy on the golden set, and only if it was measured. ]',
+    ],
+    contribution: {
+      owned: [
+        'DOCUMENT PIPELINE',
+        'EXTRACTION SCHEMA',
+        'RETRIEVAL',
+        'AGENT AND TOOLS',
+        'EVALUATION HARNESS',
+        'BACKEND AND FRONT END',
+        'BID AND WIN MODELS',
+        'DEPLOYMENT',
+      ],
+      team:
+        "A graduate ELP team. Everything chipped above is mine, design and code; the other member on this half of the project ran client communication and liaison rather than writing code. Competitor intelligence was a partner team's model, and what I built there is the integration to it, not the model. [ T to confirm this split before the placeholder tag comes off ]",
+    },
+    deepDive: [
+      {
+        heading: 'GETTING IT ONTO THEIR SERVER',
+        body: "The application had been living in a personal downloads folder on the client's database host, on a system drive with under seven gigabytes free. It now runs from a machine level path on a second disk, as two services that start on boot, behind one firewall rule, serving a production front end build rather than a development server. None of that is interesting until it is missing, and all of it is the difference between a demo and something the client still has next month.",
+      },
+      {
+        heading: 'A SUCCESS SIGNAL AT THE WRONG LAYER',
+        body: 'The service wrapper silently dropped its arguments because the program path contained a space, so the runtime started with no script and sat in an interactive prompt. The service manager reported Running the whole time. The process was alive and the application was not, and the rule that came out of it is one I now apply everywhere: service state is a fact about a process, a listening socket is a fact about the application, and only the second one is evidence.',
+      },
+      {
+        heading: 'THE EXPENSIVE PART WAS NOT THE AI',
+        body: 'The assumption going in was that the model was the slow, costly part. Profiling said otherwise. Turning the PDF into text is the genuinely compute bound stage, embedding the result took seconds and was never close to the bottleneck, and most of the clock on a large plan is the machine sitting idle waiting on network calls. That changes what is worth optimising, and it changed a hardware argument on the project: the case for moving this workload off a production database host is contention, not speed.',
+      },
+      {
+        heading: 'WHAT IS NOT IN THIS WRITE UP',
+        body: "Stage internals, the corpus, the routing between extraction passes, the field schema, the risk taxonomy, the cost per plan and anything drawn from the client's own bid performance. The shape of a pipeline is generic to its category and safe to publish. The mechanism is what makes one system different from another, and on client work it is not mine to give away.",
+      },
     ],
     lessons: [
-      '[ The interesting technical decision. What did you try that did not work, and what did you switch to? ]',
-      '[ The domain lesson. What did you learn about paving contracts that no model would have told you? ]',
+      'A success signal at the wrong layer is not evidence. On deployment day everything that was broken reported itself as working.',
+      'The domain lesson is about trust rather than accuracy. An extracted field is only useful to an estimator who can jump to the page it came from and check it, so provenance was designed in from the schema outward rather than added later.',
     ],
     constraint:
-      'T cleared this for the site on 2026-08-23, overriding the hold in the handoff, on the condition that it shows what was built and never the code. Per ADR-0003 the architecture carries the pipeline shape only, never stage internals, corpus size, cost per unit, model choices or method. Client confidentiality, and not negotiable without T saying so.',
+      "T cleared this for the site on 2026-08-23, overriding the hold in the handoff, on the condition that it shows what was built and never the code. Per ADR-0003 the prose carries the pipeline shape only, never stage internals, corpus size, cost per unit, model choices or method, and that test applies to every sentence here rather than only to the diagram. Deliberately withheld on top of that: the client's win rate and the correction made to it, which is their bid performance rather than this project's result, the server name and paths, and the open security gap in the deployment. ML AND AI DECISIONS carries a percentage that extraction cost fell by and no dollar figure, on purpose: a delta reveals nothing about what a plan costs them to run, and the per plan number does. The $22.3 million in THE PROBLEM is on the site because T supplied it in issue #37 as the stake the system was built against. It is never to be presented as an outcome. Client confidentiality, and not negotiable without T saying so.",
   },
   {
     slug: 'pickleball-iq',

@@ -156,10 +156,28 @@ export function ProjectPanel({ project }: { project: Project }) {
         </>
       )}
 
-      {project.stack && (
+      {/* ADR-0001 section 5, and the section that answers "did he wire APIs
+          together or did he make decisions". Omitted entirely on a project with
+          no model rather than rendered as an empty heading. */}
+      {project.mlDecisions && (
         <>
-          <h2>STACK</h2>
-          <p className="mac-meta">{withBlanks(project.stack.join('  ·  '))}</p>
+          <h2>ML AND AI DECISIONS</h2>
+          <ul>
+            {project.mlDecisions.map((d) => (
+              <li key={d}>{withBlanks(d)}</li>
+            ))}
+          </ul>
+        </>
+      )}
+
+      {project.evidence && (
+        <>
+          <h2>EVIDENCE</h2>
+          <ul>
+            {project.evidence.map((e) => (
+              <li key={e}>{withBlanks(e)}</li>
+            ))}
+          </ul>
         </>
       )}
 
@@ -193,15 +211,47 @@ export function ProjectPanel({ project }: { project: Project }) {
         </>
       )}
 
-      {project.evidence && (
+      {/* ADR-0001 section 8. Chips for the work he owned, then one line naming
+          the team, and the order is deliberate: the chips are the claim and the
+          line is the qualification, so a reader cannot take one without the
+          other. CONTEXT.md: a chip is a first person claim and the test it has
+          to pass is a reference call. */}
+      {project.contribution && (
         <>
-          <h2>EVIDENCE</h2>
-          <ul>
-            {project.evidence.map((e) => (
-              <li key={e}>{withBlanks(e)}</li>
+          <h2>MY CONTRIBUTION</h2>
+          <div className="mac-stack-tags mac-contribution">
+            {project.contribution.owned.map((c) => (
+              <span className="mac-stack-tag" key={c}>
+                {c}
+              </span>
             ))}
-          </ul>
+          </div>
+          <p>{withBlanks(project.contribution.team)}</p>
         </>
+      )}
+
+      {project.stack && (
+        <>
+          <h2>STACK</h2>
+          <p className="mac-meta">{withBlanks(project.stack.join('  ·  '))}</p>
+        </>
+      )}
+
+      {/* ADR-0001 section 10, and the thing that makes the length target
+          survivable: without a collapsed section the choice is a shallow page or
+          a long one. A native details element rather than React state, because
+          the browser already knows how to do this, it works before hydration,
+          and find in page still reaches the text inside it. */}
+      {project.deepDive && (
+        <details className="mac-details">
+          <summary>DEEP DIVE</summary>
+          {project.deepDive.map((s) => (
+            <div className="mac-details-part" key={s.heading}>
+              <h3>{s.heading}</h3>
+              <p>{withBlanks(s.body)}</p>
+            </div>
+          ))}
+        </details>
       )}
 
       {project.lessons && (
