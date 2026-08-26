@@ -38,8 +38,8 @@ of the queue runs.
 **Post-flight, from the real diff.** After the agent has edited and before the
 PR is opened, the worker compares `git diff --name-only main` against the file
 list of every open PR, from `gh pr list --json files`. Any overlap and the
-branch is pushed but no PR is opened, the issue gets a comment naming the PR it
-collides with, and the worker continues.
+branch is discarded, the issue gets a comment naming the PR it collides with and
+the file, the ticket stays `agent-ready`, and the worker continues.
 
 A ticket with no `OWNS:` lines is allowed and logged, so the convention can be
 adopted gradually.
@@ -72,6 +72,9 @@ guard's first act would have been to stop the work it exists to protect.
 **Chain each branch off the previous one.** Builds a stack where one rejected
 PR strands everything behind it, and every diff contains its predecessors.
 
+**Holding the collided branch on origin for a human to rebase.** Preserves the
+run, and preserves the stale base along with it. See the consequence below.
+
 **Worktrees.** Wanted, and irrelevant here. Isolating two working directories
 does not make two rewrites of one file compatible. This was a stale base, not a
 concurrent write. Worktrees come after this, not instead of it, and that
@@ -81,8 +84,12 @@ ordering is the point.
 
 - A skipped ticket must be visible. A silent skip is how a ticket goes missing,
   which is the failure this ADR exists to end.
-- A held branch is pushed, so the work is never lost to a collision, only
-  delayed until its predecessor merges.
+- **A collided branch is discarded rather than held**, and that is deliberate.
+  Holding the branch holds the stale base with it, so merging it later
+  reintroduces the exact problem. Re-running the ticket against a merged `main`
+  is the only thing that actually resolves it, and on 2026-08-26 re-running #37
+  that way produced a better result than any hand resolution would have. The
+  cost is one agent run, roughly ten minutes.
 - `docs/agents/issue-tracker.md` documents `OWNS:` beside `ADD_DIR:`.
 - Once collisions are impossible by construction, parallel worktrees become
   safe. See ADR-0006, which removes most of the contention rather than

@@ -38,6 +38,19 @@ only.
 
   The worker turns each into a `--add-dir` argument. Access is per issue and
   declared in public rather than granted globally.
+- An issue declares the files it expects to rewrite, the same way:
+
+  ```
+  OWNS: src/data/projects/pickleball-iq.ts
+  ```
+
+  Before starting anything the worker reads every `OWNS:` line in the queue.
+  Where two tickets claim one file, the later one is skipped by number, named in
+  the log, and left `agent-ready` for the next batch, because two branches
+  rewriting one file can both be green and only one can merge. A ticket with no
+  `OWNS:` lines is allowed and logged. See
+  [ADR-0005](../adr/0005-collision-guard.md), which also explains why the worker
+  checks the real diff again before opening a PR.
 
 ## Two sources, and an extraction ticket needs both
 

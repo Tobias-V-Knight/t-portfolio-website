@@ -49,8 +49,74 @@ fi
 
 log "queue: $(echo "$numbers" | tr '\n' ' ')"
 
+# The issue body is read three times per ticket, for the prompt, for ADD_DIR and
+# for OWNS. Cache it once so a long queue does not hammer the API.
+BODY_CACHE=$(mktemp -d)
+trap 'rm -rf "$BODY_CACHE"' EXIT
+body() {
+  local f="$BODY_CACHE/$1"
+  [[ -f "$f" ]] || gh issue view "$1" --json body --jq .body > "$f"
+  cat "$f"
+}
+
+# COLLISION GUARD, part one: declarations, before any agent starts.
+#
+# Two branches that rewrite one file can both be correct and both be green, and
+# only one of them can merge. It is not a race. The worker pulls fresh main
+# before every ticket, but merging is human gated, so ticket two branches from a
+# main that does not contain ticket one and will not until somebody clicks
+# merge. This cost a completed ticket on 2026-08-26, when #34 and #37 rewrote
+# Project.tsx one second apart. See docs/adr/0005-collision-guard.md.
+#
+# A ticket declares what it will rewrite with lines like:
+#   OWNS: src/data/projects/pickleball-iq.ts
+#
+# The later claimant is skipped by number and left agent-ready. The rest of the
+# queue runs, because refusing the whole batch would stop the tickets that
+# collide with nothing, which is the failure this guard exists to prevent.
+#
+# Flat files rather than associative arrays on purpose: `env bash` on the Mini
+# resolves to macOS bash 3.2, which has no `declare -A`.
+owns_map=$(mktemp)
+skips=$(mktemp)
+trap 'rm -rf "$BODY_CACHE" "$owns_map" "$skips"' EXIT
+
+for n in $numbers; do
+  claims=$(body "$n" | sed -n 's/^OWNS:[[:space:]]*//p' | tr -d '\r' | sed '/^$/d')
+  if [[ -z "$claims" ]]; then
+    log "#$n: declares no OWNS, allowed unguarded"
+    continue
+  fi
+  conflict=""
+  while IFS= read -r f; do
+    prev=$(awk -F'\t' -v f="$f" '$1==f {print $2; exit}' "$owns_map")
+    if [[ -n "$prev" ]]; then
+      conflict="$f|$prev"
+      break
+    fi
+  done <<< "$claims"
+
+  if [[ -n "$conflict" ]]; then
+    printf '%s\t%s\t%s\n' "$n" "${conflict%%|*}" "${conflict##*|}" >> "$skips"
+    log "#$n: SKIPPED, it claims ${conflict%%|*} which #${conflict##*|} already claims in this batch"
+    continue
+  fi
+  while IFS= read -r f; do
+    printf '%s\t%s\n' "$f" "$n" >> "$owns_map"
+  done <<< "$claims"
+done
+
+if [[ -s "$skips" ]]; then
+  log "collision guard: skipping $(wc -l < "$skips" | tr -d ' ') ticket(s) this batch. Merge the PRs above and run again."
+fi
+
 for n in $numbers; do
   branch="issue-$n"
+
+  if grep -q "^$n\t" "$skips" 2>/dev/null; then
+    log "#$n: held by the collision guard, leaving it agent-ready"
+    continue
+  fi
 
   if git ls-remote --exit-code --heads origin "$branch" >/dev/null 2>&1; then
     log "#$n: branch $branch already on origin, skipping"
@@ -91,7 +157,7 @@ visual check you could not run is worse than saying you could not run it.
 Here is the issue.
 
 --- ISSUE #$n: $title ---
-$(gh issue view "$n" --json body --jq .body)
+$(body "$n")
 --- END ISSUE ---
 
 Do the work by editing files. That is all you have to do.
@@ -126,7 +192,7 @@ PROMPT
   add_dirs=()
   while IFS= read -r d; do
     [[ -n "$d" ]] && add_dirs+=(--add-dir "$d")
-  done < <(gh issue view "$n" --json body --jq .body | sed -n 's/^ADD_DIR:[[:space:]]*//p' | tr -d '\r')
+  done < <(body "$n" | sed -n 's/^ADD_DIR:[[:space:]]*//p' | tr -d '\r')
   if [[ ${#add_dirs[@]} -gt 0 ]]; then
     log "#$n: granting read access to $((${#add_dirs[@]})) extra path(s)"
   fi
@@ -188,6 +254,46 @@ PROMPT
     continue
   fi
   log "#$n: typecheck and build pass"
+
+  # COLLISION GUARD, part two: the real diff, against every open PR.
+  #
+  # OWNS: is a prediction written by whoever filed the ticket, and the incident
+  # this guards against was not predicted: #37 was titled "CSI as the reference
+  # case study" and rewrote Project.tsx because that is what the work turned out
+  # to need. A declaration catches the collisions somebody anticipated. This
+  # catches the ones nobody did, and it catches collisions with PRs opened by an
+  # earlier run of this script, which a per invocation scan structurally cannot.
+  #
+  # The branch is DISCARDED rather than held. Holding it holds the stale base
+  # with it, so merging it later reintroduces the same problem. Re-running the
+  # ticket against a merged main is the only thing that actually resolves it,
+  # and on 2026-08-26 re-running #37 that way produced a better result than any
+  # hand resolution would have.
+  touched=$(git diff --name-only main)
+  open_pr_files=$(gh pr list --state open --json number,files \
+    --jq '.[] | . as $p | .files[] | "\(.path)\t\($p.number)"' 2>/dev/null || true)
+  overlap=""
+  if [[ -n "$open_pr_files" ]]; then
+    while IFS= read -r f; do
+      [[ -z "$f" ]] && continue
+      hit=$(printf '%s\n' "$open_pr_files" | awk -F'\t' -v f="$f" '$1==f {print $2; exit}')
+      if [[ -n "$hit" ]]; then
+        overlap="$f|$hit"
+        break
+      fi
+    done <<< "$touched"
+  fi
+
+  if [[ -n "$overlap" ]]; then
+    log "#$n: COLLISION with PR #${overlap##*|} on ${overlap%%|*}, discarding this branch"
+    gh issue comment "$n" --body "$(printf 'Held by the collision guard. This ticket rewrote `%s`, which is also rewritten by the open PR #%s.\n\nBoth branches would be green and only one could merge, so this run was discarded rather than opened as a PR. Merge #%s first, then re-run this ticket: it will be written against the merged file rather than resolved by hand, which is the better result.' "${overlap%%|*}" "${overlap##*|}" "${overlap##*|}")" || true
+    rm -f COMMIT_MSG.md
+    git checkout -- . 2>/dev/null || true
+    git clean -fdq 2>/dev/null || true
+    git checkout main --quiet
+    git branch -D "$branch" --quiet
+    continue
+  fi
 
   # The agent writes its commit message to a file, since it cannot run git.
   #
