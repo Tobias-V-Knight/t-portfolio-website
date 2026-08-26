@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
 import { atAGlancePrompts, categories, type AtAGlance, type Project } from '../data/content'
+import { Diagram } from '../components/Diagrams'
 import { PlaceholderTag, withBlanks } from './Panels'
 
 // Spec section 7. The homepage is world-building, the project page is
@@ -125,17 +126,28 @@ function AtAGlancePanel({ project }: { project: Project }) {
 // item; it is a class now because the same figure is drawn in two different
 // slots (the side column and the full width diagram band) and an inline style
 // cannot be told which slot it is in.
+//
+// Three fills, in descending order of what a tile is worth: a real drawing from
+// the diagram registry, a real image out of /public, and failing both, a
+// labelled box that says where the evidence is going to go.
+//
+// The caption goes through withBlanks like every other string on the site. A
+// caption is copy, so a caption is allowed to be an unanswered question, and it
+// has to be visible as one: "can this screenshot ship?" set as ordinary grey
+// type under a grey box is a question nobody would ever notice.
 function Figure({ item }: { item: Media }) {
   return (
     <figure className="mac-figure">
-      {item.src ? (
+      {item.diagram ? (
+        <Diagram id={item.diagram} />
+      ) : item.src ? (
         <img className="mac-sunken" src={`${import.meta.env.BASE_URL}${item.src}`} alt={item.caption} />
       ) : (
         <div className="mac-sunken mac-figure-box" data-tone={item.tone}>
           <span className="mac-meta">{item.tone === 'diagram' ? 'DIAGRAM' : 'SCREENSHOT'}</span>
         </div>
       )}
-      <figcaption>{item.caption}</figcaption>
+      <figcaption>{withBlanks(item.caption)}</figcaption>
     </figure>
   )
 }
@@ -219,6 +231,34 @@ export function ProjectPanel({ project }: { project: Project }) {
     })
   }
 
+  // ADR-0001 section 5, and the section that separates having built a system
+  // from having wired some APIs together. Omitted entirely where a project has
+  // no model, which is why this is a data driven push and not a heading with a
+  // blank under it: an empty ML section on a project that never had one is a
+  // claim in itself.
+  //
+  // Each item is a labelled decision rather than a bullet. The label is an
+  // action title, so it states the decision and the paragraph under it argues
+  // for it, which is the order a reader with 60 seconds needs.
+  if (project.mlDecisions?.length) {
+    text.push({
+      key: 'ml',
+      node: (
+        <>
+          <h2>ML DECISIONS</h2>
+          <dl className="mac-decisions">
+            {project.mlDecisions.map((d) => (
+              <div key={d.label}>
+                <dt>{withBlanks(d.label)}</dt>
+                <dd>{withBlanks(d.body)}</dd>
+              </div>
+            ))}
+          </dl>
+        </>
+      ),
+    })
+  }
+
   if (project.evidence) {
     text.push({
       key: 'evidence',
@@ -231,6 +271,57 @@ export function ProjectPanel({ project }: { project: Project }) {
             ))}
           </ul>
         </>
+      ),
+    })
+  }
+
+  // ADR-0001 section 8, and CONTEXT.md, Contribution chip. The chips and the
+  // team line are one section and never two: a row of chips on a team project
+  // with nobody named beside it is a claim of sole authorship whether or not
+  // it meant to be, and the test a chip has to pass is a reference call.
+  //
+  // So the team line renders whenever the section does, and it renders under
+  // the chips rather than in a comment somewhere.
+  if (project.contribution) {
+    text.push({
+      key: 'contribution',
+      node: (
+        <>
+          <h2>MY CONTRIBUTION</h2>
+          <div className="mac-stack-tags mac-contribution-chips">
+            {project.contribution.chips.map((c) => (
+              <span className="mac-stack-tag" key={c}>
+                {withBlanks(c)}
+              </span>
+            ))}
+          </div>
+          <p className="mac-contribution-team">{withBlanks(project.contribution.team)}</p>
+        </>
+      ),
+    })
+  }
+
+  // ADR-0001 section 10. Collapsed, and being collapsed is the whole point: it
+  // is what lets the default view stay inside 400 to 700 words without the page
+  // going shallow. A reviewer scanning for 90 seconds never opens it, and the
+  // engineer who wants the deployment detail gets all of it.
+  //
+  // A native details element rather than state and a button. It is keyboard
+  // reachable, it is findable by the browser's own find on page in Chrome, and
+  // it prints open. None of that comes free with a div and an onClick.
+  if (project.deepDive?.length) {
+    text.push({
+      key: 'deep-dive',
+      node: (
+        <details className="mac-deepdive">
+          <summary>DEEP DIVE</summary>
+          {project.deepDive.map((d) => (
+            <section key={d.heading}>
+              <h3>{withBlanks(d.heading)}</h3>
+              <p>{withBlanks(d.body)}</p>
+            </section>
+          ))}
+        </details>
       ),
     })
   }
