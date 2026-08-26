@@ -158,10 +158,11 @@ Things T has decided he wants but has deliberately parked.
 |---|---|---|
 | Q-01 | One paragraph per project: what it is, who it is for, what was hard, what happened | Handoff section 6. Content is the blocker for pass 2, not design. Five case studies cannot be invented |
 | Q-02 | T-Max has no definition at all. What is it | Spec section 8 literally says TODO |
-| Q-03 | Can the CSI work appear on the site | Built inside a university ELP, IP release still open |
+| Q-03 | ~~Can the CSI work appear on the site~~ | **Answered.** T cleared it on 2026-08-23, and CSI confirmed on 2026-08-24 that he may post the work publicly to get jobs, with no NDA signed. The narrower architecture question that outlived this is Q-06, and ADR-0003 closed that too |
 | Q-04 | Real photos, and consent for any face that is not T's | Handoff rule 7. Placeholders are in place until then |
 | Q-05 | DNS cutover timing at Namecheap | P1-12 cannot finish without it |
-| Q-06 | How much CSI architecture can be published | T cleared CSI for the site on 2026-08-23, overriding the handoff hold, on the condition it shows what was built and not the code. Open question is narrower: CSI is bid intelligence for paving contractors and the client project is pre bid intelligence for construction, so a detailed CSI architecture may describe the client's mechanism by proxy. The section stays empty until T rules |
+| Q-06 | ~~How much CSI architecture can be published~~ | **Answered by ADR-0003, 2026-08-26, and the diagram shipped with issue #37.** The split is shape and mechanism: the shape is the pipeline every system in the category has and is safe, the mechanism is stage internals, corpus, cost per unit, model choices and method and never ships. The diagram in `components/Diagrams.tsx` is that shape word for word, and the test before adding a label to it is the ADR's, not a design one |
+| Q-18 | **Five confirmations on the CSI window, all drafted and none signed off** | The window is `copyState: 'PLACEHOLDER'` until T rules on these. (1) The $22.3M mispricing gap is in PROBLEM as the stake that justifies the system, worded as T's own change log settles it, but it is a named client's money on a public page. (2) EVIDENCE carries a blank asking him to confirm the "up to 19 hours a plan to a 3 minute brief" figure from his own resume; confirmed, it becomes the first line. (3) A second blank asks for any extraction accuracy figure out of the eval harness. (4) ML DECISIONS carries the framing doc's own instruction to re verify the batch saving against a current run before it is published. (5) STACK has a blank asking whether the model vendor may be named: ADR-0003 lists model choices as mechanism, a vendor name is arguably a tool, and that call is his. Team size and his ELP title are a sixth blank, in MY CONTRIBUTION, and the framing doc never answers it either |
 | Q-12 | The fifth home button | T listed "contact, portfolio, background, csv, cv". Four are built. "csv" is either a mis-dictation of CV or a fifth thing nobody has identified yet |
 | Q-09 | The ten anime | Ten empty slots are sitting in the ANIME window waiting for T. Nobody else can fill these |
 | Q-10 | Employer names | **Answered by the extraction, 2026-08-25, issue #5. Needs T's yes, then a wire up ticket.** It is two employers, and the documents call them Accenture and Delivery Associates. "Formative Technologies" is 4MATIV Technologies, which is how 4MATIV sounds spoken aloud. Neither "AC Surety" nor "Formative Technologies" appears anywhere in `04_career`, while 4MATIV and Accenture are in every resume and CV in it. Titles, dates and the sources are in `docs/extracted/career.md`. It stays an identification until T confirms, because there is no document string to match "AC Surety" against |
@@ -179,7 +180,36 @@ Things T has decided he wants but has deliberately parked.
 Closed tickets keep their row above rather than moving to an archive file. The
 board is short by design and a second file would only split the history.
 
-<<<<<<< HEAD
+**2026-08-26, issue #37.** CSI in the finished template, and the three template
+sections plus the diagram it needed, because #35 and #36 were not on `main` when
+this ran. `Project.tsx` gains ML DECISIONS, MY CONTRIBUTION and a collapsed DEEP
+DIVE; `components/Diagrams.tsx` is new and holds the ADR-0002 inline SVG.
+
+The two questions that had blocked the window since 2026-08-23 are answered from
+`04_career`, not guessed. MY CONTRIBUTION is drawn from
+`2026-07-13_CSI_project_resume-framing.md`, which is T's own code grounded
+inventory and marks all four systems "T owns end to end"; the team line names
+what a teammate and a partner team owned, because a chip has to survive a
+reference call. EVIDENCE leads with the deployment on 2026-08-25 rather than a
+metric, which is the whole reason the section is not called RESULTS. Where the
+July framing doc and the August deployment records disagree, the records win:
+"client piloted, ran locally" is the older state.
+
+Every number T's own documents flag as unverified stayed a blank rather than
+becoming copy. Four of them, listed in Q-18.
+
+ADR-0003 was applied to the prose and not only to the diagram, and it cut two
+things that were written and then removed: a sentence naming where in a plan set
+the useful sheet sits, which is a parse stage internal and a directly reusable
+one, and a decision headed "batching cut the cost per document", because
+ADR-0003 names cost per unit outright. The engineering survives in both cases,
+the internal does not. Also left off deliberately: the client's hostnames,
+accounts and paths, and the open authentication gap on their network, which is
+not a confidentiality question so much as a basic one.
+
+Fixed in passing: `TICKETS.md` had a committed merge conflict between the #46
+and #47 log entries, markers and all. Both sides were complete and both are kept.
+
 **2026-08-26, issue #47.** Extractor, both MSBA 6411 live cases in one file,
 `docs/extracted/eda-6411.md`. 4mativ GPS fleet analytics, which is already a
 `projects` entry with every prose field blank, and the GED Testing Service
@@ -220,7 +250,7 @@ the earlier one. Anyone reusing the stale file quotes the wrong figure.
 No PDF tooling on this machine, so neither final deck was read, nor the client
 kickoff, nor the data dictionaries. What the decks say and no markdown repeats is
 not in the file, and the file says so.
-=======
+
 **2026-08-26, issue #46.** RoleRadar extractor. `docs/extracted/roleradar.md`,
 walked read only out of the MSBA 6511 final project folder in iCloud. Nothing is
 wired into the site, per the issue: `content.ts` was deliberately not touched.
@@ -261,7 +291,6 @@ shape as the silent miss the classifier project built a metric for. Seven open
 threads for T at the bottom of the file, including whether the case study may
 name his target companies. They are redacted to a count here, because this repo
 is public and the list is a live job search.
->>>>>>> main
 
 **2026-08-26, issue #34.** The editorial grid, ADR-0004. A case study was one
 column using about two thirds of a 1440px window, which is what made it read as

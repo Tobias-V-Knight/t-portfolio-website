@@ -1642,9 +1642,11 @@ body {
   white-space: normal;
 }
 
-/* CSI's ROLE is half an unanswered blank, so a blank has to fit inside a chip
-   rather than stretch it. It stays a highlight, it just stops being 12px type
-   with 1.9 leading inside an 11px chip. */
+/* A metadata field is allowed to be an unanswered blank, so a blank has to fit
+   inside a chip rather than stretch it. It stays a highlight, it just stops
+   being 12px type with 1.9 leading inside an 11px chip. CSI's ROLE was the one
+   that forced this; it was answered on 2026-08-26 and the rule outlives it,
+   because any project's ROLE or STATUS can carry one. */
 .mac-hero-meta .mac-blank {
   font-size: var(--type-chrome-sm);
   line-height: var(--leading-flat);
@@ -1894,3 +1896,240 @@ body {
   color: var(--mac-ink-soft);
   margin-top: 7px;
 }
+
+/* A caption is copy, so a caption is allowed to be an unanswered question, and
+   two of them on this site are. The default blank is 12px type on 1.9 leading,
+   which inside an 11px caption sets the line height for the whole row. Same
+   correction the hero chips and the at a glance cells already make. */
+.mac-figure figcaption .mac-blank,
+.mac-stack-tag .mac-blank {
+  font-size: var(--type-chrome-sm);
+  line-height: var(--leading-flat);
+  padding: 0 4px;
+}
+
+/* --- Architecture diagrams (ADR-0002) ------------------------------------ */
+/* Hand authored inline SVG. The drawing carries no colour of its own: every
+   fill and stroke below is a token from the top of this file, which is what
+   makes a diagram belong to the window instead of sitting on top of it, and
+   what would let both survive a theme.
+
+   Strokes are declared here and made scale independent in the component with
+   vector-effect, so a 1px rule stays a 1px rule at any window width. */
+
+.mac-diagram-plate {
+  padding: 10px 12px;
+  /* A diagram spans both columns and would otherwise be as tall as the space
+     it is given. It is as tall as it is. */
+  display: block;
+}
+
+.mac-diagram {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* One pipeline, two drawings, and which one shows is a legibility decision
+   rather than a layout one. The wide drawing is 848 user units across, so in a
+   full bleed window on a 390px phone it renders at about 0.42 scale and sets
+   Silkscreen at four pixels, which is not small type, it is noise. The tall
+   drawing takes over there and renders at better than 1:1 on the same phone.
+
+   Container query, not media query, for the same reason the document grid uses
+   one: a case study window is resizable, so a rule that asks the viewport how
+   wide the window is will answer confidently and wrongly.
+
+   The threshold is worked out rather than picked. The diagram band spans the
+   document, so it gets the container width less 52px of padding. For the wide
+   drawing to set Silkscreen at ten pixels or better it needs about 763px of
+   that, which is a container of 815. 820 is that with a little slack. Below it
+   the tall drawing is capped at 320px and sets its labels at about sixteen.
+
+   The default is the tall drawing, so a browser with no container query support
+   gets the one that is legible at every width rather than the one that is not.
+   The two are never both visible; whichever is hidden is display:none and so is
+   out of the accessibility tree as well as off the page. */
+.mac-diagram-wide { display: none; }
+
+@container mac-doc (min-width: 820px) {
+  .mac-diagram-wide { display: block; }
+  .mac-diagram-tall { display: none; }
+}
+
+/* The tall drawing is 220 units wide and would blow up to the full width of a
+   1000px band if it were ever shown there. It is not, but the cap costs one
+   line and removes the failure mode. */
+.mac-diagram-tall { max-width: 320px; margin: 0 auto; }
+
+.mac-diagram-face {
+  fill: var(--mac-face);
+  stroke: var(--mac-line);
+  stroke-width: 1;
+}
+
+.mac-diagram-hi {
+  fill: none;
+  stroke: var(--mac-hi);
+  stroke-width: 1;
+}
+
+.mac-diagram-lo {
+  fill: none;
+  stroke: var(--mac-lo);
+  stroke-width: 1;
+}
+
+.mac-diagram-arrow {
+  fill: var(--mac-ink);
+  stroke: var(--mac-ink);
+  stroke-width: 1;
+}
+
+/* The head is a filled shape, so a stroke on it only makes it fatter, and it
+   would be the one stroke in the drawing that scales with the window. */
+.mac-diagram-arrow polygon { stroke: none; }
+
+/* ADR-0002: label with the chrome face at chrome-sm. Silkscreen is a bitmap
+   face and this is the one place on the site it is allowed to scale, because a
+   diagram with no fixed width is the whole point of drawing it in SVG. */
+.mac-diagram-label {
+  font-family: var(--mac-chrome);
+  font-size: var(--type-chrome-sm);
+  fill: var(--mac-ink);
+  stroke: none;
+  letter-spacing: 0.04em;
+}
+
+/* --- ML decisions (ADR-0001 section 5) ----------------------------------- */
+/* A definition list, because that is what it is: a decision, and the argument
+   for it. Drawn as a rule and an indent rather than as a box per item, so four
+   decisions read as one section and not as four cards. */
+
+.mac-decisions {
+  margin: 0;
+  padding: 0;
+  max-width: var(--measure);
+}
+
+.mac-decisions > div {
+  padding-left: 12px;
+  border-left: 2px solid var(--mac-face-dim);
+  margin-bottom: 16px;
+}
+
+.mac-decisions > div:last-child { margin-bottom: 0; }
+
+/* The label states the decision, so it is the loud half of the pair. Chrome
+   type at sub heading size: it is a heading for a paragraph, which is exactly
+   what --type-chrome-md is for. */
+.mac-decisions dt {
+  font-family: var(--mac-chrome);
+  font-size: var(--type-chrome-md);
+  line-height: var(--leading-tight);
+  letter-spacing: 0.03em;
+  color: var(--mac-ink);
+  margin-bottom: 5px;
+}
+
+.mac-decisions dd {
+  /* dd carries a 40px indent by default, which fights the rule on the left. */
+  margin: 0;
+  font-size: var(--type-body);
+  line-height: var(--leading-body);
+}
+
+/* --- My contribution (ADR-0001 section 8) -------------------------------- */
+/* The chips reuse .mac-stack-tags wholesale. The team line under them is the
+   half that keeps the chips honest, so it is set as prose rather than as a
+   footnote: a reference call is the test, and a sentence somebody skims past
+   does not pass it. */
+
+/* Same two corrections the hero chips and the CV rows make, for the same two
+   reasons. The base chip is translucent white because it was drawn to sit on a
+   photograph, and it all but vanishes on paper. And a contribution chip is a
+   phrase rather than a tool name, so a nowrap chip holding PLAN READER PIPELINE
+   pushes a 390px window sideways. */
+.mac-contribution-chips .mac-stack-tag {
+  background: var(--mac-face);
+  white-space: normal;
+}
+
+/* Scoped through .mac-doc on purpose. `.mac-doc p` sets a bottom margin on
+   every paragraph in a case study and outranks a bare class, so a rule written
+   as `.mac-contribution-team` alone would lose the margin argument silently. */
+.mac-doc .mac-contribution-team {
+  margin: 12px 0 0;
+  font-size: var(--type-body-sm);
+  line-height: var(--leading-body);
+  color: var(--mac-ink-soft);
+  max-width: var(--measure);
+}
+
+/* --- Deep dive (ADR-0001 section 10) ------------------------------------- */
+/* A native details element. Keyboard reachable, findable by the browser's own
+   find on page, and it prints open, none of which comes free with a div and an
+   onClick.
+
+   The summary IS the section heading rather than sitting beside one, because a
+   heading that says DEEP DIVE above a toggle that also says DEEP DIVE is the
+   same words twice. So it is drawn exactly as .mac-doc h2 is drawn, down to the
+   hairline under it, and the only thing that marks it as different is the
+   disclosure triangle, which is the browser's own marker restyled to the one
+   the Finder uses. */
+
+.mac-deepdive > summary {
+  font-family: var(--mac-chrome);
+  font-size: var(--type-chrome-lg);
+  line-height: var(--leading-flat);
+  letter-spacing: 0.04em;
+  color: var(--mac-ink-soft);
+  cursor: default;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid #d5d2cb;
+}
+
+/* Safari draws its own marker through ::-webkit-details-marker and ignores
+   list-style, so both have to be turned off or the row gets two triangles. */
+.mac-deepdive > summary::-webkit-details-marker { display: none; }
+
+.mac-deepdive > summary::before {
+  content: '';
+  /* A zero width flex item with borders is still shrinkable, and a shrunk
+     triangle is a smear. */
+  flex: 0 0 auto;
+  width: 0;
+  height: 0;
+  border-left: 6px solid var(--mac-ink-soft);
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent;
+}
+
+.mac-deepdive[open] > summary::before {
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 6px solid var(--mac-ink-soft);
+  border-bottom: 0;
+}
+
+.mac-deepdive > summary:focus-visible {
+  outline: 2px solid var(--mac-accent);
+  outline-offset: 2px;
+}
+
+.mac-deepdive > section { margin-top: 16px; }
+
+.mac-deepdive h3 {
+  font-family: var(--mac-chrome);
+  font-size: var(--type-chrome-md);
+  line-height: var(--leading-tight);
+  letter-spacing: 0.03em;
+  color: var(--mac-ink);
+  margin: 0 0 6px;
+}
+
+.mac-deepdive p { margin: 0; }
