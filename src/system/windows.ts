@@ -20,6 +20,7 @@ export type WindowKind =
   | 'text'
   | 'trash'
   | 'work'
+  | 'archive'
   | 'anime'
   | 'contact'
   | 'zippy'
@@ -93,6 +94,25 @@ export const windowDefs: WindowDef[] = [
     height: 520,
     sizeFrac: { w: 0.52, h: 0.72, maxW: 920, maxH: 740, minW: 480, minH: 400 },
     spawn: { x: 0.14, y: 0.1 },
+  },
+  {
+    // The ARCHIVE folder, opened from inside PORTFOLIO.
+    //
+    // T's call on 2026-08-26, and a better idea than the divider the ticket
+    // asked for. A divider is a decoration on a list; a folder is the Finder's
+    // own way of saying "these exist and are not the point". It also fixes
+    // something a divider cannot: nine archived rows take more vertical space
+    // than five case studies, so the thing being played down was dominating
+    // the window. One folder row makes the case studies the whole visible list.
+    id: 'archive',
+    title: 'ARCHIVE',
+    kind: 'archive',
+    route: '/work/archive',
+    width: 660,
+    height: 460,
+    // Offset from PORTFOLIO's own spawn so the parent stays visible behind it,
+    // the way a Finder folder opens beside the window it came from.
+    spawn: { x: 0.22, y: 0.2 },
   },
   {
     id: 'msba',

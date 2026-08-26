@@ -154,38 +154,6 @@ export const projects: Project[] = [
     ],
   },
   {
-    slug: 'pickletrack',
-    title: 'PickleTrack',
-    windowTitle: 'PICKLETRACK.APP',
-    oneLiner: 'Computer vision that tracks pickleball shot accuracy from ordinary match video.',
-    role: 'Built it',
-    status: 'Public',
-    year: '2025',
-    categories: ['ai-ml'],
-    copyState: 'PLACEHOLDER',
-    hasWindow: true,
-    problem:
-      'Shot accuracy is the number every player wants and nobody measures, because measuring it by hand means watching the same rally four times with a notepad. The data exists in every phone video ever shot from the fence, it is just locked in pixels.',
-    built: [
-      'Ball and player detection on match footage.',
-      'Court mapping that turns image coordinates into real positions on a real court, which is what makes a bounce location mean something.',
-      'A performance analytics layer over the tracked shots.',
-    ],
-    architecture:
-      'Detection runs frame by frame with YOLOv8. A homography maps the detected court corners onto a known court geometry, so every detection becomes a position in feet rather than pixels. Shot events come out of the position and velocity series, and the analytics run on those events.',
-    stack: ['Python', 'YOLOv8', 'OpenCV', '[ anything else worth naming ]'],
-    media: [{ caption: 'Tracked rally with court overlay', tone: 'screenshot' }],
-    evidence: [
-      '[ Detection accuracy, and on what footage ]',
-      '[ What it got wrong, and where it broke down ]',
-    ],
-    lessons: [
-      '[ Court mapping is usually the hard part. Was it here? ]',
-      'This became the groundwork for Pickleball IQ, which is the same problem approached as a product rather than as a model.',
-    ],
-    links: [{ label: 'GitHub', href: 'https://github.com/Tobias-V-Knight/pickletrackv2' }],
-  },
-  {
     slug: 'nlp-material-classifier',
     title: 'NLP Material Classifier',
     windowTitle: 'CLASSIFIER.APP',
@@ -214,6 +182,26 @@ export const projects: Project[] = [
     lessons: [
       '[ Writing attention by hand teaches something specific. What was it? ]',
     ],
+  },
+  {
+    slug: '4mativ-anomaly-detection',
+    title: '4mativ Anomaly Detection',
+    windowTitle: '4MATIV.APP',
+    oneLiner: 'Anomaly detection on operational data.',
+    role: 'Team project',
+    status: 'Public',
+    year: '2026',
+    categories: ['data'],
+    copyState: 'PLACEHOLDER',
+    hasWindow: true,
+    problem:
+      '[ What was the operational problem, and who was feeling it? Anomaly detection is a method, not a problem, and the article needs the problem. ]',
+    built: ['[ What did you build and hand over? ]'],
+    architecture: '[ What detected the anomalies, and how were they surfaced? ]',
+    stack: ['[ language and libraries ]'],
+    evidence: ['[ What did it catch? ]'],
+    lessons: ['[ The interesting part ]'],
+    links: [{ label: 'GitHub', href: 'https://github.com/Tobias-V-Knight/4mativ-anomaly-detection' }],
   },
   {
     slug: 'roleradar',
@@ -246,24 +234,36 @@ export const projects: Project[] = [
     links: [{ label: 'GitHub', href: 'https://github.com/Tobias-V-Knight/roleradar' }],
   },
   {
-    slug: '4mativ-anomaly-detection',
-    title: '4mativ Anomaly Detection',
-    windowTitle: '4MATIV.APP',
-    oneLiner: 'Anomaly detection on operational data.',
-    role: 'Team project',
+    slug: 'pickletrack',
+    title: 'PickleTrack',
+    windowTitle: 'PICKLETRACK.APP',
+    oneLiner: 'Computer vision that tracks pickleball shot accuracy from ordinary match video.',
+    role: 'Built it',
     status: 'Public',
-    year: '2026',
-    categories: ['data'],
+    year: '2025',
+    categories: ['ai-ml'],
     copyState: 'PLACEHOLDER',
-    hasWindow: true,
+    hasWindow: false,
     problem:
-      '[ What was the operational problem, and who was feeling it? Anomaly detection is a method, not a problem, and the article needs the problem. ]',
-    built: ['[ What did you build and hand over? ]'],
-    architecture: '[ What detected the anomalies, and how were they surfaced? ]',
-    stack: ['[ language and libraries ]'],
-    evidence: ['[ What did it catch? ]'],
-    lessons: ['[ The interesting part ]'],
-    links: [{ label: 'GitHub', href: 'https://github.com/Tobias-V-Knight/4mativ-anomaly-detection' }],
+      'Shot accuracy is the number every player wants and nobody measures, because measuring it by hand means watching the same rally four times with a notepad. The data exists in every phone video ever shot from the fence, it is just locked in pixels.',
+    built: [
+      'Ball and player detection on match footage.',
+      'Court mapping that turns image coordinates into real positions on a real court, which is what makes a bounce location mean something.',
+      'A performance analytics layer over the tracked shots.',
+    ],
+    architecture:
+      'Detection runs frame by frame with YOLOv8. A homography maps the detected court corners onto a known court geometry, so every detection becomes a position in feet rather than pixels. Shot events come out of the position and velocity series, and the analytics run on those events.',
+    stack: ['Python', 'YOLOv8', 'OpenCV', '[ anything else worth naming ]'],
+    media: [{ caption: 'Tracked rally with court overlay', tone: 'screenshot' }],
+    evidence: [
+      '[ Detection accuracy, and on what footage ]',
+      '[ What it got wrong, and where it broke down ]',
+    ],
+    lessons: [
+      '[ Court mapping is usually the hard part. Was it here? ]',
+      'This became the groundwork for Pickleball IQ, which is the same problem approached as a product rather than as a model.',
+    ],
+    links: [{ label: 'GitHub', href: 'https://github.com/Tobias-V-Knight/pickletrackv2' }],
   },
   {
     slug: 'film-recommender',
@@ -275,7 +275,7 @@ export const projects: Project[] = [
     year: '2026',
     categories: ['ai-ml'],
     copyState: 'PLACEHOLDER',
-    hasWindow: true,
+    hasWindow: false,
     problem:
       '[ Every recommender demo looks the same. What made this one worth building: the dataset, the approach, or the question you were testing? ]',
     built: ['[ Collaborative filtering, content based, or a hybrid? ]'],
@@ -295,7 +295,7 @@ export const projects: Project[] = [
     year: '2026',
     categories: ['ai-ml'],
     copyState: 'PLACEHOLDER',
-    hasWindow: true,
+    hasWindow: false,
     problem:
       '[ Product recommendation with an ingredient constraint is a more interesting problem than film recommendation. Was that the angle? ]',
     built: ['[ What did it recommend on: ingredients, reviews, skin type? ]'],
@@ -315,7 +315,7 @@ export const projects: Project[] = [
     year: '2026',
     categories: ['ai-ml'],
     copyState: 'PLACEHOLDER',
-    hasWindow: true,
+    hasWindow: false,
     problem:
       'The canonical first computer vision problem, which makes it a fair test of technique rather than of novelty. Everyone has the same data, so the only variable is what you do with it.',
     built: ['[ Trained from scratch, fine tuned a pretrained backbone, or both? ]'],
@@ -335,7 +335,7 @@ export const projects: Project[] = [
     year: '2026',
     categories: ['hardware'],
     copyState: 'PLACEHOLDER',
-    hasWindow: true,
+    hasWindow: false,
     problem:
       'Training a model on a laptop means the laptop is gone for the afternoon, and renting a GPU for every experiment means paying to find out an idea was bad. A machine that sits in the corner and takes jobs solves both, and it is cheaper than either over a year.',
     built: [
@@ -359,7 +359,7 @@ export const projects: Project[] = [
     year: '2026',
     categories: ['tools'],
     copyState: 'PLACEHOLDER',
-    hasWindow: true,
+    hasWindow: false,
     problem:
       'Matplotlib opens every figure in its own window and gives you no way to step between them. Anyone who has generated forty plots in a loop has then closed forty windows one at a time. Spyder solved this years ago and nothing outside Spyder did.',
     built: ['A viewer that collects the figures and lets you arrow through them.'],
@@ -380,7 +380,7 @@ export const projects: Project[] = [
     year: '2026',
     categories: ['tools'],
     copyState: 'PLACEHOLDER',
-    hasWindow: true,
+    hasWindow: false,
     problem:
       'A portfolio has about fifteen seconds to be worth reading, and every portfolio looks the same, so the fifteen seconds go to whoever is memorable rather than whoever is best. The risk in solving that with a gimmick is that the gimmick becomes the thing people remember instead of the work.',
     built: [
@@ -407,7 +407,7 @@ export const projects: Project[] = [
     year: '2026',
     categories: ['data', 'tools'],
     copyState: 'PLACEHOLDER',
-    hasWindow: true,
+    hasWindow: false,
     problem:
       'The intersection of 15th and 28th has no crosswalk and a lot of traffic moving faster than it should. Everyone on the street knows it. Nobody can prove it, and "the neighbours think it is dangerous" is the weakest possible thing to bring to a city that has to prioritise between a hundred streets making the same claim.',
     built: [
@@ -450,13 +450,19 @@ export const projects: Project[] = [
     categories: ['product'],
     copyState: 'PLACEHOLDER',
     hasWindow: false,
-    links: [{ label: 'gravl-ai.com', href: 'https://gravl-ai.com' }],
     constraint:
       'OUTCOME ONLY, and as of 2026-08-23 not even that: no window, no founder title, one row. Never add architecture, pipeline stages, corpus size, unit or marginal compute cost, model details, the five work product method, the phase and gate table, or the pit and haul insight. See CLAUDE.md.',
   },
 ]
 
-export const windowProjects = projects.filter((p) => p.hasWindow)
+// `hasWindow` is the one switch. Flip it and a project changes group, gains or
+// loses its route, and starts or stops being clickable. There is deliberately
+// no second list to keep in step with this one.
+export const caseStudyProjects = projects.filter((p) => p.hasWindow)
+export const archiveProjects = projects.filter((p) => !p.hasWindow)
+
+// Kept as an alias so nothing that imported the old name breaks silently.
+export const windowProjects = caseStudyProjects
 
 export interface Role {
   org: string
