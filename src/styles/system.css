@@ -2091,6 +2091,14 @@ body {
   gap: 8px;
   padding-bottom: 6px;
   border-bottom: 1px solid #d5d2cb;
+  /* The only control in a case study window, and the only way to reach the
+     technical detail. It measured 23px tall on a phone, which is half a thumb.
+     The rule this repo already holds for the menu bar applies here for the
+     same reason: everything you have to hit goes to 44px, and that beats
+     period authenticity. Padding rather than height, so the text stays put and
+     the target grows around it. */
+  min-height: 44px;
+  padding-top: 10px;
 }
 
 /* Safari draws its own marker through ::-webkit-details-marker and ignores
