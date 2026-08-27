@@ -133,3 +133,21 @@ refuses to open a PR whose real diff overlaps an open PR. See
 [ADR-0005](docs/adr/0005-collision-guard.md), and
 [ADR-0006](docs/adr/0006-one-file-per-project.md) for the split that removes the
 contention rather than arbitrating it.
+
+## Subject, and source
+
+The distinction that unblocked the GED case study. See
+[ADR-0007](docs/adr/0007-client-pages-are-shape-only.md).
+
+A client is the **source** of data. It is not always the **subject** of the
+finding drawn from it.
+
+GED Testing Service supplied a dataset about three hundred thousand adult
+learners. A result about which preparation methods carry weight is about those
+learners, so it may ship. A figure about how GEDTS itself performs may not.
+4mativ is both source and subject, because the analysis scores its own vendor
+network, so nothing about the mechanism ships there.
+
+**Ask who the sentence is about, not where the file came from.** Withholding a
+finding about adult education because of who owned the spreadsheet protects
+nobody.

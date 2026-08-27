@@ -54,6 +54,28 @@ The specific cost is not paranoid. 4MATIV is a live prospect. A page describing
 how their vendor scoring works, published by the person who built it, is exactly
 where a competitor looks for what the company's own site does not say.
 
+## Amendment, 2026-08-26: the client is not always the subject
+
+Written for 4MATIV, where the analysis scores the client's own vendors, and then
+immediately tested by the GED case, where it does not.
+
+The GED work segments roughly three hundred thousand adult learners on which
+preparation methods carry weight and on where they live. **GED Testing Service
+supplied the data and is not what the findings are about.** Reading this ADR to
+cover them would withhold a finding about adult education because of who owned
+the spreadsheet.
+
+So the line is the **subject**, not the source:
+
+* **The client's own performance, operations and mechanism** stay withheld. For
+  GEDTS that is pass rates, volumes, revenue, anything characterising how the
+  organisation itself performs.
+* **Findings about a population the client merely observed** may ship: the odds
+  ratios on prep methods, the geographic result, the model selection plot.
+
+T ruled this on 2026-08-26. It does not loosen anything for 4MATIV, where the
+subject is the client's vendor network and the client's own scoring of it.
+
 ## Consequences
 
 - The 4MATIV page was cut back on this basis before it merged.

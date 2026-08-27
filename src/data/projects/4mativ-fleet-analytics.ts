@@ -20,13 +20,18 @@ import type { Project } from '../types'
 // -------------------------------------------------------------------------
 
 const project: Project = {
-  slug: '4mativ-anomaly-detection',
+  // Renamed from 4mativ-anomaly-detection on 2026-08-26, hours after it went
+  // live and while the cost was still one edit rather than a dead link. Anomaly
+  // detection is layer three of four. The page also covers signal quality
+  // scoring, the in service window, corridor learning and the rollup, and the
+  // slug is the one part of a case study a reader sees before the copy.
+  slug: '4mativ-fleet-analytics',
   order: 30,
   // Was '4mativ Anomaly Detection'. The company is '4MATIV Technologies' in
   // RESUME and '4MATIV.APP' in the window title, so the lower case spelling
   // here was the only one of the three that disagreed. Casing only: the
   // slug, the route and the file name are untouched.
-  title: '4MATIV Anomaly Detection',
+  title: '4MATIV Fleet Analytics',
   windowTitle: '4MATIV.APP',
   oneLiner:
     'Every school bus vendor with its own GPS, and no way to tell a broken device from a driver who skipped the route. Scoring those two things separately is the whole design.',
