@@ -64,6 +64,28 @@ const project: Project = {
   // explained on first use because a hiring manager does not play pickleball.
   problem:
     "Pickleball players know their DUPR rating, the sport's skill number, and nothing about what to practise next. One number covers a game made of a dozen separate skills, so a player with weak resets and a player with a weak serve read the same on paper. Coaches have the mirrored problem: privates, clinics and leagues each generate notes with nowhere shared to keep them, so a coach carrying thirty client relationships holds most of what they know in their head. That pair of complaints came out of 62 discovery interviews.",
+  // ADR-0008. Four measured figures, and none of them is a growth number,
+  // because retention and engagement are genuinely [ not recorded ] and a
+  // strip is not the place to imply otherwise.
+  //
+  // The recall figure carries its denominator on purpose. A recall of 1.00 with
+  // no n reads as either a triumph or a rigged test, and a reader cannot tell
+  // which. T's own resume note calls it a 25 question test judged by a separate
+  // model, so the tile says so and the claim gets stronger rather than weaker.
+  kpis: [
+    {
+      label: 'Drills extracted',
+      value: '586',
+      note: 'From 145 coaching videos, each tagged and deep linked to its own timestamp',
+    },
+    { label: 'Discovery interviews', value: '62', note: 'The problem came from these, not from a hunch' },
+    { label: 'Pilot', value: '30 players', note: 'At Life Time, in weekly use' },
+    {
+      label: 'Retrieval recall@6',
+      value: '1.00',
+      note: 'Across a 25 question golden set, graded by a different model from the one that answers',
+    },
+  ],
   built: [
     'A YouTube extraction pipeline: 145 coaching videos in, 586 drills out, each one tagged by shot type, DUPR band and court position against one canonical taxonomy, and deep linked to its own timestamp.',
     'An iOS app where a player gets a drill queue mapped to their rating and an assistant grounded in their own data, plus a coach platform running clients, notes and lesson plans.',
@@ -82,7 +104,7 @@ const project: Project = {
   evidence: [
     'Live on the App Store as PBIQ v2.0 since 19 June 2026, with pbiq.ai behind it. PB IQ, LLC was formed on 3 June 2026.',
     'A 30 player pilot at Life Time, in weekly use.',
-    'The retrieval system is the one part that was properly measured: recall@6 of 1.00, faithfulness and citation 5.0 of 5, refusal accuracy 1.0 on questions the corpus cannot answer.',
+    'The retrieval system is the one part that was properly measured, over a 25 question golden set graded by a different model from the one that answers: recall@6 of 1.00, faithfulness and citation 5.0 of 5, and a perfect record of refusing questions the corpus cannot answer. The eval also chose the retrieval mode: dense only beat hybrid plus reranking on this corpus.',
     'Retention, latency and recommender accuracy are [ not recorded ]: engagement metrics were still being wired at the last status update, and the recommender was never fitted.',
   ],
   // Every chip traces to a document in which T describes his own work. There
