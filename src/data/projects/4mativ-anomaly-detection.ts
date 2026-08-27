@@ -29,7 +29,7 @@ const project: Project = {
   title: '4MATIV Anomaly Detection',
   windowTitle: '4MATIV.APP',
   oneLiner:
-    'Sixteen school bus vendors, sixteen kinds of GPS, and no way to tell a broken device from a driver who skipped the route. Scoring those two things separately is the whole design.',
+    'Every school bus vendor with its own GPS, and no way to tell a broken device from a driver who skipped the route. Scoring those two things separately is the whole design.',
   // Nothing in the delivered folder attributes a layer, a script or a chart
   // to a person, and the two labels it uses for the team disagree with each
   // other. Five people is the one fact the material settles, so it is the
@@ -58,7 +58,7 @@ const project: Project = {
     evidence: 'Handed over with the document needed to maintain it',
   },
   problem:
-    '4mativ coordinates school transport to two schools across sixteen vendors, each running its own GPS hardware on its own polling standard. When a route underperforms, nobody can say why. A bus that reports almost nothing might have a dead device or a driver who never ran the route, and the raw feed reads the same either way. That answer decides the intervention: a performance warning, a hardware audit, or a benchmark worth copying. Getting it backwards sends a driver warning to a vendor whose drivers are fine. Sixteen vendors, 640 routes, six months of pings, and no defensible way to say which of them was failing.',
+    '4mativ coordinates school transport across a set of vendors, each running its own GPS hardware on its own polling standard. When a route underperforms, nobody can say why. A bus that reports almost nothing might have a dead device or a driver who never ran the route, and the raw feed reads the same either way. That answer decides the intervention: a performance warning, a hardware audit, or a benchmark worth copying. Getting it backwards sends a driver warning to a vendor whose drivers are fine. A fleet of vendors, six months of pings, and no defensible way to say which of them was failing.',
   built: [
     'A four layer Python pipeline, with per layer notebooks and rerun flags so the slowest layer can be skipped.',
     "A Streamlit dashboard on the client's own cloud, whose scorecard carries live weight sliders so an operations manager can reweight the axes and watch the vendors move.",
@@ -66,22 +66,22 @@ const project: Project = {
     'A knowledge transfer document, so their technical team can maintain all of it without us.',
   ],
   architecture:
-    "Four layers, and the reason there are four is that two of them measure different things on purpose. Layer 1 scores GPS connection health per trip. Layer 2 finds the window in which the bus was actually in service, geofencing the first and last planned stop at 100 metres. Layer 3 learns each route's normal corridor and labels every ping against it. Layer 4 rolls trip level scores up to route and vendor. Signal quality and route execution stay on separate axes to the last step, which is what turns a ranking into a diagnosis.",
+    "Four layers, and the reason there are four is that two of them measure different things on purpose. Layer 1 scores GPS connection health per trip. Layer 2 finds the window in which the bus was actually in service, geofencing the first and last planned stop. Layer 3 learns each route's normal corridor and labels every ping against it. Layer 4 rolls trip level scores up to route and vendor. Signal quality and route execution stay on separate axes to the last step, which is what turns a ranking into a diagnosis.",
   // Three methods, three reasons. The point of naming all three is that each
   // one answers a question the others cannot, which is method selection
   // rather than reaching for the first thing that fits.
   mlDecisions: [
     {
       label: 'One Isolation Forest per provider, not one for the fleet',
-      body: 'Two providers poll every 60 seconds and two every 20, which at 30 mph is 804 metres between pings against 268. A fleet wide model would score the slow vendors worse for being slow, so each forest fits one provider group and normalises within it.',
+      body: 'Providers poll at different intervals, so at road speed the gap between consecutive pings differs by hundreds of metres between one vendor and the next. A fleet wide model would score the slow pollers worse for being slow rather than for being late, so each forest fits one provider group and normalises within it.',
     },
     {
       label: "DBSCAN learns each route's corridor rather than reading the one on file",
-      body: 'Normal is where the buses actually drove. DBSCAN at 150 metres over historical pings, grouped by route and by trip type, with morning and afternoon runs trained separately so that opposite direction corridors do not contaminate each other. Below three trips, a route falls back to a global model.',
+      body: 'Normal is where the buses actually drove, not where the route file says they should have. DBSCAN over historical pings, grouped by route and by trip type, with morning and afternoon runs trained separately so that opposite direction corridors do not contaminate each other. A route with too little history falls back to a global model rather than to a confident wrong answer.',
     },
     {
       label: 'Local Outlier Factor asks the question a ping cannot answer',
-      body: 'Ping level labels say where the bus was, not whether the trip as a whole was normal. Local Outlier Factor over eight trip level features flags those, above a score of 3.0.',
+      body: 'Ping level labels say where the bus was, not whether the trip as a whole was normal. Local Outlier Factor over trip level features asks the second question.',
     },
   ],
   stack: [
@@ -113,7 +113,6 @@ const project: Project = {
   // Nothing here is a vendor score.
   evidence: [
     'Correcting for depot pings moved fleet completion down 7 points. Devices start pinging when the engine starts, so pings from the yard were earning credit at stops near it. We shipped the corrected figure and told the client in writing not to use the old one.',
-    '14,859 trips, 640 routes, 16 vendors, 2 schools and about 2.35 million GPS pings, September 2025 to February 2026.',
     'Delivered to 4mativ as a running pipeline, a deployed dashboard, and the maintenance document their technical team works from.',
   ],
   // A chip is a first person claim and the test it has to pass is a
@@ -127,7 +126,7 @@ const project: Project = {
   deepDive: [
     {
       heading: 'Every flag routes to the person who has to pick up the phone',
-      body: 'DETOUR and WRONG_ROUTE go to vendor operations, FROZEN_DEVICE and GPS_JUMP to the GPS provider, DATA_GAP to driver training or cellular coverage. Each is a threshold anybody can check: a ping more than 150 metres off the learned corridor, an implied speed above 80 mph between consecutive pings, near zero variance across consecutive coordinates, a gap over five minutes. A DBSCAN label of minus one is noise and goes to nobody, because it is a mathematical byproduct and not a failure. Sorting the flags into behavioural, hardware and coverage faults is the part of this the client can act on without a data scientist in the room.',
+      body: 'DETOUR and WRONG_ROUTE go to vendor operations, FROZEN_DEVICE and GPS_JUMP to the GPS provider, DATA_GAP to driver training or cellular coverage. Each is a threshold anybody can check without a model: a ping too far off the learned corridor, an implied speed no bus reaches, near zero variance across consecutive coordinates, a reporting gap. A DBSCAN label of minus one is noise and goes to nobody, because it is a mathematical byproduct and not a failure. Sorting the flags into behavioural, hardware and coverage faults is the part of this the client can act on without a data scientist in the room.',
     },
     {
       heading: 'Completion is bimodal, and the average hides it completely',
@@ -139,11 +138,11 @@ const project: Project = {
     },
     {
       heading: 'One set of components, three stakeholders, three sets of weights',
-      body: 'Five components score at trip level: completion, corridor, coverage, data quality and on time. A parent asks whether the bus came, so the parent facing lens weights completion at 70 percent. A vendor scorecard has to be arguable, so completion drops to 45 and corridor rises. Real time dispatch cares where the bus is now, so corridor and coverage carry it. Route execution, the Y axis of every matrix, is completion at 0.60 plus corridor at 0.40. The dashboard ships the weights as sliders, which is the difference between handing over a ranking and handing over an argument.',
+      body: 'Five components score at trip level: completion, corridor, coverage, data quality and on time. A parent asks whether the bus came, so their lens leans almost entirely on completion. A vendor scorecard has to be arguable, so completion gives ground to corridor. Real time dispatch cares where the bus is now, so corridor and coverage carry it. The dashboard ships the weights as sliders rather than baking them in, which is the difference between handing over a ranking and handing over an argument.',
     },
     {
-      heading: 'On time shipped at 2 percent weight, with the reason written down',
-      body: 'Nobody had confirmed whether the scheduled pickup time in the export meant arrival at the first student stop or departure from the depot, and per stop scheduled times were not in the data at all. Dropping the component would have hidden a real dimension of service. Weighting it properly would have scored vendors against a definition nobody could vouch for. It went in at 2 percent, on the vendor lens only, with the ambiguity recorded in the handoff as a question for the client.',
+      heading: 'On time shipped at almost no weight, with the reason written down',
+      body: 'Nobody had confirmed whether the scheduled pickup time in the export meant arrival at the first student stop or departure from the depot, and per stop scheduled times were not in the data at all. Dropping the component would have hidden a real dimension of service. Weighting it properly would have scored vendors against a definition nobody could vouch for. It went in at almost no weight, on the vendor lens only, with the ambiguity recorded in the handoff as a question for the client.',
     },
     {
       heading: 'Two stop identifiers, and only one of them is a place',
@@ -151,11 +150,11 @@ const project: Project = {
     },
   ],
   lessons: [
-    'Comparing sixteen vendors on one axis meant first proving the axis was fair. The slow polling vendors looked worse on every raw signal metric while being no worse at all, so normalising within provider group came first. Skip that and the leaderboard ranks procurement decisions and calls it performance.',
+    'Comparing vendors on one axis meant first proving the axis was fair. The slow polling vendors looked worse on every raw signal metric while being no worse at all, so normalising within provider group came first. Skip that and the leaderboard ranks procurement decisions and calls it performance.',
     'The deliverable worth having was not the ranking. A blended score would have buried the vendors whose drivers execute and whose hardware cannot prove it, and sent them a driver warning instead of a hardware audit. Splitting the axes gave those vendors a quadrant of their own, and each flag names who has to act on it.',
   ],
   constraint:
-    "4mativ is a real client and this analysis scores its own transport vendors, which makes it one company's assessment of other companies. This page is method and outcome only. `docs/extracted/eda-6411.md` draws the line and holds it: method, algorithm, parameters, pipeline shape, dataset scale and relative deltas may ship, while absolute performance levels, per vendor scores, quadrant assignments and the names of the teammates may not. Each withheld figure is one path lookup away in that file rather than lost. The 7 point correction is cleared as a delta; the figures it moved are not, and no sentence here states a level. Q-15 in the extraction asks whether T clears 4mativ the way he cleared CSI on 2026-08-23. Until he answers it, nothing withheld there gets backfilled here.",
+    "4mativ is a real client and a live prospect, and this analysis scores its own transport vendors, which makes it one company's assessment of other companies. **Shape only.** T answered Q-15 on 2026-08-26 with the stricter of the two rules that were in play: the extraction would have allowed parameters, dataset scale and relative deltas, and CLAUDE.md's client rule does not, so CLAUDE.md wins. Cut on that basis: the fleet and corpus counts, the polling intervals and the metre distances they imply, the DBSCAN and geofence radii, the Local Outlier Factor threshold and feature count, the flag thresholds, and every scoring weight. What stays is the pipeline shape, why each model was chosen over the others, the data decisions, and the delivery. Per vendor scores, quadrant assignments, absolute performance levels and the teammates' names were never in scope. Every withheld figure is one path lookup away in `docs/extracted/eda-6411.md` rather than lost.",
   // Was a hard link to github.com/Tobias-V-Knight/4mativ-anomaly-detection.
   // Nothing in the extraction evidences that repo: the code sits in iCloud
   // with the client data directory gitignored as privacy sensitive, and
