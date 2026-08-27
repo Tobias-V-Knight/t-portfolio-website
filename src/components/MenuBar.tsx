@@ -116,7 +116,15 @@ export function MenuBar({ menus, clock }: { menus: Menu[]; clock: Clock }) {
         {/* Two spans, not one string. The bar cannot wrap without breaking the
             illusion, and adding the RESUME title pushed the clock off the right
             edge on a phone. Splitting the date off means the narrow rule can
-            drop it and keep the time, which is the half anyone reads. */}
+            drop it and keep the time, which is the half anyone reads.
+
+            The date carries the class because it is the part with spaces in it,
+            and a squeezed bar breaks a string at its spaces: WED, AUG 26 came
+            apart into three stacked lines on a phone, which is #85. The widths
+            that decide what survives are in system.css, next to
+            .mac-menubar-right, and they run out at the point the clock goes
+            entirely. Nothing here should ever be the last line of defence
+            against a wrap, so the CSS refuses to shrink this block at all. */}
         <span className="mac-menubar-optional">{clock.date}</span>
         <span>{clock.time}</span>
       </div>

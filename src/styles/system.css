@@ -118,6 +118,10 @@ body {
   z-index: 9000;
   display: flex;
   align-items: stretch;
+  /* A real menu bar is a fixed height rule and this one is never allowed to
+     become two. No overflow rule here on purpose: the drops are positioned
+     inside the bar and clipping it would clip every menu. */
+  flex-wrap: nowrap;
   gap: 0;
   background: var(--mac-paper);
   border-bottom: 1px solid var(--mac-line);
@@ -201,10 +205,20 @@ body {
   background: #b9b6b0;
 }
 
+/* The clock is the one thing in the bar that could ever wrap, and #85 is what
+   happens when it does. Every menu title is nowrap, so in a bar too narrow for
+   its contents flexbox squeezes the only shrinkable item, which is this one,
+   down to its longest word. WED, AUG 26 has two spaces in it, so it came apart
+   into three stacked lines and took the height of the bar with it. Refusing to
+   shrink and refusing to wrap turns the worst case from a broken bar into a
+   clock that runs past the right edge, and the widths below stop it reaching
+   even that. */
 .mac-menubar-right {
   margin-left: auto;
   display: flex;
   align-items: center;
+  flex: 0 0 auto;
+  white-space: nowrap;
   gap: 14px;
   padding: 0 12px;
   font-family: var(--mac-chrome);
@@ -1431,19 +1445,44 @@ body {
   .mac-zoombox { display: none; }
   .mac-doc { margin: 0; border: 0; padding: 18px 16px 40px; font-size: 16px; }
   .mac-menubar-right { gap: 8px; padding: 0 8px; }
+
+  /* The date goes at the same width the desktop metaphor does. Below here the
+     chrome is already reduced on purpose, Close All and the zoom box are gone,
+     and the date is the same kind of thing: texture that a phone has no room
+     for. The time stays, which is all the original menu bar ever showed. */
+  .mac-menubar-right .mac-menubar-optional { display: none; }
+
   .mac-sheet { grid-template-columns: repeat(2, 1fr); }
 }
 
-/* Anything narrower than a small phone drops the ambient readouts rather than
-   letting the menu bar wrap, which would break the whole illusion. */
-@media (max-width: 460px) {
-  .mac-menubar-right .mac-menubar-optional { display: none; }
+/* Below here the bar is four routes into the site and a clock competing for
+   the same rule, and the routes win every time. Each step gives up the least
+   valuable thing still in the bar rather than letting anything wrap. */
+@media (max-width: 520px) {
   .mac-menubar-right { gap: 0; padding: 0 4px; }
 
   /* Four titles plus a clock is 474px of content in a 433px bar, measured, so
      the padding comes off rather than a title. Every title in the bar is a
      route into the site and losing one costs more than tight spacing does. */
   .mac-menu-title { padding: 0 6px; }
+}
+
+/* On a 390px phone the four titles and the Apple menu already fill most of the
+   bar, so the clock is what has to go: it is ambient texture and every title
+   next to it is a way into the work. This is option 3 in #85, taken because
+   the two that keep the clock only fit if the glyph widths land exactly where
+   they were estimated, and a clock clipped by the edge of the screen is no
+   better than the wrap it replaced. */
+@media (max-width: 400px) {
+  .mac-menubar-right { display: none; }
+}
+
+/* Narrower than any phone in use, and the width where a wrap shows up first.
+   Nothing is left to drop but the titles, which are the navigation, so the
+   type steps down one stop on the scale instead. The bar keeps its 46px of
+   touch target, only the glyphs get smaller. */
+@media (max-width: 340px) {
+  .mac-menu-title { padding: 0 4px; font-size: var(--type-chrome-md); }
 }
 
 /* --- Capabilities: what T contracts in ---------------------------------- */
