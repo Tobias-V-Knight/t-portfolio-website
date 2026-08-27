@@ -100,12 +100,10 @@ const project: Project = {
       diagram: 'csi-shape',
     },
     {
-      caption: 'A plan set dropped into the chat. [ screenshot to capture from localhost ]',
+      caption:
+        'The product, ready for a plan set. One entry point: drop the document in, or ask about pricing, competitors and bid history against the same data.',
       tone: 'screenshot',
-    },
-    {
-      caption: 'The finished bid brief. [ screenshot to capture from localhost ]',
-      tone: 'screenshot',
+      src: 'csi-home.jpg',
     },
     { caption: 'The CSI ELP team, Alexandria MN', tone: 'screenshot', src: 'csi-team.jpeg' },
   ],

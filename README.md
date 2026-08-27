@@ -117,6 +117,7 @@ one before writing project copy, never instead of it.
 | `og.png` | Link preview card | 1200x630. The actual front door, because almost every visitor sees this on LinkedIn before they see the site |
 | `favicon.svg` | Favicon | A small beige computer |
 | `luffy.mp4` · `ice.mp4` | Movie clips | The LUFFY.MOV playlist (B&W via player CSS), cycled in the order set by `moviePlaylist` in `data/content.ts`. A new clip is one entry there plus the file here |
+| `csi-home.jpg` | The CSI product, ready for a plan set | Real screenshot of the app's home state with the sidebar collapsed, which is why nothing in it needed blurring: no chat list, no project, no location. Captured 2026-08-27 from the running app on localhost |
 | `csi-verify.jpg` | The CSI human in the loop step | Real screenshot of the app's verification screen: ten of twelve fields confirmed, each cited to its page, one handed back to the estimator. Every region carrying the client's project identity is blurred, and the blur list is in the commit that added it. The product, the confidence badges, the page citations and the nav are the case study and all stay |
 | `csi-team.jpeg` | CSI ELP team photo | Shown on the CSI.APP project page |
 | `photos/*.JPG` | Placeholder photographs | Eight generated stand ins. The Photos window is queued for removal |
