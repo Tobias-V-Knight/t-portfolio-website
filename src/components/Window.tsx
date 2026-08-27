@@ -13,6 +13,10 @@ interface WindowProps {
   onFocus: () => void
   onMove: (x: number, y: number) => void
   onResize: (w: number, h: number) => void
+  onZoom: () => void
+  // Whether this window is currently zoomed. Drives `aria-pressed` on the
+  // zoom box, so the toggle's state is readable without seeing the screen.
+  zoomed: boolean
   width: number
   height: number
   // The little icon at the left of the title, as every Mac OS 8 window had.
@@ -33,6 +37,8 @@ export function MacWindow({
   onFocus,
   onMove,
   onResize,
+  onZoom,
+  zoomed,
   width,
   height,
   icon,
@@ -125,8 +131,22 @@ export function MacWindow({
           {def.title}
         </h2>
         {/* The zoom box. Present on every Mac OS 8 window, on the right, and
-            its absence was part of why the chrome read as approximate. */}
-        <span className="mac-zoombox" aria-hidden />
+            it toggles: out to fill the desktop, back to exactly where the
+            window was. It shipped as an `aria-hidden` span with no handler,
+            which made the chrome look complete and lie about it. A control
+            that does something is a button, so it is one. The name stays put
+            and `aria-pressed` carries the state, which is the toggle button
+            pattern: a label that flips between Zoom and Restore renames the
+            control under anyone reading it and is harder to follow, not
+            easier. The title bar drag skips anything inside a button, so
+            clicking it will not also start dragging the window. */}
+        <button
+          type="button"
+          className="mac-zoombox"
+          onClick={onZoom}
+          aria-pressed={zoomed}
+          aria-label={`Zoom ${def.title}`}
+        />
       </div>
 
       <div className="mac-window-body">{children}</div>

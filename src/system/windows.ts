@@ -224,6 +224,27 @@ function clamp(x: number, y: number, def: WindowDef) {
   }
 }
 
+// Where a zoomed window goes. Every number here is read off a bound that
+// already existed rather than chosen fresh, because a zoom that lands outside
+// what `clamp` and `resize` allow just gets clamped back and looks like a bug.
+//
+// `resize` caps width at innerWidth - 24, so a 12px inset each side is exactly
+// that cap. `clamp` refuses to put any window's top above MENU_BAR, so that
+// floor is the top margin whether we ask for it or not, and the height is what
+// is left once the same 12px is kept at the bottom. Windows are positioned
+// inside `.mac-desktop`, which already starts below the menu bar, so the menu
+// bar stays visible by construction.
+const ZOOM_INSET = 12
+
+function zoomRect() {
+  return {
+    x: ZOOM_INSET,
+    y: MENU_BAR,
+    w: window.innerWidth - ZOOM_INSET * 2,
+    h: window.innerHeight - MENU_BAR * 2 - ZOOM_INSET,
+  }
+}
+
 // Where a window WILL be, computed before it renders.
 //
 // The zoom rectangle has to animate from an icon to a window, and it has to
@@ -273,6 +294,15 @@ export function useWindowManager() {
   // per kind. A classic Mac window had a grow box in the corner and it worked,
   // so ours works too rather than being decoration that lies about itself.
   const [sizes, setSizes] = useState<Record<string, { w: number; h: number }>>({})
+  // The zoom box, per instance and next to `sizes` for the same reason. A key
+  // in here means that window is currently zoomed, and its value is the rect
+  // the window had immediately before it was zoomed. It is remembered rather
+  // than re-derived on restore, because re-deriving gives the window's default
+  // size back and silently throws away wherever the visitor had dragged and
+  // grown it to, which is not a restore.
+  const [zoomFrom, setZoomFrom] = useState<
+    Record<string, { x: number; y: number; w: number; h: number }>
+  >({})
   // The window that is currently playing its close animation. It stays
   // mounted for the length of the animation and only then actually closes,
   // because a window that vanishes the instant you click the box reads as a
@@ -363,6 +393,20 @@ export function useWindowManager() {
       // worst possible response to clicking a close box.
       const finish = () => {
         setClosing(null)
+        // Closing a zoomed window unzooms it. `sizes` outlives a close, so
+        // without this the window reopens at its full desktop size but at its
+        // small spawn position, and still marked zoomed, so the first click on
+        // the zoom box would shrink it. Restoring the remembered size here
+        // means it comes back the way the visitor last sized it.
+        const wasZoomed = zoomFrom[id]
+        if (wasZoomed) {
+          setSizes((prev) => ({ ...prev, [id]: { w: wasZoomed.w, h: wasZoomed.h } }))
+          setZoomFrom((prev) => {
+            const next = { ...prev }
+            delete next[id]
+            return next
+          })
+        }
         if (id === 'luffy') {
           setLuffyOpen(false)
           return
@@ -385,7 +429,7 @@ export function useWindowManager() {
       window.setTimeout(finish, CLOSE_MS)
       return
     },
-    [navigate, stack, closing],
+    [navigate, stack, closing, zoomFrom],
   )
 
   const focus = useCallback(
@@ -433,6 +477,48 @@ export function useWindowManager() {
       },
     }))
   }, [])
+
+  // The zoom box. Mac OS 8 toggled a window between its own size and one that
+  // fitted the screen, and both halves of that are load bearing: a control that
+  // only grows is half a control. Going out runs through `move` and `resize` so
+  // the zoomed rect obeys exactly the same bounds as a drag and a grow, and
+  // coming back writes the remembered rect so the restore is exact.
+  //
+  // Desktop only. Below 768px every window is pinned full bleed by CSS, so
+  // there is nothing for a zoom to do and the box is hidden there.
+  const toggleZoom = useCallback(
+    (id: string) => {
+      if (isSmallScreen()) return
+      const def = byId.get(id)
+      if (!def) return
+
+      const previous = zoomFrom[id]
+      if (previous) {
+        setZoomFrom((prev) => {
+          const next = { ...prev }
+          delete next[id]
+          return next
+        })
+        move(id, previous.x, previous.y)
+        setSizes((prev) => ({ ...prev, [id]: { w: previous.w, h: previous.h } }))
+        return
+      }
+
+      const pos =
+        id === 'intro' ? introPos : id === 'luffy' ? luffyPos : stack.find((w) => w.id === id)
+      if (!pos) return
+      const size = sizes[id] ?? defSize(def)
+      const rect = zoomRect()
+
+      setZoomFrom((prev) => ({
+        ...prev,
+        [id]: { x: pos.x, y: pos.y, w: size.w, h: size.h },
+      }))
+      move(id, rect.x, rect.y)
+      resize(id, rect.w, rect.h)
+    },
+    [zoomFrom, introPos, luffyPos, stack, sizes, move, resize],
+  )
 
   const openWindows = useMemo(() => {
     const list = stack.map((w) => ({ ...w, def: byId.get(w.id) as WindowDef }))
@@ -506,5 +592,18 @@ export function useWindowManager() {
     if (location.pathname !== '/') navigate('/')
   }, [location.pathname, navigate])
 
-  return { openWindows, topId, open, close, closeAll, focus, move, resize, sizes, closing }
+  return {
+    openWindows,
+    topId,
+    open,
+    close,
+    closeAll,
+    focus,
+    move,
+    resize,
+    sizes,
+    closing,
+    toggleZoom,
+    zoomFrom,
+  }
 }
