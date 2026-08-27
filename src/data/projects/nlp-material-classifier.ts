@@ -51,6 +51,34 @@ const project: Project = {
   // the method. A reader who stops after two sentences still has the stake.
   problem:
     'Every line item in a highway bid document has to be assigned a material, because those categories add up into the tonnage a paving contractor prices the job on. The step that made the call was a hand tuned keyword list. Measured against 2,434 labeled items, it categorized 681 of them, 28 percent, and sent two thirds of the rest to a paid model call. Twelve of the 24 categories were missing from its vocabulary entirely. None of that is visible while it happens. On one project it read 121,221 tons of hot mix as 200, a 605x under report, because the pay item used North Dakota wording and the keywords were written in Minnesota. A contractor could bid off that number and never know.',
+  // ADR-0008. Every figure here is in the extraction with a path beside it, and
+  // the two that carry the argument are paired with what they beat: an F1 means
+  // nothing without the baseline, and the silent miss rate means nothing
+  // without the 0.635 it replaced.
+  //
+  // The LoRA lane is not a KPI. It has never been scored, and a strip is for
+  // measured figures, so the blank stays in EVIDENCE where a reader can see
+  // that it is missing rather than in a tile where it would look broken.
+  kpis: [
+    { label: 'Macro F1', value: '0.546', before: '0.328', note: 'Same 331 rows, same harness' },
+    {
+      label: 'Silent miss rate',
+      value: '0.161',
+      before: '0.635',
+      note: 'A wrong category nobody sees. For a tonnage rollup this matters more than the accuracy',
+    },
+    {
+      label: 'Categories covered',
+      value: '24',
+      before: '12',
+      note: 'The keyword list had no vocabulary at all for the other half',
+    },
+    {
+      label: 'Gold set',
+      value: '331 rows',
+      note: 'Adjudicated by hand across all 24 categories and frozen before any model saw it',
+    },
+  ],
   built: [
     'A gold test set of 331 rows, adjudicated by hand, stratified across all 24 categories and frozen before any model saw it.',
     'One eval harness every lane is scored through, so the comparison is fair by construction.',

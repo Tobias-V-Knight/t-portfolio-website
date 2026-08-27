@@ -21,7 +21,7 @@ export class ErrorBoundary extends Component<
     if (this.state.error) {
       return (
         this.props.fallback ?? (
-          <div style={{ padding: 20, fontFamily: 'monospace', fontSize: 13, color: '#c2410c' }}>
+          <div className="mac-crash">
             <strong>Something crashed.</strong>
             <div style={{ marginTop: 8, color: '#333' }}>{this.state.error.message}</div>
           </div>

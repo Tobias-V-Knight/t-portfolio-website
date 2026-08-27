@@ -386,7 +386,7 @@ export function ZippyPanel() {
         src={`${import.meta.env.BASE_URL}zippy.png`}
         alt="Zippy, a grey and white dog with one blue eye"
       />
-      <h1 style={{ fontSize: 22, marginTop: 12 }}>ZIPPY</h1>
+      <h1 className="mac-zippy-name">ZIPPY</h1>
       <p className="mac-meta">Good dog. No further comment.</p>
     </div>
   )
@@ -395,7 +395,7 @@ export function ZippyPanel() {
 export function AnimePanel() {
   return (
     <div className="mac-doc">
-      <h1 style={{ fontSize: 22 }}>TOP TEN</h1>
+      <h1>TOP TEN</h1>
       <p className="mac-meta" style={{ marginBottom: 18 }}>
         No particular order. Arguments accepted by email.
       </p>
