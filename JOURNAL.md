@@ -159,3 +159,49 @@ four tickets an hour earlier produced three skips.
 `agent-ready`.** `csi-shape` shipped inside #65. An unchanged worker run would
 have handed a finished ticket to an agent. A ticket that ships inside another
 ticket's PR does not close itself.
+
+## 2026-08-26, night — four case studies, and a rule that had quietly forked
+
+The Mini worked #56 to #59 in one batch. **Four tickets, four PRs, each touching
+exactly one file**, which is ADR-0006 doing the job it was written for. The same
+four an hour earlier would have produced one mergeable PR.
+
+**The NLP page refused the number that caused all of this.** An unsupported F1
+of 0.914 reached the live site on 2026-08-25 and is the reason `main` is
+protected. Writing the NLP case study, the agent found it in the boot sequence,
+identified it as set dressing per CONTEXT.md, and left a comment saying it must
+never be borrowed to fill the empty LoRA row. Every other figure on that page
+traces to the extraction.
+
+**Then the one that had to stop.** The 4MATIV page was written from
+`docs/extracted/eda-6411.md`, which sets its own publishing rule: method,
+parameters, dataset scale and relative deltas may ship, performance levels and
+per vendor scores may not. The page followed it exactly and published corpus
+counts, polling intervals, DBSCAN and geofence radii, an outlier threshold and
+every scoring weight.
+
+`CLAUDE.md` and ADR-0003 say something stricter about client work, and say it
+generally: mechanism, defined there as stage internals, corpus size, model
+details and method, never ships. **Two documents had forked, and nobody noticed
+until a page was written from the wrong one.** The extraction's rule was written
+to protect performance figures and quietly became a ruling on mechanism.
+
+T took the stricter rule. ADR-0007 makes it general rather than CSI specific,
+and #60, the GED case study, is the other client in the same extraction and now
+inherits it.
+
+**What the cut cost was almost nothing, which is the finding.** Out went the
+radii, the thresholds and the weights. What stayed was three models chosen for
+three different reasons, the two stop identifiers of which only one is a place,
+and a finding published with the caveat that could invalidate it. The
+parameters were the least persuasive part of the page and the only part that
+carried a confidentiality cost.
+
+**The agent had already flagged it.** Its `constraint` field named Q-15 and said
+the clearance question was unanswered. Contribution stayed a blank because
+nothing in the delivered folder attributes a layer to a person. The GitHub link
+stayed a blank asking whether a public repo of a client pipeline should exist.
+Placeholder discipline is what made the problem visible rather than shipped.
+
+**Scoreboard.** Five case studies live. Six PRs merged tonight, plus the two
+infrastructure ones. Board at 18.

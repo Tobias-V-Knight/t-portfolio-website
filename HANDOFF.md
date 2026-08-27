@@ -15,7 +15,7 @@ Last rewritten **2026-08-26**.
 
 **Live at `tobiasknight.dev`**, Cloudflare Workers, deploying on every merge to
 `main`. `main` is protected: no direct push from anyone including T, PR plus
-green CI. `main` is at `f0eb74b`, working tree clean.
+green CI. `main` is at `ad0459e`, working tree clean.
 
 Static Vite + React + TypeScript. The site is a classic Macintosh desktop.
 
@@ -78,24 +78,29 @@ order.
 
 ## Next, in order
 
-**The two infrastructure tickets are done.** #64 the collision guard and #71 the
-split both merged on 2026-08-26. `main` is at `f0eb74b`.
+**The case studies are done.** Five are live: CSI, PB IQ, NLP material
+classifier, RoleRadar and 4MATIV. The sixth is #60, the GED entry, which needs
+five field answers from T before an agent can start.
 
-**1. The four case studies. #56, #57, #58, #59.** This is the actual goal. All
-`agent-ready`, all following CSI's shape, and after #71 they touch no file in
-common, so they can run as one Mini batch. A dry run confirms no collisions.
-**#57 ships a blank marquee number unless the LoRA eval runs first.**
+**1. Mobile, properly.** The four new windows were checked at 390px only through
+one page. The layout holds and the menu bar date wraps to three lines there,
+which nobody has decided about. #21 is the designed version, #12 the type
+overrides.
 
-**2. Worktrees, for parallel tracks.** Now safe, because collisions are caught
-by construction. The worker is a serial `for` loop and a four ticket batch takes
-roughly 40 minutes that could be 12. Not yet a ticket.
+**2. Worktrees, for parallel tracks.** Safe now that collisions are caught. The
+worker is a serial `for` loop and tonight's four ticket batch took roughly 40
+minutes that could have been 12. Not yet a ticket.
 
-**3. The visual backlog**, after the content: #62 the oversized team photo, #27
-the PORTFOLIO columns, #12 the mobile type overrides, #21 mobile as a designed
-thing. #28 and #2 collide with nothing and can ride along in any batch.
+**3. The visual backlog.** #62 the oversized team photo, #27 the PORTFOLIO
+columns, #43 the nested folder deep link. #28 and #2 collide with nothing.
 
-#63 carries the dependency order and was rewritten on 2026-08-26. The P0 to P3
-labels predate the case study system and are not authoritative.
+**Client work is shape only, on every page and not just CSI.** ADR-0007, taken
+tonight when the 4MATIV page turned out to have been written from a looser rule
+in an extraction file. #60 inherits it. Read the ADR before writing any client
+copy.
+
+#63 carries the dependency order. The P0 to P3 labels predate the case study
+system and are not authoritative.
 
 ## Blocked on T, and these gate real work
 
