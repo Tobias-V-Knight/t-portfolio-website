@@ -469,17 +469,31 @@ body {
 }
 
 
-/* The zoom box, top right of every window. Non functional on purpose: on a
-   desktop where windows are already the size of their content, a zoom that
-   does nothing visible is worse than a zoom that is clearly ornamental. */
+/* The zoom box, top right of every window. It works: one click fills the
+   desktop, the next puts the window back exactly where it was. It used to be
+   ornamental, which read as complete chrome and was a lie about a live
+   control, so it is a real button now. */
 .mac-zoombox {
   flex: 0 0 auto;
   width: 13px;
   height: 13px;
+  padding: 0;
   background: var(--mac-face);
   border: 1px solid var(--mac-line);
   box-shadow: inset 1px 1px 0 var(--mac-hi), inset -1px -1px 0 var(--mac-lo);
+  cursor: default;
   position: relative;
+}
+
+/* 13px is period correct and small for a mouse, so the target widens. Only
+   sideways: the title bar is 22px tall and the window body starts immediately
+   under it, so growing this downward would put an invisible overlay across the
+   top of the scrollbar's up arrow. Left and right it only ever covers title
+   bar padding and the ellipsised end of a title, neither of which is clickable. */
+.mac-zoombox::before {
+  content: '';
+  position: absolute;
+  inset: 0 -6px 0 -10px;
 }
 
 .mac-zoombox::after {
@@ -492,6 +506,9 @@ body {
   border: 1px solid var(--mac-line);
   background: var(--mac-face);
 }
+
+.mac-zoombox:active,
+.mac-zoombox:active::after { background: var(--mac-lo); }
 
 .mac-window[data-active='false'] .mac-zoombox { opacity: 0.35; }
 
@@ -1387,6 +1404,12 @@ body {
 
   .mac-titlebar { height: 34px; }
   .mac-closebox { width: 17px; height: 17px; }
+
+  /* The zoom box goes. Every window here is already pinned full bleed, so
+     zooming has nothing to grow into and restoring has nothing to go back to.
+     The window manager refuses the toggle below this width too; this is the
+     half a visitor can see. */
+  .mac-zoombox { display: none; }
   .mac-doc { margin: 0; border: 0; padding: 18px 16px 40px; font-size: 16px; }
   .mac-menubar-right { gap: 8px; padding: 0 8px; }
   .mac-sheet { grid-template-columns: repeat(2, 1fr); }

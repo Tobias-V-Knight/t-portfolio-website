@@ -119,8 +119,20 @@ function useClock() {
 }
 
 export default function App() {
-  const { openWindows, topId, open, close, closeAll, focus, move, resize, sizes, closing } =
-    useWindowManager()
+  const {
+    openWindows,
+    topId,
+    open,
+    close,
+    closeAll,
+    focus,
+    move,
+    resize,
+    sizes,
+    closing,
+    toggleZoom,
+    zoomFrom,
+  } = useWindowManager()
   const clock = useClock()
   // The desktop mounts underneath the boot curtain, not after it. If this
   // component threw, the site would still be there behind it.
@@ -269,6 +281,8 @@ export default function App() {
               onFocus={() => focus(w.id)}
               onMove={(x, y) => move(w.id, x, y)}
               onResize={(width, height) => resize(w.id, width, height)}
+              onZoom={() => toggleZoom(w.id)}
+              zoomed={Boolean(zoomFrom[w.id])}
               width={sizes[w.id]?.w ?? defSize(w.def).w}
               height={sizes[w.id]?.h ?? defSize(w.def).h}
               icon={titleIconFor(w.id, w.def.kind)}
