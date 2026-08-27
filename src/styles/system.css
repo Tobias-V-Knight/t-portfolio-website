@@ -985,6 +985,13 @@ body {
   font-size: var(--type-chrome-md);
   line-height: 1.9;
   border-radius: 2px;
+  /* A blank often carries the path or URL that answers it, and those arrive as
+     one unbroken token. In a media caption or a stack tag the column is narrow
+     enough that such a token pushes the highlight straight out of the window.
+     Break inside the word rather than let the container lose. Editing the copy
+     to fit would throw away the useful half of the blank, which is the address
+     of the thing that fills it. */
+  overflow-wrap: anywhere;
 }
 
 /* --- HOME ----------------------------------------------------------------
