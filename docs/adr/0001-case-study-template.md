@@ -1,3 +1,9 @@
+> **Parts 2, 5, 10 and 11 are superseded by
+> [ADR-0008](0008-shorter-template-with-kpis.md), 2026-08-27.** ML decisions,
+> deep dive and lessons are gone; the at a glance panel's second cell may be a
+> key question; a KPI strip was added. Build to 0008. This file records what was
+> tried and why.
+
 # 0001. One template for every case study
 
 Date: 2026-08-26

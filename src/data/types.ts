@@ -32,7 +32,13 @@ export interface ProjectLink {
 
 export interface AtAGlance {
   problem: string
-  approach: string
+  // The second cell is either an approach or a key question, never both.
+  // ADR-0008: situation, complication, key question is how the CSI work was
+  // put to the client, and a question is a sharper second beat than a
+  // restatement of the approach. `approach` stays for the projects that have
+  // no such question.
+  approach?: string
+  keyQuestion?: string
   output: string
   evidence: string
 }
@@ -105,15 +111,6 @@ export interface Project {
   // image out of /public, and neither renders a labelled placeholder box so the
   // page shows where the evidence is going to go.
   media?: { caption: string; tone: 'screenshot' | 'diagram'; src?: string; diagram?: DiagramId }[]
-  // ADR-0001 section 5, and the section that shows he did not wire APIs
-  // together. Omitted entirely where there is no model: an empty ML heading on
-  // a project that never had one is worse than no heading.
-  //
-  // The label is an action title, not a container label. "Retrieval, not a
-  // trained model" states the decision; "Approach" labels a box and makes the
-  // reader do the work. T's own communications coursework is the standard here,
-  // not general taste.
-  mlDecisions?: { label: string; body: string }[]
   // ADR-0001 section 8, and CONTEXT.md, Contribution chip. A chip is a first
   // person claim: `RETRIEVAL` means he built the retrieval, not that the
   // project had some. The test a chip has to pass is a reference call, so on a
@@ -125,12 +122,13 @@ export interface Project {
   // was real, so a deployment fact or a screenshot belongs here. Do not rename
   // it back. See CONTEXT.md, Evidence.
   evidence?: string[]
-  // ADR-0001 section 10. Collapsed, and it is what makes the 400 to 700 word
-  // budget on the default view survivable: without somewhere for the data prep,
-  // the failed approaches and the deployment detail to go, the only choices are
-  // a shallow page or a long one.
-  deepDive?: { heading: string; body: string }[]
-  lessons?: string[]
+  // ADR-0008. Renders only where real measured figures exist, which is the
+  // minority of projects. `before` is optional because not every figure has a
+  // predecessor to beat.
+  //
+  // The rule that matters: a KPI may not be a figure whose arithmetic a reader
+  // can disprove. State the unit that survives division.
+  kpis?: { label: string; value: string; before?: string; note?: string }[]
   links?: ProjectLink[]
   // Renders nothing to the visitor. It exists so the next agent reads it
   // before adding sections to a project that is under a publishing limit.

@@ -72,23 +72,6 @@ const project: Project = {
   ],
   architecture:
     "Four layers, and the reason there are four is that two of them measure different things on purpose. Layer 1 scores GPS connection health per trip. Layer 2 finds the window in which the bus was actually in service, geofencing the first and last planned stop. Layer 3 learns each route's normal corridor and labels every ping against it. Layer 4 rolls trip level scores up to route and vendor. Signal quality and route execution stay on separate axes to the last step, which is what turns a ranking into a diagnosis.",
-  // Three methods, three reasons. The point of naming all three is that each
-  // one answers a question the others cannot, which is method selection
-  // rather than reaching for the first thing that fits.
-  mlDecisions: [
-    {
-      label: 'One Isolation Forest per provider, not one for the fleet',
-      body: 'Providers poll at different intervals, so at road speed the gap between consecutive pings differs by hundreds of metres between one vendor and the next. A fleet wide model would score the slow pollers worse for being slow rather than for being late, so each forest fits one provider group and normalises within it.',
-    },
-    {
-      label: "DBSCAN learns each route's corridor rather than reading the one on file",
-      body: 'Normal is where the buses actually drove, not where the route file says they should have. DBSCAN over historical pings, grouped by route and by trip type, with morning and afternoon runs trained separately so that opposite direction corridors do not contaminate each other. A route with too little history falls back to a global model rather than to a confident wrong answer.',
-    },
-    {
-      label: 'Local Outlier Factor asks the question a ping cannot answer',
-      body: 'Ping level labels say where the bus was, not whether the trip as a whole was normal. Local Outlier Factor over trip level features asks the second question.',
-    },
-  ],
   stack: [
     'Python',
     'pandas',
@@ -128,36 +111,6 @@ const project: Project = {
     chips: ['[ which layers were yours? ]'],
     team: 'A five person team, through the Carlson Analytics Lab. [ Nothing in the delivered folder attributes a layer or a script to a person, so this page claims nothing. Name your part and the chips write themselves. ]',
   },
-  deepDive: [
-    {
-      heading: 'Every flag routes to the person who has to pick up the phone',
-      body: 'DETOUR and WRONG_ROUTE go to vendor operations, FROZEN_DEVICE and GPS_JUMP to the GPS provider, DATA_GAP to driver training or cellular coverage. Each is a threshold anybody can check without a model: a ping too far off the learned corridor, an implied speed no bus reaches, near zero variance across consecutive coordinates, a reporting gap. A DBSCAN label of minus one is noise and goes to nobody, because it is a mathematical byproduct and not a failure. Sorting the flags into behavioural, hardware and coverage faults is the part of this the client can act on without a data scientist in the room.',
-    },
-    {
-      heading: 'Completion is bimodal, and the average hides it completely',
-      body: 'Several high volume vendors show a dumbbell distribution rather than a spread: trips complete either none of their stops or all of them, with very little in between. Drivers are not skipping a stop or two. Whole routes are either run or not run. An average completion rate reports a middling number that describes almost none of the actual trips, and it changes the intervention from tighten up to find out why entire routes are going unrun.',
-    },
-    {
-      heading: 'The detour finding names the thing that could invalidate it',
-      body: 'Detour dominates the anomaly mix, which reads as drivers leaving planned corridors rather than devices failing. It could equally mean the official route definitions are out of date, and off corridor detections appearing across many vendors at once is exactly what that would look like. So the handoff tells the client to verify the route definitions before using detour rates in a contract review. A finding that cannot survive its own caveat being stated out loud was not a finding. Five further questions went back open rather than closed by assumption, including whether a wrong route trip should trigger an automatic dispatch review.',
-    },
-    {
-      heading: 'One set of components, three stakeholders, three sets of weights',
-      body: 'Five components score at trip level: completion, corridor, coverage, data quality and on time. A parent asks whether the bus came, so their lens leans almost entirely on completion. A vendor scorecard has to be arguable, so completion gives ground to corridor. Real time dispatch cares where the bus is now, so corridor and coverage carry it. The dashboard ships the weights as sliders rather than baking them in, which is the difference between handing over a ranking and handing over an argument.',
-    },
-    {
-      heading: 'On time shipped at almost no weight, with the reason written down',
-      body: 'Nobody had confirmed whether the scheduled pickup time in the export meant arrival at the first student stop or departure from the depot, and per stop scheduled times were not in the data at all. Dropping the component would have hidden a real dimension of service. Weighting it properly would have scored vendors against a definition nobody could vouch for. It went in at almost no weight, on the vendor lens only, with the ambiguity recorded in the handoff as a question for the client.',
-    },
-    {
-      heading: 'Two stop identifiers, and only one of them is a place',
-      body: 'A stop instance on one route and a physical location shared across routes are different identifiers in the source data. Join on the wrong one and a bus running the wrong route earns credit for visiting a stop it happened to drive past, which inflates exactly the completion metric the whole analysis rests on. Most of the accuracy in this project came from data decisions like that one rather than from anything the models did.',
-    },
-  ],
-  lessons: [
-    'Comparing vendors on one axis meant first proving the axis was fair. The slow polling vendors looked worse on every raw signal metric while being no worse at all, so normalising within provider group came first. Skip that and the leaderboard ranks procurement decisions and calls it performance.',
-    'The deliverable worth having was not the ranking. A blended score would have buried the vendors whose drivers execute and whose hardware cannot prove it, and sent them a driver warning instead of a hardware audit. Splitting the axes gave those vendors a quadrant of their own, and each flag names who has to act on it.',
-  ],
   constraint:
     "4mativ is a real client and a live prospect, and this analysis scores its own transport vendors, which makes it one company's assessment of other companies. **Shape only.** T answered Q-15 on 2026-08-26 with the stricter of the two rules that were in play: the extraction would have allowed parameters, dataset scale and relative deltas, and CLAUDE.md's client rule does not, so CLAUDE.md wins. Cut on that basis: the fleet and corpus counts, the polling intervals and the metre distances they imply, the DBSCAN and geofence radii, the Local Outlier Factor threshold and feature count, the flag thresholds, and every scoring weight. What stays is the pipeline shape, why each model was chosen over the others, the data decisions, and the delivery. Per vendor scores, quadrant assignments, absolute performance levels and the teammates' names were never in scope. Every withheld figure is one path lookup away in `docs/extracted/eda-6411.md` rather than lost.",
   // Was a hard link to github.com/Tobias-V-Knight/4mativ-anomaly-detection.

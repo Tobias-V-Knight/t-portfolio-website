@@ -17,9 +17,6 @@ const project: Project = {
   built: ['A viewer that collects the figures and lets you arrow through them.'],
   stack: ['Python', 'Matplotlib'],
   evidence: ['[ Do you still use it? That is the only metric a tool like this has. ]'],
-  lessons: [
-    'The smallest tools are the ones you actually keep, because they solve a problem you hit weekly rather than a problem you found interesting once.',
-  ],
   links: [{ label: 'GitHub', href: 'https://github.com/Tobias-V-Knight/figviewer' }],
 }
 

@@ -18,7 +18,6 @@ const project: Project = {
   architecture: '[ How were recommendations generated? ]',
   stack: ['Python', '[ libraries ]'],
   evidence: ['[ Evaluation metric and score ]'],
-  lessons: ['[ What surprised you ]'],
   links: [{ label: 'GitHub', href: 'https://github.com/Tobias-V-Knight/skin-care-recommender' }],
 }
 

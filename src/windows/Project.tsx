@@ -97,6 +97,9 @@ function HeroActions({ project }: { project: Project }) {
 // cell, which is why this renders unconditionally and falls back to the prompts
 // in content.ts. An at a glance panel that disappears when the data is thin is
 // a panel that is missing on exactly the pages that need it most.
+// ADR-0008: the second cell is an approach or a key question, whichever the
+// project carries, and the label follows the data. Still four cells, still in
+// this order, still never droppable.
 const GLANCE_CELLS: { key: keyof AtAGlance; label: string }[] = [
   { key: 'problem', label: 'PROBLEM' },
   { key: 'approach', label: 'APPROACH' },
@@ -109,12 +112,17 @@ function AtAGlancePanel({ project }: { project: Project }) {
   // per pair is valid inside a dl and it is what makes each pair one grid cell.
   return (
     <dl className="mac-glance mac-doc-full">
-      {GLANCE_CELLS.map(({ key, label }) => {
+      {GLANCE_CELLS.map((cell) => {
+        // The second cell swaps to the key question where one exists. A project
+        // never has both, so there is nothing to choose between at render time.
+        const asksQuestion = cell.key === 'approach' && !!project.atAGlance?.keyQuestion?.trim()
+        const key = asksQuestion ? 'keyQuestion' : cell.key
+        const label = asksQuestion ? 'KEY QUESTION' : cell.label
         const value = project.atAGlance?.[key]?.trim()
         return (
-          <div className="mac-glance-cell" key={key}>
+          <div className="mac-glance-cell" key={cell.key}>
             <dt className="mac-glance-label">{label}</dt>
-            <dd className="mac-glance-value">{withBlanks(value || atAGlancePrompts[key])}</dd>
+            <dd className="mac-glance-value">{withBlanks(value || atAGlancePrompts[cell.key] || '')}</dd>
           </div>
         )
       })}
@@ -203,6 +211,33 @@ export function ProjectPanel({ project }: { project: Project }) {
     })
   }
 
+  // ADR-0008. Renders only where measured figures exist, which is the minority
+  // of projects, and it sits directly under the problem because a number is the
+  // fastest answer to "did this work". `before` is what the figure beat, and a
+  // KPI without one is still a KPI: not every number has a predecessor.
+  if (project.kpis?.length) {
+    text.push({
+      key: 'kpis',
+      node: (
+        <>
+          <h2>BY THE NUMBERS</h2>
+          <dl className="mac-kpis">
+            {project.kpis.map((k) => (
+              <div className="mac-kpi" key={k.label}>
+                <dt>{withBlanks(k.label)}</dt>
+                <dd>
+                  {k.before ? <span className="mac-kpi-before">{withBlanks(k.before)}</span> : null}
+                  <span className="mac-kpi-value">{withBlanks(k.value)}</span>
+                </dd>
+                {k.note ? <p className="mac-kpi-note">{withBlanks(k.note)}</p> : null}
+              </div>
+            ))}
+          </dl>
+        </>
+      ),
+    })
+  }
+
   if (project.built) {
     text.push({
       key: 'built',
@@ -237,27 +272,6 @@ export function ProjectPanel({ project }: { project: Project }) {
   // blank under it: an empty ML section on a project that never had one is a
   // claim in itself.
   //
-  // Each item is a labelled decision rather than a bullet. The label is an
-  // action title, so it states the decision and the paragraph under it argues
-  // for it, which is the order a reader with 60 seconds needs.
-  if (project.mlDecisions?.length) {
-    text.push({
-      key: 'ml',
-      node: (
-        <>
-          <h2>ML DECISIONS</h2>
-          <dl className="mac-decisions">
-            {project.mlDecisions.map((d) => (
-              <div key={d.label}>
-                <dt>{withBlanks(d.label)}</dt>
-                <dd>{withBlanks(d.body)}</dd>
-              </div>
-            ))}
-          </dl>
-        </>
-      ),
-    })
-  }
 
   if (project.evidence) {
     text.push({
@@ -305,42 +319,7 @@ export function ProjectPanel({ project }: { project: Project }) {
   // is what lets the default view stay inside 400 to 700 words without the page
   // going shallow. A reviewer scanning for 90 seconds never opens it, and the
   // engineer who wants the deployment detail gets all of it.
-  //
-  // A native details element rather than state and a button. It is keyboard
-  // reachable, it is findable by the browser's own find on page in Chrome, and
-  // it prints open. None of that comes free with a div and an onClick.
-  if (project.deepDive?.length) {
-    text.push({
-      key: 'deep-dive',
-      node: (
-        <details className="mac-deepdive">
-          <summary>DEEP DIVE</summary>
-          {project.deepDive.map((d) => (
-            <section key={d.heading}>
-              <h3>{withBlanks(d.heading)}</h3>
-              <p>{withBlanks(d.body)}</p>
-            </section>
-          ))}
-        </details>
-      ),
-    })
-  }
 
-  if (project.lessons) {
-    text.push({
-      key: 'lessons',
-      node: (
-        <>
-          <h2>WHAT I LEARNED</h2>
-          <ul>
-            {project.lessons.map((l) => (
-              <li key={l}>{withBlanks(l)}</li>
-            ))}
-          </ul>
-        </>
-      ),
-    })
-  }
 
   // Column two. Screenshots first, so a picture sits beside the opening prose
   // rather than at the foot of the page, and the stack last, which is roughly

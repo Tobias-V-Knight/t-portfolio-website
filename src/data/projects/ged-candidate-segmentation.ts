@@ -75,24 +75,6 @@ const project: Project = {
   ],
   architecture:
     'Five steps, and each one exists because the previous one was not enough. A phi coefficient establishes that the eleven methods are not equally informative, and cannot handle candidates using several at once. A logistic regression separates each method\'s contribution from the others. The log odds behind those coefficients become weights, which turns a survey checkbox into one continuous score. K means segments on that score plus age, demographics and motivation. Then the whole thing is rolled up to county, against a reliability floor. Presenting it as five steps each answering the last one\'s limitation is the difference between a method and a list of techniques.',
-  mlDecisions: [
-    {
-      label: 'A weighted score, not a count of methods',
-      body: 'Counting how many preparation methods a candidate used treats them as interchangeable, and the regression shows they are not: two of the eleven are associated with lower odds of credentialing. The weight on each method is the log odds coefficient the outcome itself produced, so methods that help add and methods that do not subtract. That is what makes the score a measurement rather than a tally, and it is the whole bridge from a survey checkbox to a segmentable variable.',
-    },
-    {
-      label: 'Logistic regression because candidates use several methods at once',
-      body: 'The simple comparison of each method against credentialing is contaminated: a candidate using GED Ready, an Adult Ed class and online video appears in three rankings and nothing separates the three. All eleven methods enter one model as simultaneous predictors, and each odds ratio is then that method\'s contribution holding the others still. Ten of the eleven were retained. The mobile app flag was dropped as not significant.',
-    },
-    {
-      label: 'k chosen, not assumed',
-      body: 'Elbow and silhouette across k from two to seven on a sample, then four fitted on all 304,137 rows for the balance of separation and interpretability. The plot that justifies it is a deliverable rather than a working note, because a segment count nobody can defend is the first thing a client pushes back on.',
-    },
-    {
-      label: 'Counties ranked against their own segment mix, not against each other',
-      body: 'Ranking counties by raw credential rate surfaces the counties with the hardest candidates. Ranking them by the gap against their own segment composition\'s national average surfaces the counties underperforming what their candidate mix predicts, which is a different and far more actionable list. A county needs a minimum candidate count to appear at all, as a reliability floor on a rate estimate.',
-    },
-  ],
   stack: [
     'R',
     'R Markdown',
@@ -131,29 +113,6 @@ const project: Project = {
     chips: ['CREDENTIAL ANALYSIS IN R', 'LOGISTIC REGRESSION', 'ENGAGEMENT SCORE', 'GEOCODING'],
     team: 'Five person team. Built the credential analysis in R, the logistic regression that weighted the eleven prep methods and the engagement score the segmentation runs on, plus the geocoding that made the county level layer possible. Through the Carlson Analytics Lab. The clustering, the deck and the presentation are not attributed to anyone in the delivered material, so this page claims the four pieces the documents evidence and none of the rest.',
   },
-  deepDive: [
-    {
-      heading: 'The four segments each fail for a different reason',
-      body: 'GED Ready Completers, 35 percent and averaging 22 years old, are the benchmark behaviour. Digital Self Starters, 28 percent, are demographically near identical to them and almost none use GED Ready: same age, same motivation, same digital comfort, a less effective tool. That gap closes on a platform switch rather than a behaviour change, which makes them the cheapest win in the data. Institutionally Dependent candidates, 20 percent, are the sharpest single result: over nine in ten attend an Adult Ed class and they are the only segment with a negative engagement score. They are showing up. Classroom instruction alone is underperforming self directed digital preparation, and the barriers named are device access, internet access and digital literacy, not motivation. Returning Adults, 18 percent and averaging 44, are twenty years older than everyone else, near gender balanced where every other segment skews male, and a quarter are motivated by work. Their preparation mix is reasonable and they credential worst. They show up, they prepare, and the product fails them.',
-    },
-    {
-      heading: 'The geography finding is structural, and it changes the recommendation',
-      body: 'In three urban boroughs, credential rates are low across all four segments including the best prepared one. Candidates doing everything right still do not credential there. That is not a preparation behaviour problem and no messaging campaign will move it: it is testing site density against candidate volume. Elsewhere, one state\'s counties lead the rankings across three of the four segments at once, which the team flagged as a model to study rather than a result to celebrate. The recommendation that came out of this is the part that shows judgement rather than method: four levers sequenced by dependency rather than by size, structural access audits first because behavioural campaigns cannot work where the barrier is physical, and commission the study of the high performing state now, before committing money anywhere, so there is a playbook to copy rather than a guess to fund. Telling a client not to run a campaign in the place with the worst numbers is a harder recommendation to make than any of the model output.',
-    },
-    {
-      heading: 'The exclusions and assumptions are declared, not buried',
-      body: 'Candidates whose preparation engagement summed to zero were excluded, on the reasoning that a zero is a skipped survey question rather than a behavioural signal. International and incarcerated candidates were excluded, and Texas was out of scope per the client. Eight assumptions are listed in an appendix rather than left implicit, including the minimum county size, the post hoc nature of the segment names, and the association not causation line. One entry excludes a county from its own ranking as a likely data artifact and says why. An appendix that names the thing which could invalidate the analysis is evidence of honest method, and it is the part of a deck a technical reader turns to first.',
-    },
-    {
-      heading: 'The geocoding was its own piece of work',
-      body: 'The source had city, state and county but no candidate postcode, so two sets of locations were geocoded through the Google Geocoding API: where each candidate lives and where they sat the exam. About 18,800 unique candidate points and 20,700 unique test centre points. County coverage went from largely missing to nearly complete for residence, and about two thirds for test centres, the remainder being international jurisdictions with no US postcode. Two findings fell straight out of it. Almost every US candidate sits the exam in the state they live in, which retired the idea that cross state travel explained the geographic spread before anyone modelled it. And every candidate ended with either full geography or an explicit international flag, which is what made the county layer possible at all.',
-    },
-  ],
-  lessons: [
-    'The interesting problem was not the clustering. It was that the variable the client wanted to segment on did not exist, and building a defensible proxy for it from a binary survey is the work. Any segmentation can be run; earning the right to segment on something is the part that takes judgement.',
-    'Two of the eleven preparation methods are associated with lower odds of credentialing, which means a count of methods would have measured the wrong thing while looking perfectly reasonable. Learning the weights from the outcome rather than assigning them by opinion is the difference.',
-    'The place with the worst numbers was the place not to spend first. Sequencing recommendations by what blocks what, rather than by what is biggest, is what turned four findings into one playbook a client could actually run.',
-  ],
   // No links. No repo was found for this project in the extraction walk, and
   // a client engagement's code may not belong in a public one anyway. That is
   // T's question rather than a formatting gap, tracked as Q-18.
