@@ -36,7 +36,8 @@ number, named in the log, and left `agent-ready`** for the next batch. The rest
 of the queue runs.
 
 **Post-flight, from the real diff.** After the agent has edited and before the
-PR is opened, the worker compares `git diff --name-only main` against the file
+PR is opened, the worker compares the files the branch touched, tracked changes
+plus untracked additions, against the file
 list of every open PR, from `gh pr list --json files`. Any overlap and the
 branch is discarded, the issue gets a comment naming the PR it collides with and
 the file, the ticket stays `agent-ready`, and the worker continues.
@@ -79,6 +80,15 @@ run, and preserves the stale base along with it. See the consequence below.
 does not make two rewrites of one file compatible. This was a stale base, not a
 concurrent write. Worktrees come after this, not instead of it, and that
 ordering is the point.
+
+## Amendment, 2026-08-26
+
+The first version of the post-flight check read `git diff --name-only main`,
+which sees tracked changes only. A ticket that adds a file leaves it untracked,
+so the check reported an empty file list and passed. Since ADR-0006 that is the
+normal shape of a case study ticket rather than an edge case: a new project file
+and a new drawing are both additions. The check now unions the diff with
+`git ls-files --others --exclude-standard`.
 
 ## Consequences
 

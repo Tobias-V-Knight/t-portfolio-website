@@ -269,7 +269,14 @@ PROMPT
   # ticket against a merged main is the only thing that actually resolves it,
   # and on 2026-08-26 re-running #37 that way produced a better result than any
   # hand resolution would have.
-  touched=$(git diff --name-only main)
+  #
+  # `git diff` against main sees tracked changes only. A ticket that ADDS a file
+  # (a new project under `data/projects/`, a new drawing under
+  # `components/diagrams/`) leaves it untracked, so a check built on diff alone
+  # would report an empty file list and wave the ticket straight through. Since
+  # ADR-0006, adding files is the normal shape of a case study ticket rather
+  # than the exception, so the untracked half is the half that matters.
+  touched=$( { git diff --name-only main; git ls-files --others --exclude-standard; } | sort -u )
   open_pr_files=$(gh pr list --state open --json number,files \
     --jq '.[] | . as $p | .files[] | "\(.path)\t\($p.number)"' 2>/dev/null || true)
   overlap=""
