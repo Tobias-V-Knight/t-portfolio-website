@@ -22,9 +22,6 @@ const project: Project = {
   architecture:
     'Static Vite and React with no backend. Every colour comes from one stylesheet, every word of copy comes from one data file, and the whole thing deploys to GitHub Pages as flat files.',
   stack: ['Vite', 'React', 'TypeScript', 'React Router', 'No CSS framework, no component library'],
-  lessons: [
-    'Navigating to a window that is already open means two opposite things. Back onto it means close everything above it, clicking a buried one means raise it and leave the rest. Same URL, opposite intent, and only the navigation type tells them apart.',
-  ],
   links: [{ label: 'GitHub', href: 'https://github.com/Tobias-V-Knight/t-portfolio-website' }],
 }
 

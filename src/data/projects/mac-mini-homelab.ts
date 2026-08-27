@@ -23,7 +23,6 @@ const project: Project = {
   stack: ['[ OS, container runtime, anything orchestrating it ]'],
   media: [{ caption: 'The machine, in situ', tone: 'screenshot' }],
   evidence: ['[ What it has actually run. The NLP classifier trained on it, what else? ]'],
-  lessons: ['[ What you would do differently on the next build ]'],
 }
 
 export default project

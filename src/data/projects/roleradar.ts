@@ -64,16 +64,6 @@ const project: Project = {
   // as a conversation.
   architecture:
     'I built the AutoGen group chat and then never drove it. Four agent objects exist, a user proxy and three specialists with their own system prompts, wired into a GroupChat that no conversation ever starts and no tool is ever registered to. What runs instead is a fixed pipeline, scrape then match then upsert then record, handing off a Python list of dicts rather than a message. That is the right shape. Fetching a JSON endpoint and gating 9,800 titles are not judgement tasks, and a model would do both slower, dearer and less reliably. Reading a job description against a resume is, and that is the one place a model runs.',
-  mlDecisions: [
-    {
-      label: 'A required token gate runs before the fuzzy score',
-      body: 'Fuzzy similarity alone matched "AI Engineer" to "Electrical Engineer". The rebuild requires every significant token of the keyword to be present in the title before any score is computed, with short tokens matched exactly because fuzzy matching an abbreviation is noise, and longer ones matched fuzzily so plurals and typos still count. "Electrical Engineer" now fails: no ai token, and a shared head noun is not enough.',
-    },
-    {
-      label: 'Nothing in this system has ever been scored',
-      body: 'No test file, no evaluation script, no gold set. The 1,100 matches out of 9,800 postings are a count and not a precision figure: how many were worth applying for, and how many good roles the gate rejected, are both unrecorded. The match score picks which keyword to credit and is not a confidence, and the fit score is the model grading its own homework.',
-    },
-  ],
   stack: [
     'Python',
     'FastAPI',
@@ -129,32 +119,6 @@ const project: Project = {
     team:
       '[ Who else was on the course team, and what did they own? The worklog reads as a sole build, and the same file records handing teammates a shared key and setup instructions. A chip has to survive a reference call. ]',
   },
-  deepDive: [
-    {
-      heading: 'Stub mode is the proof that the agents were never load bearing',
-      body: 'With no credentials set, every agent builder prints a line describing what it would have created and returns nothing at all. The scrape, match, store and serve flow runs unchanged, because none of it needed an agent. Only the resume analysis falls back to mock data. That is the cleanest evidence available for the finding above: the pipeline behaves identically whether the agent objects exist or not. The divergence was documented at the time, in comments in the code, which is why this reads as a design decision rather than as something being admitted under pressure.',
-    },
-    {
-      heading: 'The one model call returns a contract, not prose',
-      body: 'The resume read is the only generative step, and its shape is fixed in the prompt and enforced by JSON output mode: a fit score from 0 to 100, a two sentence summary, three gaps, two strengths, three bullet rewrites as before and after pairs, and an apply recommendation from four allowed values. That is what lets the dashboard render fields instead of parsing paragraphs. Any exception, a parse failure included, degrades to a stub whose every string is visibly marked as one, so the endpoint never returns a 500 in the middle of a demo.',
-    },
-    {
-      heading: 'Fetching each description eagerly turned a three minute run into forty five',
-      body: 'The scrape loop originally pulled the full job description for every match as it went, and the 45 company run went from about 3 minutes to about 45. The fix is to fetch lazily on the first Analyze click and cache the result in the row, and the comment defending it sits at the exact line where the eager fetch used to be so nobody puts it back. Fetching is where this project actually lives: plain HTTP first, a real browser only on evidence that the page came back empty. That browser is also why the whole thing is a container, because the deploy target allowed pip installs but not the system libraries Chromium needs.',
-    },
-    {
-      heading: 'Eight of the forty five scrapers still return nothing',
-      body: 'Some are bot blocked, and 20 of the 45 seed URLs were never confirmed to return jobs at all. The generic parser warns when a page yields fewer than three, which flags the case without fixing it. One is worse than unfixed: a dedicated parser for an aggregator board was written and is called from nowhere, because the dispatcher routes on hostname and company name and has no branch for it, and the flag on that seed row meant to select it is read by nothing and has no column in the schema. So the aggregator falls through to the generic link scanner and returns category pages instead of postings.',
-    },
-    {
-      heading: 'The threshold in the config does not do what its own comment says',
-      body: 'The config documents its match threshold as the score a title must reach to count as a match. It is not used that way. It is passed in as the per token spelling floor, and the actual match decision is whether any keyword cleared the gate at all. Raising it to 100 would not tighten matching, it would tighten typo tolerance. The dashboard compounds this with a threshold slider that adjusts nothing, which its own caption admits. Both are the same failure: a control whose name promises an effect it does not have is worse than no control, because it invites somebody to turn it.',
-    },
-  ],
-  lessons: [
-    'Build the orchestration, then check whether you need it. The group chat was constructed, guarded and documented before anything asked it to run, and the pipeline behaved identically with the agents switched off. A framework you can remove without changing behaviour was never load bearing.',
-    'A count is not a score. This reports 1,100 matches out of 9,800 postings and cannot say how many were worth reading or how many good roles it threw away. Building the gold set is the boring half nobody schedules.',
-  ],
   links: [{ label: 'GitHub', href: 'https://github.com/Tobias-V-Knight/roleradar' }],
   // Renders nothing. It is here so the next agent reads it before adding to
   // this window.

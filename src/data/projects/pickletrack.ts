@@ -27,10 +27,6 @@ const project: Project = {
     '[ Detection accuracy, and on what footage ]',
     '[ What it got wrong, and where it broke down ]',
   ],
-  lessons: [
-    '[ Court mapping is usually the hard part. Was it here? ]',
-    'This became the groundwork for Pickleball IQ, which is the same problem approached as a product rather than as a model.',
-  ],
   links: [{ label: 'GitHub', href: 'https://github.com/Tobias-V-Knight/pickletrackv2' }],
 }
 

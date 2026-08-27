@@ -75,25 +75,6 @@ const project: Project = {
   // only; runtime RAG lives in the Node backend."
   architecture:
     'Three repos, and the seam between them is deliberate. A Python analytics repo builds the drill catalog and the taxonomy. A TypeScript backend on Railway serves the product over MongoDB, Firebase Auth and a Pinecone knowledge base, and the SwiftUI app talks only to that backend. Analytics is build time only: it exports a seed file the backend loads, so a long extraction run can never make the app slow. PB IQ runs no computer vision of its own: match statistics come from PB Vision, a third party product, and feed the coach analytics locally rather than the app.',
-  // Three decisions, each labelled with what was decided rather than with the
-  // name of a box. The third is the honest one and it stays: the July resume
-  // bullets cut the BERT claim outright, and no trained model exists here. An
-  // ML section that implies a fitted model on a project that never fitted one
-  // is the exact claim rule 9 forbids.
-  mlDecisions: [
-    {
-      label: 'Enums constrain the model, code computes the timestamps',
-      body: 'Extraction runs against a fixed schema, with shot type, category, court position and DUPR band constrained to the canonical taxonomy. Timestamps are computed from the transcript in code rather than asked of the model, which removes a formatting failure mode instead of catching it later.',
-    },
-    {
-      label: 'The eval chose dense retrieval, and a second model graded the answers',
-      body: 'Recall@6 reached 1.00 on a golden question set with dense retrieval alone, beating hybrid search plus reranking on this corpus, so hybrid stays behind a flag. A second model grades the output, Sonnet judging an Opus generator, because grading a model with itself measures agreement rather than quality.',
-    },
-    {
-      label: 'No trained recommender, and this page does not claim one',
-      body: 'The matrix factorisation recommender exists as a specification with a cold start design and an evaluation framework, never as a fitted model, and notes to tags is rule based. What actually runs is embedding, retrieval and structured extraction.',
-    },
-  ],
   // Ordered by strength: a deployment fact, a pilot, the one thing that was
   // properly measured, and then the honest absence. The last bullet is not an
   // apology. Retention, latency and recommender accuracy are genuinely not
@@ -166,44 +147,6 @@ const project: Project = {
       caption: 'Three repos, one build time seam. [ diagram ticket to follow ]',
       tone: 'diagram',
     },
-  ],
-  deepDive: [
-    {
-      heading: 'YouTube rate limited the pipeline at about 70 transcripts',
-      body: 'Transcript fetching died partway through the playlist with a clean positional cutoff in the video list, which is what identified it as rate limiting rather than bad data. Recovery meant rotating the VPN exit node per batch and re running the stage, which was cheap because every stage is idempotent and skips what already exists. Final coverage was 145 of 151 videos. The remaining 6 are music or text shorts with no speech in them, so there was nothing to transcribe.',
-    },
-    {
-      heading: 'Deduplication was a coaching judgement, so the stage came out',
-      body: 'A dedup stage looked obvious on a 586 drill catalog and it over merged. At a 0.40 threshold it collapsed the forehand and backhand halves of the same drill into one, and separate progression levels of one drill into one. Deciding whether two drills are the same drill turned out to be a coaching call rather than a similarity score, so the stage was deleted and replaced with an overlaps_existing flag that routes the pair to a human.',
-    },
-    {
-      heading: 'A drill with no clip does not ship',
-      body: 'The 81 authored V1 drills were text only and were dropped from the shipped catalog in favour of a video only rule. Video is shown through the official YouTube embedded player, deep linked to the drill timestamp, and never downloaded or re hosted. That was a legal decision before it was a product one, and it holds because the value is in the curation layer rather than in the video.',
-    },
-    {
-      heading: 'Prompt caching cut roughly 90 percent of the tokens',
-      body: 'The taxonomy and the drill index are large, static and needed by every call, so they sit in cached system blocks with the cache marker on the last one. Verified live: the second and subsequent calls read 9403 cached tokens. A content hash on the payload skips the model call entirely when nothing has changed. On top of that, scoring all 586 drills for fun and skill transfer ran as 21 parallel agents, one per shot type, roughly 889k tokens in two and a half minutes.',
-    },
-    {
-      heading: 'The drill count is four different numbers, and this page uses 586',
-      body: '81 is the authored V1 matrix. 93 was the DUPR mapped set in the April TestFlight build. 136 is the full authored taxonomy across 14 modules. 586 is the built, video backed master catalog the pipeline produces, and it is the number used everywhere on this page because it is the one with the pipeline behind it. The in app subset differs, and it differs by exactly one open pull request: the exporter turns the master catalog into backend seed JSON, and the seeding scripts exist on the receiving side. [ Did PR #290 merge, so is the built catalog live in the app? ] An older 330 figure was wrong and is retired.',
-    },
-    {
-      heading: 'The paper trail found bugs that only running it finds',
-      body: 'Turning scanned scorecards and rubric cards into data surfaced a run of failures no test would have caught. An ingest guard sat unmerged, so the rubric page still keyed on league plus player with a delete then insert, which had already destroyed 14 assessments. The card extractor assumed two cards to a page, correct for the old card and wrong for the new one, so it silently dropped the first two players of every batch. A missing shot row scored as seen and fine, quietly crediting every historical player with a clean groundstroke. A migration dry run wrote to the database, because sqlite3 runs DDL in autocommit and the schema change survived the rollback.',
-    },
-    {
-      heading: 'The rubric knows it is currently wrong and says so',
-      body: 'The league rubric card went through three versions in a month because of how coaches actually filled it in. The current version splits one NOT SEEN box into did not see it and looked good, after the ambiguity of the single box produced two conflicting scoring rules that are both still live and both inflate apparent week over week improvement. That sits in the status board as an open decision flagged red, waiting on the coach to rule, rather than being quietly resolved by whoever noticed it.',
-    },
-    {
-      heading: 'What the pilot changed',
-      body: 'A fourteen item walkthrough of the TestFlight build in April 2026 is visibly what several shipped features came from. The skill assessment became universal rather than being skipped for players who enter a DUPR rating, because a 4.0 with weak resets is the variance the product exists to find, and every rated signup now builds a calibration set against a real number. A shot picker with 19 flat options was reorganised into six categories. The session planner, flagged then as the best part of the app and buried, is now the home screen hero.',
-    },
-  ],
-  lessons: [
-    'An evaluation is only worth building if it can change your mind. Mine picked dense retrieval over hybrid search plus reranking, which is not what I would have chosen, and the same harness is what lets the assistant decline a question rather than invent an answer.',
-    'A form that two coaches fill in differently is a broken data model, not a training problem. One ambiguous box on the league rubric produced two live scoring rules at once, both flattering the numbers, and the fix was to split the box.',
   ],
   links: [
     { label: 'APP STORE', href: 'https://apps.apple.com/us/app/pbiq/id6761266107' },

@@ -1771,6 +1771,87 @@ body {
   .mac-glance { grid-template-columns: repeat(2, 1fr); }
 }
 
+/* --- KPI strip (ADR-0008) ------------------------------------------------ */
+/* Not the at a glance panel with bigger type. That panel is four phrases and
+   this is two to four figures, so it wants a different shape: the number is the
+   thing the eye lands on and the label is the caption under it, which is the
+   opposite of the glance panel's label-then-sentence.
+
+   A struck-through before value sits above the number where one exists. It is
+   the only place on this site where a strikethrough is used, and it earns it:
+   crossing out the old figure is the claim, and writing "from 10 to 20 hours"
+   in prose takes a line and lands softer. */
+.mac-kpis {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1px;
+  /* NOT the line colour, which is the trick .mac-glance uses. That trick works
+     there because the panel is always exactly four cells in a four column grid,
+     so no track is ever empty. This grid wraps: two to four figures against a
+     column count the width decides, so three KPIs on a two column row leave an
+     empty track, and a track with nothing in it would paint the line colour as
+     a solid black block. Each cell rings itself instead. */
+  background: var(--mac-face);
+  margin: 0 0 14px;
+  max-width: none;
+}
+
+.mac-kpi {
+  background: var(--mac-face);
+  box-shadow: 0 0 0 1px var(--mac-line);
+  padding: 11px 12px 12px;
+  min-width: 0;
+  overflow-wrap: break-word;
+}
+
+.mac-kpi dt {
+  font-family: var(--mac-chrome);
+  font-size: var(--type-chrome-sm);
+  line-height: var(--leading-flat);
+  letter-spacing: 0.04em;
+  color: var(--mac-ink-soft);
+  margin: 0 0 6px;
+}
+
+.mac-kpi dd {
+  margin: 0;
+  max-width: none;
+}
+
+.mac-kpi-before {
+  display: block;
+  font-family: var(--mac-chrome);
+  font-size: var(--type-chrome-sm);
+  line-height: var(--leading-flat);
+  color: var(--mac-ink-soft);
+  text-decoration: line-through;
+  margin: 0 0 2px;
+}
+
+/* Body face, not the pixel face. A figure is read, not scanned as chrome, and
+   Silkscreen at this size turns digits into a puzzle. */
+.mac-kpi-value {
+  display: block;
+  font-family: var(--mac-body);
+  font-size: var(--type-body-lg);
+  line-height: var(--leading-flat);
+  color: var(--mac-ink);
+}
+
+.mac-kpi-note {
+  font-family: var(--mac-body);
+  font-size: var(--type-body-sm);
+  line-height: var(--leading-tight);
+  color: var(--mac-ink-soft);
+  margin: 5px 0 0;
+  max-width: none;
+}
+
+.mac-kpi .mac-blank {
+  line-height: var(--leading-tight);
+  padding: 1px 5px;
+}
+
 /* --- The editorial grid (ADR-0004, issue #34) ---------------------------- */
 /* The case study was a single column using about 65 percent of a 1440px window,
    which is why it read as too long and too empty at the same time. This is the

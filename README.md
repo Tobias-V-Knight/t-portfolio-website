@@ -86,7 +86,7 @@ redacted.
 | `windows/Work.tsx` | PORTFOLIO and ARCHIVE | Finder list view (Name / Date Modified / Kind / Size). PORTFOLIO lists the case studies plus one ARCHIVE folder row; ARCHIVE opens its own window listing everything else. Every row in both opens a project window, and its depth follows the data |
 | `components/ZoomRect.tsx` | The zoom rectangle | The classic Mac open and close animation: an outlined rectangle stepping from an icon out to a window and back. Its effect is mount only, and the comment in it explains why that is load bearing rather than lazy |
 | `components/Boot.tsx` | Boot sequence | A full screen ML training run: the import stack, then epochs with a jittering loss, then a prompt that waits for Enter. Plays once per session, skips on any key, homepage only. Never blocks content, because the desktop is already mounted underneath it |
-| `windows/Project.tsx` | Project window | The ADR-0001 case study template, all eleven sections. Sections render only when the data has them, which is how the client project stays outcome only, and how a project with no model gets no ML heading rather than an empty one. ML DECISIONS, MY CONTRIBUTION and the collapsed DEEP DIVE landed 2026-08-26 with the CSI window |
+| `windows/Project.tsx` | Project window | The ADR-0008 case study template, eight sections. Sections render only when the data has them, which is how the client project stays outcome only, and how a project with no model gets no ML heading rather than an empty one. ML DECISIONS, MY CONTRIBUTION and the collapsed DEEP DIVE landed 2026-08-26 with the CSI window |
 | `windows/Photos.tsx` | Photo gallery, parked | Built, then taken off the desktop on 2026-08-25 (P2-03) because `public/photos/` has nothing real in it. Unreferenced by design; one entry in `windowDefs` puts it back |
 | `styles/system.css` | The entire visual language | Palette tokens, bevels, window chrome, menu bar, type scale, focus states, and the mobile layout. Every colour in the codebase comes from here |
 
@@ -117,6 +117,7 @@ one before writing project copy, never instead of it.
 | `og.png` | Link preview card | 1200x630. The actual front door, because almost every visitor sees this on LinkedIn before they see the site |
 | `favicon.svg` | Favicon | A small beige computer |
 | `luffy.mp4` · `ice.mp4` | Movie clips | The LUFFY.MOV playlist (B&W via player CSS), cycled in the order set by `moviePlaylist` in `data/content.ts`. A new clip is one entry there plus the file here |
+| `csi-verify.jpg` | The CSI human in the loop step | Real screenshot of the app's verification screen: ten of twelve fields confirmed, each cited to its page, one handed back to the estimator. Every region carrying the client's project identity is blurred, and the blur list is in the commit that added it. The product, the confidence badges, the page citations and the nav are the case study and all stay |
 | `csi-team.jpeg` | CSI ELP team photo | Shown on the CSI.APP project page |
 | `photos/*.JPG` | Placeholder photographs | Eight generated stand ins. The Photos window is queued for removal |
 

@@ -58,16 +58,6 @@ const project: Project = {
   ],
   architecture:
     'A line item string goes in, one of 24 material categories comes out, and it all runs on one machine, so classification costs nothing per item and no bid data leaves. The lanes differ only in the middle.',
-  mlDecisions: [
-    {
-      label: 'The existing labels could not be the test set',
-      body: "Of the 2,434 crosswalk rows, 681 carried the keyword matcher's own opinion and 1,608 were guesses on what it missed, so scoring against them measures agreement with the thing being replaced. Step zero was 331 rows adjudicated by hand and frozen, and training drops any row that appears in gold, in code rather than by intention.",
-    },
-    {
-      label: 'A wrong answer and no answer are different failures',
-      body: 'Silent miss rate is the share of rows whose truth is a real category and whose prediction lands in other, noise or nothing. Accuracy charges one point for both. A number in the wrong column is one somebody may query; a non answer is tonnage that is silently not there.',
-    },
-  ],
   stack: [
     'Python',
     'scikit-learn',
@@ -114,48 +104,6 @@ const project: Project = {
     team:
       'A course project for MSBA 6461, Advanced AI for NLP. [ Confirm nobody else worked on it and this line can say solo. ]',
   },
-  deepDive: [
-    {
-      heading: 'The gold set, and the 8.8 percent it caught',
-      body: "The 331 rows were sampled stratified by category with a cap of 15 rows each and a fixed seed, so classes with two examples in the whole corpus appear instead of drowning under noise. They were shuffled before labeling to reduce anchoring, and shown alongside the database's existing suggestion, which made the pass adjudication rather than blind labeling. It found 8.8 percent of the old labels wrong, and the errors clustered informatively: plan sheet titles labeled as work, the word bituminous over firing to hot mix on saw and salvage lines, sign legends labeled as the thing the sign names.",
-    },
-    {
-      heading: 'The LoRA lane is built, and it has never been scored',
-      body: 'The adapter exists. Its config records the run that made it: Qwen2.5 1.5B Instruct at 4 bit, rank 8, scale 20, 8 layers, batch size 8, 400 iterations, learning rate 1e-4, sequence length 128, seed 0. Training used 1,874 rows with 209 held for validation, and all 331 gold rows held out. The scorer prints accuracy, macro F1, silent miss, a per state split and a parse robustness count, and writes none of it to a file, so no number from it exists anywhere in the repo. One thing to reconcile before publishing the hyperparameters: the runner script defaults sequence length to 96 in two places while the adapter on disk records 128, so the published figure would not reproduce from the published command.',
-    },
-    {
-      heading: 'Macro F1 selects the model, accuracy does not',
-      body: 'The 24 classes run from roughly 801 rows of noise down to 2 of stockpile, so an accuracy optimizer learns to answer noise and scores well doing it. Macro F1 is the selection metric everywhere in the project for that reason. The tail costs something in return: a class with 2 rows in the whole corpus cannot be split into train, validation and test at all, so it lands entirely in train and its F1 is undefined rather than low. Those are reported as train only and unmeasurable rather than quoted as a zero.',
-    },
-    {
-      heading: 'Two details keep the silent miss rate honest',
-      body: 'Rows whose truth is itself other or noise are excluded from the metric, so answering other for a genuinely other row is correct rather than punished. And a non answer is mapped to a sentinel that can never match any truth, so a model that returns nothing scores as wrong instead of crashing the scorer. Without the first, the metric would punish the correct answer on the most common class in the corpus.',
-    },
-    {
-      heading: 'A second scoreboard scores the product rather than the model',
-      body: 'The 24 way task is the honest labeled task, but it is not the task the customer reads. A second pass rolls every category into the 7 that carry tonnage plus one non_material class, turning it into an 8 way problem, and reuses the same arithmetic so only the labels differ. The reason is that an error between hot mix and base corrupts a total an estimator reads first, while an admin against testing_qc mixup costs macro F1 and no money. Both are printed, one under the other, so neither can be quoted without the other being visible. [ No bucket level number has been recorded for any lane. ]',
-    },
-    {
-      heading: 'The from scratch model lost, and the data says why, not the architecture',
-      body: "Attention scored 0.396 against TF-IDF's 0.628. The diagnosis was counts, not intuition: five of the 24 categories had zero training rows left after the gold rows were held out, because they are globally rare and the stratified sample drained them into the test set. A model cannot predict a class it never saw, which guarantees 0 F1 on five classes and caps macro F1 by roughly 0.21 before training starts. Going to look for more data recovered one of them, about 25 examples. The rest are exhausted everywhere in the dataset, which is the entire argument for the fine tuned lane: the fix is not a bigger network, it is a model that already knows what a guardrail is. Short keyword like text also suits character n grams, where a shared substring carries the signal even when the exact token was never seen in training, and that is what lifts North Dakota from 0.267 to 0.64.",
-    },
-    {
-      heading: 'A judgement that was written down and then overridden',
-      body: 'The architecture document names a fine tuned DistilBERT as the shipped model and argues, at length and correctly, that a specialist encoder is the right tool for classifying short strings. The professor steered the course toward LoRA as the learning focus, DistilBERT became optional, and it was never built. The reasoning still stands and is worth keeping as a judgement that lost to a good reason rather than to a better argument.',
-    },
-    {
-      heading: 'Apple Silicon shaped the model code',
-      body: 'Packed sequences have been flaky on the MPS backend, so the model avoids packing entirely and handles padding with a boolean mask before the softmax instead. The MPS fallback environment variable is set at import time, before torch initializes the backend, because setting it afterwards is too late to have any effect.',
-    },
-    {
-      heading: 'Nothing from this repo is deployed',
-      body: 'The serving wrapper is specified as a single function, classify a description and return a category, and that file does not exist. Its ticket is unchecked. What runs in production today is the keyword matcher plus a paid model call on everything it misses, so production accuracy on the gold set is the keyword row, 0.308, plus a fallback lane that has never been scored at all. The supported claim is that a free local model doubles the accuracy of the thing in production. The claim that it shipped is not supported, yet.',
-    },
-  ],
-  lessons: [
-    'A model that loses can still be the finding. The attention network written from scratch lost to a linear model, and the reason was the data, not the architecture: five categories had no training rows at all, which caps macro F1 by about 0.21 whatever sits in the middle. Counting the rows was worth more than another epoch.',
-    'The yardstick outlasts the model. This step had no accuracy number in any form before, only coverage and known failures, so nobody could say whether a change helped. Doubling the accuracy is the headline; the 331 frozen labels are what the next attempt gets judged on.',
-  ],
   // Renders nothing. Read it before adding to this page.
   //
   // Confidentiality. The extraction held two rules and this page holds them

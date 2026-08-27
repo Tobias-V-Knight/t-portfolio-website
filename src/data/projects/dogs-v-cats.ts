@@ -18,7 +18,6 @@ const project: Project = {
   architecture: '[ Model architecture and augmentation strategy ]',
   stack: ['Python', 'Jupyter', '[ framework ]'],
   evidence: ['[ Leaderboard score and placement ]'],
-  lessons: ['[ What moved the score most ]'],
   links: [{ label: 'GitHub', href: 'https://github.com/Tobias-V-Knight/dogs-v-cats_kaggle_comp' }],
 }
 

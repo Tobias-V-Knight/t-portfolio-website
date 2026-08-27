@@ -29,10 +29,6 @@ const project: Project = {
     '[ The number that matters: what share are over the limit, and how far over ]',
     '[ What the city said when it was shared with them ]',
   ],
-  lessons: [
-    '[ The interesting part: what turned out to be harder than expected? ]',
-    'The point was never the model. It was turning a thing everyone already knew into a thing a city representative can act on.',
-  ],
   constraint:
     'Shared with a city council representative by role only. T confirmed on 2026-08-24 that the official is not to be named on the public site: this is an advocacy page about a named intersection, and the person on the other side of it did not choose to be part of it.',
 }
