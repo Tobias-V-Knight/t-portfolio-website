@@ -25,7 +25,10 @@ record. PORTFOLIO lists five case studies plus an ARCHIVE folder that opens its
 own window; every row in both opens, and window depth follows how much material
 the entry has.
 
-**CSI is the finished reference case study.** The other four follow its shape.
+**CSI is the reference for the template's shape, not for finished copy.** It
+renders six blanks, one of which is the flagship's headline number waiting on T.
+The other four follow its shape and carry four to six blanks each. See #84 and
+#83.
 
 ## Where the work happens
 
@@ -55,8 +58,8 @@ TOOLBOX. PORTFOLIO curated to five case studies plus an ARCHIVE folder.
 
 **The case study system.** ADR-0001's eleven part template, built across #31 to
 #38 and #65. Hero chips, the at a glance panel, the editorial grid, ML
-decisions, contribution chips, a collapsed deep dive. **CSI is complete and
-live.**
+decisions, contribution chips, a collapsed deep dive. **CSI was the first window
+built to it**, and it is complete as a template rather than as copy.
 
 **Content.** Six extractions in `docs/extracted/`, every claim cited by path:
 career, MSBA, NLP classifier, PB IQ, RoleRadar, EDA 6411. These are what the
