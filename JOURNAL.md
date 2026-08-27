@@ -30,7 +30,7 @@ Mac Mini doing the typing.
 
 ---
 
-## 2026-08-25 — the pipeline gets built, and mostly fails
+## 2026-08-25: the pipeline gets built, and mostly fails
 
 The night's real work was infrastructure, and almost all of it broke first.
 
@@ -57,7 +57,7 @@ bugs are quiet, because the agent politely reports what happened and moves on.
 unsupported F1 of 0.914 reached production within a minute of being written,
 which is the argument for the branch protection added the next day.
 
-## 2026-08-26 — content, and two corrections that mattered
+## 2026-08-26: content, and two corrections that mattered
 
 **Branch protection and CI.** `main` protected for everyone including T. The
 agent already could not reach `main`; the hole was the human.
@@ -113,7 +113,7 @@ site with no blanks in it.
 worked by the Mini, 11 shipped. Six extractions. One P0 open: the collision
 guard.
 
-## 2026-08-26, later — the guard, and removing the thing it guards
+## 2026-08-26, later: the guard, and removing the thing it guards
 
 **Grilled #64 before building it, and the grilling changed the design three
 times.**
@@ -160,7 +160,7 @@ four tickets an hour earlier produced three skips.
 have handed a finished ticket to an agent. A ticket that ships inside another
 ticket's PR does not close itself.
 
-## 2026-08-26, night — four case studies, and a rule that had quietly forked
+## 2026-08-26, night: four case studies, and a rule that had quietly forked
 
 The Mini worked #56 to #59 in one batch. **Four tickets, four PRs, each touching
 exactly one file**, which is ADR-0006 doing the job it was written for. The same
@@ -206,7 +206,7 @@ Placeholder discipline is what made the problem visible rather than shipped.
 **Scoreboard.** Five case studies live. Six PRs merged tonight, plus the two
 infrastructure ones. Board at 18.
 
-## 2026-08-26, correction — CSI was never blank free
+## 2026-08-26, correction: CSI was never blank free
 
 The entry above says CSI is "the first window on the site with no blanks in it".
 It is not, and it never was. A census on the same night found six rendered
@@ -225,3 +225,69 @@ session of work that never opened the file.
 A window is finished when it renders no blanks and a person has signed off the
 copy. Nothing on this site meets that yet: all thirteen projects still carry
 `copyState: 'PLACEHOLDER'`, which is #83.
+
+## 2026-08-26, late: the sixth window, and a rule that forked twice in one night
+
+**The Mini worked #56 to #59 in one batch and every PR touched exactly one
+file.** That is the whole return on ADR-0006 in one line: the same four tickets
+that morning would have produced one mergeable PR and three wasted runs.
+
+**Two documents had forked, and it took writing a page to find out.** The
+4MATIV case study was written from `docs/extracted/eda-6411.md`, which sets its
+own publishing rule allowing method, parameters, dataset scale and relative
+deltas. `CLAUDE.md` and ADR-0003 say a client's mechanism never ships and name
+corpus size and model details explicitly. The page followed the extraction
+exactly and published radii, thresholds and every scoring weight. The
+extraction's rule had been written to protect performance figures and had
+quietly become a ruling on mechanism that nobody had taken.
+
+T took the stricter rule and ADR-0007 made it general. **The cut cost almost
+nothing, which is the finding.** Out went the parameters. What stayed was three
+models chosen for three different reasons, the two stop identifiers of which
+only one is a place, and a finding published with the caveat that could
+invalidate it. The parameters were the least persuasive part of the page and the
+only part carrying a confidentiality cost.
+
+**Then the same ADR broke the next case study, within the hour.** GED's findings
+are about three hundred thousand adult learners. GED Testing Service supplied
+the data and is not what the findings are about. Reading ADR-0007 as written
+would have withheld a result about adult education because of who owned the
+spreadsheet, and would have shipped a case study whose EVIDENCE section was a
+blank by construction. The amendment is the distinction: **the client is the
+source, and is not always the subject.** A rule written for one client and
+tested against a second within the hour is a rule that got cheap early.
+
+**Placeholder discipline is what made all of this visible.** The 4MATIV page
+flagged its own clearance question in a `constraint` field, left contribution a
+blank because nothing attributed a layer to a person, and left the repo link a
+blank asking whether a public repo of client code should exist. None of that was
+prompted. An agent that invents is a problem you find in an interview; an agent
+that blanks is a problem you find in a diff.
+
+**A census found the thing nobody had looked for.** All thirteen projects carry
+`copyState: 'PLACEHOLDER'`, so the site shows six sourced case studies while
+announcing that none are approved. Underneath it, CSI renders six blanks and two
+documents called it finished, one of them saying "the first window on the site
+with no blanks in it". **The cost of that error is the lesson: a blocker inside
+something described as complete is a blocker nobody goes looking for.** The
+flagship's headline claim, 19 hours of bid review down to a 3 minute brief, had
+been sitting unconfirmed inside it through a full session that never opened the
+file.
+
+**Two bugs in tonight's own work.** The collision guard read `git diff
+--name-only main`, which sees tracked changes only, so a ticket that adds a file
+passed with an empty file list. Since ADR-0006 that is the normal shape of a
+case study ticket. And nothing stops two projects sharing an `order` value: the
+GED entry nearly shipped at 50, which `pickletrack` holds, and the tie would
+have resolved by glob order and been quietly wrong.
+
+**The pipeline went down at the end and it is worth writing down why.** The
+laptop changed subnet, the Mini answers on one LAN only, and there is no
+fallback: the tailnet has two nodes and neither is the Mini. It failed as a bare
+`ssh` timeout, which looks exactly like a sleeping machine. An AFK pipeline that
+requires the human to be on one specific network is not AFK, and the fix is one
+`brew install` that has never been run.
+
+**Scoreboard.** 64 commits. Six case studies written, none signed off. Twenty
+three PRs merged after 20:00. Three ADRs, 0005 to 0007, plus one amendment.
+Board at 22.
