@@ -205,3 +205,23 @@ Placeholder discipline is what made the problem visible rather than shipped.
 
 **Scoreboard.** Five case studies live. Six PRs merged tonight, plus the two
 infrastructure ones. Board at 18.
+
+## 2026-08-26, correction — CSI was never blank free
+
+The entry above says CSI is "the first window on the site with no blanks in it".
+It is not, and it never was. A census on the same night found six rendered
+blanks in it, including `[ Your resume says bid review went from up to 19 hours
+a plan to a 3 minute brief. Confirm it and it becomes the first line here. ]`,
+which is the flagship's headline number.
+
+Left in place above rather than edited, because this file is append only and a
+wrong entry with a correction under it is more useful than a quietly fixed one.
+
+**The cost is the lesson, not the error.** `HANDOFF.md` repeated the claim as
+"complete and live", and a blocker inside something two documents call finished
+is a blocker nobody goes looking for. The number sat there through a full
+session of work that never opened the file.
+
+A window is finished when it renders no blanks and a person has signed off the
+copy. Nothing on this site meets that yet: all thirteen projects still carry
+`copyState: 'PLACEHOLDER'`, which is #83.
