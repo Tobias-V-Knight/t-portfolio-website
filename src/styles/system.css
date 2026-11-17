@@ -907,21 +907,21 @@ body {
 .mac-boot-log {
   font-family: var(--mac-chrome);
   font-size: clamp(11px, 1.3vw, 13.5px);
-  line-height: 1.5;
+  line-height: 1.4;
   color: #9ef0a8;
 }
 
 .mac-boot-line[data-dim='true'] { color: #4e7a58; }
 
 .mac-boot-rows {
-  min-height: calc(6 * 20px);
+  min-height: calc(4 * 20px);
 }
 
 .mac-boot-row {
   display: flex;
   align-items: center;
   gap: 14px;
-  line-height: 1.9;
+  line-height: 1.6;
   white-space: nowrap;
 }
 
@@ -959,7 +959,7 @@ body {
 /* The prompt that waits for Enter. Brighter than everything above it, because
    by then it is the only thing on screen the visitor has to act on. */
 .mac-boot-prompt {
-  margin: 22px 0 0;
+  margin: 14px 0 0;
   font-family: var(--mac-chrome);
   font-size: var(--type-chrome-lg);
   line-height: 1;

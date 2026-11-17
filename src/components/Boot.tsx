@@ -19,8 +19,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 const SESSION_KEY = 'tk-booted'
 const EPOCHS = 30
 const EPOCH_MS = 34
-const isSmallScreen = () => typeof window !== 'undefined' && window.innerWidth <= 768
-const VISIBLE_EPOCHS = isSmallScreen() ? 4 : 6
+const VISIBLE_EPOCHS = 4
 
 // Time multiplier, 1 in production. The sequence runs faster than a
 // screenshot round trip, so verifying it by eye means slowing it down.
@@ -35,20 +34,14 @@ const RUN_DELAY_MS = 320
 // the front page of a site whose marquee project is a fine tuned text
 // classifier. This is the actual stack, torch plus transformers plus peft, so
 // the boot sequence and the work now agree. Blank strings are group breaks.
+// Trimmed on 2026-11-17 so the whole boot fits one laptop window (1280x800,
+// 1440x900) with no scrolling: same stack, fewer lines.
 const SOURCE = [
-  'import sqlite3',
-  '',
-  'import numpy as np',
   'import pandas as pd',
-  '',
   'import torch',
-  'import torch.nn as nn',
   '',
-  'from sklearn.model_selection import train_test_split',
-  'from sklearn.feature_extraction.text import TfidfVectorizer',
-  'from sklearn.metrics import accuracy_score, f1_score',
-  '',
-  'from transformers import AutoTokenizer, AutoModelForSequenceClassification',
+  'from sklearn.metrics import f1_score',
+  'from transformers import AutoModelForSequenceClassification',
   'from peft import LoraConfig, get_peft_model',
 ]
 const SOURCE_TEXT = SOURCE.join('\n')
@@ -298,12 +291,8 @@ export function Boot({ onDone }: { onDone: () => void }) {
 
 const RUN_HEAD = [
   '$ python train.py',
-  '',
-  'MOUNTING MACINTOSH_HD ........ OK',
   'LOADING DATASET .............. OK',
-  'TOKENIZING TEXT .............. OK',
   'LOADING MODEL WEIGHTS ........ OK',
-  '',
   `FINE-TUNING: ${EPOCHS} EPOCHS, BATCH 32, LR 3E-4`,
 ]
 
@@ -322,11 +311,7 @@ const RUN_HEAD = [
 // The rule this sits under: a number here is atmosphere and may be invented. A
 // number in a case study window is a claim about T's work and may not.
 const RUN_TAIL = [
-  '',
-  'EVALUATING CHECKPOINT ........ OK',
   'F1 SCORE ..................... 0.914',
-  'BASELINE ..................... BEAT',
-  '',
   'CONVERGED. CHECKPOINT SAVED.',
 ]
 
