@@ -291,3 +291,25 @@ requires the human to be on one specific network is not AFK, and the fix is one
 **Scoreboard.** 64 commits. Six case studies written, none signed off. Twenty
 three PRs merged after 20:00. Three ADRs, 0005 to 0007, plus one amendment.
 Board at 22.
+
+## 2026-11-16: pared back to the CV and current work
+
+T now works as an Applied AI Engineer at Woodstone, a general contractor, and
+wanted the public site to show the CV and what he is working on, with projects
+as quick glances rather than case studies.
+
+**The full site is saved first.** `staging` was cut from `main` before anything
+changed and pushed, so every case study, screenshot and diagram still has a
+live Cloudflare preview and stays in history.
+
+**Removed from source, not hidden.** Hiding the windows would have left every
+case study, metric and screenshot readable in the shipped JavaScript and in
+`public/`. So the thirteen project files, the case study template, the diagram
+registry and the three CSI images are gone on this branch, and a grep of
+`dist/` after the build finds none of the case study figures.
+
+**Old links land on the desktop.** `/projects/<slug>` and `/work/archive` are no
+longer in the window registry, so they name no window. One small effect in
+`useWindowManager` replaces any such URL with `/`, which keeps the routing model
+intact: the URL still owns the window, and a URL that names nothing is the
+desktop.
