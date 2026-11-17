@@ -39,7 +39,7 @@ that gets consulted before a new file is ever created.
 | `docs/adr/` | Decisions, with reasoning | One file per architectural decision: what was chosen, why, and what was rejected on what grounds. Numbered, append only, not edited after acceptance |
 | `assets_src/` | Raw source media | Original videos/photos (gitignored); the converted, served copies live in `public/` |
 | `docs/` | Extractor output | Raw material gathered from other repos, one file per project. See its own section below |
-| `index.html` | Page shell | Title, description, the Open Graph tags that drive the LinkedIn preview, and the Google Fonts link for Silkscreen and Inter |
+| `index.html` | Page shell | Title, description, the Open Graph and Twitter card tags that drive the LinkedIn preview, and the Google Fonts link for Silkscreen and Inter |
 | `vite.config.ts` | Build config | Sets the base path from `VITE_BASE`, which is what differs between the custom domain and the github.io preview URL |
 | `package.json` | Manifest | React 19, React Router 7, Vite 8, TypeScript. No UI library and no CSS framework |
 | `.gitignore` | Ignore list | `node_modules`, `dist`, editor and OS noise |

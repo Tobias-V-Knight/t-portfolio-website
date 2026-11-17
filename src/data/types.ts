@@ -18,7 +18,11 @@ export interface ProjectLink {
 // slug, because a glance is not a window and has no route; no metrics, because
 // a number on the public site is a claim and the claims went with the case
 // studies.
+// A glance is in progress unless it says otherwise.
+export type GlanceStatus = 'In progress' | 'Shipped'
+
 export interface Glance {
   title: string
   line: string
+  status?: GlanceStatus
 }

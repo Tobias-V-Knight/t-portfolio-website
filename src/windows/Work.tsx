@@ -28,7 +28,7 @@ export function WorkPanel({ onStatus }: { onStatus: (s: string) => void }) {
             <p className="mac-course-head">{g.title}</p>
             <p className="mac-course-note">{g.line}</p>
             <div className="mac-stack-tags">
-              <span className="mac-stack-tag">{glanceStatus}</span>
+              <span className="mac-stack-tag">{g.status ?? glanceStatus}</span>
             </div>
           </li>
         ))}

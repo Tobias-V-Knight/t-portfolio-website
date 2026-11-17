@@ -313,3 +313,9 @@ longer in the window registry, so they name no window. One small effect in
 `useWindowManager` replaces any such URL with `/`, which keeps the routing model
 intact: the URL still owns the window, and a URL that names nothing is the
 desktop.
+
+**Pickleball IQ is marked Shipped.** A glance can now carry its own `status`,
+and any glance without one shows the default "In progress" pill. Pickleball IQ
+is the only one that sets it. The link preview text in `index.html` (the page
+description, Open Graph and Twitter card) now reads as an Applied AI Engineer in
+Minneapolis rather than a technical founder. `og.png` is unchanged.

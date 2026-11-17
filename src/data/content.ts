@@ -13,14 +13,14 @@
 //              number that survives to the live site is a number T gets asked
 //              about in an interview.
 
-export type { Placeholder, ProjectLink, Glance } from './types'
-import type { Glance, Placeholder, ProjectLink } from './types'
+export type { Placeholder, ProjectLink, Glance, GlanceStatus } from './types'
+import type { Glance, GlanceStatus, Placeholder, ProjectLink } from './types'
 
 // ---------------------------------------------------------------------------
 // PORTFOLIO, pared back on 2026-11-16.
 //
 // The public site shows the CV and current work. Projects are glances: a title,
-// one line and an "In progress" pill, and none of them opens. The case study
+// one line and a status pill, and none of them opens. The case study
 // windows, their metrics, screenshots and diagrams are no longer in the source
 // on this branch, so they cannot be read out of the shipped JavaScript either.
 // The full versions live on the `staging` branch and in git history.
@@ -36,7 +36,8 @@ export const now = {
   line: "I'm an Applied AI Engineer at Woodstone, a general contractor, where I build practical tools that take some of the manual work off the team. It's early days, and I'm learning the business as I go.",
 }
 
-export const glanceStatus = 'In progress'
+// The pill a glance shows when it does not set its own `status`.
+export const glanceStatus: GlanceStatus = 'In progress'
 
 export const glances: Glance[] = [
   {
@@ -46,6 +47,7 @@ export const glances: Glance[] = [
   {
     title: 'Pickleball IQ',
     line: "An iOS app that turns a player's rating into the next drill to run.",
+    status: 'Shipped',
   },
   {
     title: 'NLP Material Classifier',
