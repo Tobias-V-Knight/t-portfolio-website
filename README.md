@@ -39,7 +39,7 @@ that gets consulted before a new file is ever created.
 | `docs/adr/` | Decisions, with reasoning | One file per architectural decision: what was chosen, why, and what was rejected on what grounds. Numbered, append only, not edited after acceptance |
 | `assets_src/` | Raw source media | Original videos/photos (gitignored); the converted, served copies live in `public/` |
 | `docs/` | Extractor output | Raw material gathered from other repos, one file per project. See its own section below |
-| `index.html` | Page shell | Title, description, the Open Graph tags that drive the LinkedIn preview, and the Google Fonts link for Silkscreen and Inter |
+| `index.html` | Page shell | Title, description, the Open Graph and Twitter card tags that drive the LinkedIn preview, and the Google Fonts link for Silkscreen and Inter |
 | `vite.config.ts` | Build config | Sets the base path from `VITE_BASE`, which is what differs between the custom domain and the github.io preview URL |
 | `package.json` | Manifest | React 19, React Router 7, Vite 8, TypeScript. No UI library and no CSS framework |
 | `.gitignore` | Ignore list | `node_modules`, `dist`, editor and OS noise |
@@ -67,26 +67,21 @@ redacted.
 | File | What it is | What it does |
 |---|---|---|
 | `main.tsx` | Entry point | Mounts the app inside a `BrowserRouter`. Every route renders the same desktop, because the desktop has to survive the navigation |
-| `App.tsx` | The desktop | Owns the five desktop icons, builds the menus, renders the open windows, and runs the menu bar clock |
+| `App.tsx` | The desktop | Owns the desktop icons, builds the menus, renders the open windows, and runs the menu bar clock. CSI.APP and PICKLEBALL_IQ came off on 2026-11-16 with the case studies they opened |
 | `.github/workflows/ci.yml` | CI | Install, typecheck, build, on every PR and push to main. The `verify` job is the required check on the protected `main` branch |
 | `scripts/mini-worker.sh` | The Mac Mini worker | Pulls `agent-ready` issues off GitHub, works one per branch, opens a PR, comments on the issue. Never touches main. Run it inside tmux |
-| `data/types.ts` | The data vocabulary | `Project`, `Category`, `AtAGlance`, `DiagramId` and the rest. Split out by ADR-0006 so a project file can import its type without importing the module that imports it |
-| `data/projects/*.ts` | One file per project | Thirteen files, one `Project` each, default exported. `index.ts` collects them with `import.meta.glob` and sorts on `order`. There is no list of slugs anywhere, which is the point: two case study tickets touch no file in common |
-| `data/content.ts` | All the copy that is not a project | Every word on the site outside `projects/`, and the re-export surface for both it and `types.ts`, so all seven importers in `src/` still read one module. Split three ways: `home` (professional), `about` (the person), `resume` (the record). Skills are two levels, `skills` (eight discipline groups) and `toolbox` (named technologies), plus `capabilities` (the long form). Placeholder copy is flagged here and the flag renders on screen |
+| `data/types.ts` | The data vocabulary | `Placeholder`, `ProjectLink` and `Glance`. The case study types went with the case studies on 2026-11-16 |
+| `data/content.ts` | All the copy | Every word on the site, and the re-export surface for `types.ts`. `now` (what T is working on) and `glances` (each project as a title and one line) feed PORTFOLIO. Then `home` (professional), `about` (the person), `resume` (the record). Skills are two levels, `skills` (eight discipline groups) and `toolbox` (named technologies), plus `capabilities` (the long form). Placeholder copy is flagged here and the flag renders on screen |
 | `system/windows.ts` | Window manager | The window registry and the hook that reconciles open windows with the URL. The routing model is documented in `CLAUDE.md` and in the file itself |
 | `components/Window.tsx` | Window chrome | Title bar, close box, pointer dragging, focus and z order. Drag is desktop only |
 | `components/MenuBar.tsx` | Menu bar | The menus, including the Go menu, which is the fast path to the work for anyone who does not want to explore |
 | `components/Icons.tsx` | Desktop icons | OG-Mac SVGs: folder, document, 3.5" floppy, ridged trash, road, paddle, TV, film (movie), drawn crisp-edged |
-| `components/Diagrams.tsx` | The diagram registry | Globs `components/diagrams/*.tsx` and keys the registry on the filename, per ADR-0006, so a case study registers a drawing by adding a file rather than by editing a shared object literal. An unknown id renders nothing |
-| `components/diagram-primitives.tsx` | The drawing kit | `Box` and `Arrow`, the Mac bevel and the non scaling stroke. Shared by every diagram |
-| `components/diagrams/csi-shape.tsx` | The CSI pipeline shape | Hand authored inline SVG in two orientations, wide and tall, because Silkscreen in an 848 unit drawing renders at four pixels on a phone. The drawing is the ADR-0003 shape word for word, and adding a label to it is a client confidentiality decision |
 | `components/ErrorBoundary.tsx` | Crash guard | Catches a component error and renders a message instead of blanking the whole app |
 | `components/VideoJsPlayer.tsx` | Movie player | StrictMode-safe Video.js player used by the LUFFY.MOV window (B&W via CSS). Cycles the `moviePlaylist` clips in order and repeats |
 | `windows/Panels.tsx` | Small windows | HOME (professional snapshot + skill rows), ABOUT (the person), RESUME (capabilities, core skills, toolbox, history), Contact, Anime, Zippy, the MSBA panel, the Trash Easter egg, the placeholder tag + blank renderer |
-| `windows/Work.tsx` | PORTFOLIO and ARCHIVE | Finder list view (Name / Date Modified / Kind / Size). PORTFOLIO lists the case studies plus one ARCHIVE folder row; ARCHIVE opens its own window listing everything else. Every row in both opens a project window, and its depth follows the data |
+| `windows/Work.tsx` | PORTFOLIO | What T is working on now, then every project as a glance: title, one line, an In progress pill. Nothing opens. The Finder list, the ARCHIVE folder and the case study windows were removed on 2026-11-16 and live on the `staging` branch |
 | `components/ZoomRect.tsx` | The zoom rectangle | The classic Mac open and close animation: an outlined rectangle stepping from an icon out to a window and back. Its effect is mount only, and the comment in it explains why that is load bearing rather than lazy |
 | `components/Boot.tsx` | Boot sequence | A full screen ML training run: the import stack, then epochs with a jittering loss, then a prompt that waits for Enter. Plays once per session, skips on any key, homepage only. Never blocks content, because the desktop is already mounted underneath it |
-| `windows/Project.tsx` | Project window | The ADR-0008 case study template, eight sections. Sections render only when the data has them, which is how the client project stays outcome only, and how a project with no model gets no ML heading rather than an empty one. ML DECISIONS, MY CONTRIBUTION and the collapsed DEEP DIVE landed 2026-08-26 with the CSI window |
 | `windows/Photos.tsx` | Photo gallery, parked | Built, then taken off the desktop on 2026-08-25 (P2-03) because `public/photos/` has nothing real in it. Unreferenced by design; one entry in `windowDefs` puts it back |
 | `styles/system.css` | The entire visual language | Palette tokens, bevels, window chrome, menu bar, type scale, focus states, and the mobile layout. Every colour in the codebase comes from here |
 
@@ -117,9 +112,6 @@ one before writing project copy, never instead of it.
 | `og.png` | Link preview card | 1200x630. The actual front door, because almost every visitor sees this on LinkedIn before they see the site |
 | `favicon.svg` | Favicon | A small beige computer |
 | `luffy.mp4` · `ice.mp4` | Movie clips | The LUFFY.MOV playlist (B&W via player CSS), cycled in the order set by `moviePlaylist` in `data/content.ts`. A new clip is one entry there plus the file here |
-| `csi-home.jpg` | The CSI product, ready for a plan set | Real screenshot of the app's home state with the sidebar collapsed, which is why nothing in it needed blurring: no chat list, no project, no location. Captured 2026-08-27 from the running app on localhost |
-| `csi-verify.jpg` | The CSI human in the loop step | Real screenshot of the app's verification screen: ten of twelve fields confirmed, each cited to its page, one handed back to the estimator. Every region carrying the client's project identity is blurred, and the blur list is in the commit that added it. The product, the confidence badges, the page citations and the nav are the case study and all stay |
-| `csi-team.jpeg` | CSI ELP team photo | Shown on the CSI.APP project page |
 | `photos/*.JPG` | Placeholder photographs | Eight generated stand ins. The Photos window is queued for removal |
 
 ### `scripts/`

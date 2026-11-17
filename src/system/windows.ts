@@ -11,16 +11,13 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useLocation, useNavigate, useNavigationType } from 'react-router-dom'
-import { windowProjects } from '../data/content'
 
 export type WindowKind =
   | 'intro'
-  | 'project'
   | 'photos'
   | 'text'
   | 'trash'
   | 'work'
-  | 'archive'
   | 'anime'
   | 'contact'
   | 'zippy'
@@ -41,7 +38,6 @@ export interface WindowDef {
   // null means the window is not routed. Only the intro window is, because it
   // opens on load and closing it should not put an entry in history.
   route: string | null
-  payload?: string
   width: number
   height: number
   // Spawn position on the desktop, as a fraction of the viewport, so windows
@@ -94,25 +90,6 @@ export const windowDefs: WindowDef[] = [
     height: 520,
     sizeFrac: { w: 0.52, h: 0.72, maxW: 920, maxH: 740, minW: 480, minH: 400 },
     spawn: { x: 0.14, y: 0.1 },
-  },
-  {
-    // The ARCHIVE folder, opened from inside PORTFOLIO.
-    //
-    // T's call on 2026-08-26, and a better idea than the divider the ticket
-    // asked for. A divider is a decoration on a list; a folder is the Finder's
-    // own way of saying "these exist and are not the point". It also fixes
-    // something a divider cannot: nine archived rows take more vertical space
-    // than five case studies, so the thing being played down was dominating
-    // the window. One folder row makes the case studies the whole visible list.
-    id: 'archive',
-    title: 'ARCHIVE',
-    kind: 'archive',
-    route: '/work/archive',
-    width: 660,
-    height: 460,
-    // Offset from PORTFOLIO's own spawn so the parent stays visible behind it,
-    // the way a Finder folder opens beside the window it came from.
-    spawn: { x: 0.22, y: 0.2 },
   },
   {
     id: 'msba',
@@ -174,21 +151,10 @@ export const windowDefs: WindowDef[] = [
     height: 286,
     spawn: { x: 0.75, y: 0.58 },
   },
-  // Only projects with a full case study get a window. Everything else is a
-  // row in the WORK list, which is not the same thing as a thin window.
-  ...windowProjects.map((p, i) => ({
-    id: `project:${p.slug}`,
-    title: p.windowTitle,
-    kind: 'project' as const,
-    route: `/projects/${p.slug}`,
-    payload: p.slug,
-    // Case-study windows open large, taking a real portion of the screen the
-    // way Charlie Dean's project pages do, not a thin note.
-    width: 900,
-    height: 720,
-    sizeFrac: { w: 0.64, h: 0.84, maxW: 1120, maxH: 880, minW: 420, minH: 480 },
-    spawn: { x: 0.16 + i * 0.03, y: 0.07 + i * 0.04 },
-  })),
+  // No project windows, and no ARCHIVE. Pared back on 2026-11-16: projects are
+  // glances inside PORTFOLIO and none of them opens. The old routes,
+  // `/projects/<slug>` and `/work/archive`, are no longer in this registry, so
+  // they resolve to no window at all. See the effect in `useWindowManager`.
 ]
 
 const byId = new Map(windowDefs.map((w) => [w.id, w]))
@@ -330,6 +296,16 @@ export function useWindowManager() {
   const [raised, setRaised] = useState<'intro' | 'luffy' | null>(null)
 
   const routeId = byRoute.get(location.pathname) ?? null
+
+  // A URL that names no window is the desktop. That covers the old case study
+  // links (`/projects/<slug>`, `/work/archive`) that are still out there on
+  // LinkedIn and in old messages: they land on the desktop with nothing open,
+  // never a 404 and never a window that no longer exists. Replacing rather
+  // than pushing keeps the dead URL out of history, so the address bar says
+  // what the screen shows and Back does not walk into it.
+  useEffect(() => {
+    if (!routeId && location.pathname !== '/') navigate('/', { replace: true })
+  }, [routeId, location.pathname, navigate])
 
   // One effect owns the whole relationship between the URL and the stack.
   // Anything that wants to open or close a window navigates, and this reacts.
