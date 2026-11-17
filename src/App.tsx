@@ -15,15 +15,13 @@ import {
   HomeIcon,
   ImgIcon,
   MailIcon,
-  PaddleIcon,
-  RoadIcon,
   TrashIcon,
   TvIcon,
 } from './components/Icons'
 import { MacWindow } from './components/Window'
 import { defFor, defSize, plannedRect, useWindowManager } from './system/windows'
 import { ZoomRect, type Rect } from './components/ZoomRect'
-import { home, moviePlaylist, projects } from './data/content'
+import { home, moviePlaylist } from './data/content'
 import {
   AboutPanel,
   AnimePanel,
@@ -34,8 +32,7 @@ import {
   TrashPanel,
   ZippyPanel,
 } from './windows/Panels'
-import { ProjectPanel } from './windows/Project'
-import { ArchivePanel, WorkPanel } from './windows/Work'
+import { WorkPanel } from './windows/Work'
 import './styles/system.css'
 
 // Five desktop objects, which is the middle of the four to six the spec asks
@@ -50,10 +47,11 @@ const ZippyIcon = ({ className }: { className?: string }) => (
 // most of why a classic Mac desktop is memorable at all.
 // Orientation, T's call: professional on the left, fun on the right. The left
 // column is the work you'd hire him for; the right is the person.
+// CSI.APP and PICKLEBALL_IQ came off on 2026-11-16 with the case studies they
+// opened. Projects are glances inside PORTFOLIO now, and an icon that opens
+// nothing is worse than no icon.
 const desktopItems = [
   { id: 'work', label: 'PORTFOLIO', Art: FolderIcon, side: 'left' },
-  { id: 'project:csi-bid-intelligence', label: 'CSI.APP', Art: RoadIcon, side: 'left' },
-  { id: 'project:pickleball-iq', label: 'PICKLEBALL_IQ', Art: PaddleIcon, side: 'left' },
   { id: 'msba', label: 'MSBA.TXT', Art: DocIcon, side: 'left' },
   { id: 'resume', label: 'RESUME.TXT', Art: DocIcon, side: 'left' },
   { id: 'about', label: 'ABOUT_ME.TXT', Art: DocIcon, side: 'left' },
@@ -80,11 +78,10 @@ function breakableLabel(label: string) {
 // Every window carries the same icon in its title bar that it has on the
 // desktop, which is what makes an icon feel like the file rather than like a
 // button that happens to open something.
-function titleIconFor(id: string, kind: string) {
+function titleIconFor(id: string) {
   const byId: Record<string, () => React.JSX.Element> = {
     intro: () => <HomeIcon className="mac-title-art" />,
     work: () => <FolderIcon className="mac-title-art" />,
-    archive: () => <FolderIcon className="mac-title-art" />,
     about: () => <DocIcon className="mac-title-art" />,
     msba: () => <DocIcon className="mac-title-art" />,
     resume: () => <DocIcon className="mac-title-art" />,
@@ -93,12 +90,9 @@ function titleIconFor(id: string, kind: string) {
     trash: () => <TrashIcon className="mac-title-art" />,
     zippy: () => <ZippyIcon className="mac-title-art" />,
     luffy: () => <FilmIcon className="mac-title-art" />,
-    'project:csi-bid-intelligence': () => <RoadIcon className="mac-title-art" />,
-    'project:pickleball-iq': () => <PaddleIcon className="mac-title-art" />,
   }
   const exact = byId[id]
   if (exact) return exact()
-  if (kind === 'project') return <DocIcon className="mac-title-art" />
   return <DocIcon className="mac-title-art" />
 }
 
@@ -141,7 +135,6 @@ export default function App() {
   const [zoom, setZoom] = useState<{ from: Rect; to: Rect; key: number } | null>(null)
   const zoomKey = useRef(0)
   const [workStatus, setWorkStatus] = useState('')
-  const [archiveStatus, setArchiveStatus] = useState('')
 
   // Functional nav, Charlie Dean style: an Apple dropdown (About Tobias / View
   // Resume) plus Portfolio / About / Contact that open their window on click.
@@ -222,7 +215,6 @@ export default function App() {
   )
 
   const handleWorkStatus = useCallback((s: string) => setWorkStatus(s), [])
-  const handleArchiveStatus = useCallback((s: string) => setArchiveStatus(s), [])
 
   return (
     <>
@@ -264,9 +256,6 @@ export default function App() {
 
         {openWindows.map((w, i) => {
           const isTop = w.id === topId
-          const project =
-            w.def.kind === 'project' ? projects.find((p) => p.slug === w.def.payload) : undefined
-
           return (
             <MacWindow
               key={w.id}
@@ -285,16 +274,8 @@ export default function App() {
               zoomed={Boolean(zoomFrom[w.id])}
               width={sizes[w.id]?.w ?? defSize(w.def).w}
               height={sizes[w.id]?.h ?? defSize(w.def).h}
-              icon={titleIconFor(w.id, w.def.kind)}
-              status={
-                w.def.kind === 'work'
-                  ? workStatus
-                  : w.def.kind === 'archive'
-                    ? archiveStatus
-                  : w.def.kind === 'project' && project
-                    ? `${project.status}`
-                    : undefined
-              }
+              icon={titleIconFor(w.id)}
+              status={w.def.kind === 'work' ? workStatus : undefined}
             >
               {w.def.kind === 'intro' && <IntroPanel onOpen={openZoomed} />}
               {w.def.kind === 'text' && <AboutPanel />}
@@ -311,20 +292,7 @@ export default function App() {
                   </Suspense>
                 </ErrorBoundary>
               )}
-              {w.def.kind === 'archive' && (
-                <ArchivePanel
-                  onOpenProject={(slug) => openZoomed(`project:${slug}`)}
-                  onStatus={handleArchiveStatus}
-                />
-              )}
-              {w.def.kind === 'work' && (
-                <WorkPanel
-                  onOpenProject={(slug) => openZoomed(`project:${slug}`)}
-                  onOpenArchive={() => openZoomed('archive')}
-                  onStatus={handleWorkStatus}
-                />
-              )}
-              {w.def.kind === 'project' && project && <ProjectPanel project={project} />}
+              {w.def.kind === 'work' && <WorkPanel onStatus={handleWorkStatus} />}
             </MacWindow>
           )
         })}

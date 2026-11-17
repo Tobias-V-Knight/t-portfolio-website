@@ -1,10 +1,5 @@
-// Every word of copy on this site that is not a project lives here, so that
-// replacing placeholder text with real text never means hunting through
-// components.
-//
-// ADR-0006 moved the projects out to `projects/`, one file each, and the types
-// they share to `types.ts`. This file re-exports both, so every importer in
-// `src/` still reads one module and none of them changed.
+// Every word of copy on this site lives here, so that replacing placeholder
+// text with real text never means hunting through components.
 //
 // Two conventions, both load bearing:
 //
@@ -18,53 +13,57 @@
 //              number that survives to the live site is a number T gets asked
 //              about in an interview.
 
-export type {
-  Placeholder,
-  ProjectLink,
-  AtAGlance,
-  Category,
-  DiagramId,
-  Project,
-} from './types'
-import type { AtAGlance, Category, Placeholder, ProjectLink } from './types'
+export type { Placeholder, ProjectLink, Glance } from './types'
+import type { Glance, Placeholder, ProjectLink } from './types'
 
-export { projects } from './projects'
-import { projects } from './projects'
+// ---------------------------------------------------------------------------
+// PORTFOLIO, pared back on 2026-11-16.
+//
+// The public site shows the CV and current work. Projects are glances: a title,
+// one line and an "In progress" pill, and none of them opens. The case study
+// windows, their metrics, screenshots and diagrams are no longer in the source
+// on this branch, so they cannot be read out of the shipped JavaScript either.
+// The full versions live on the `staging` branch and in git history.
+//
+// Every line here is the old one liner with its figures taken out. A number in
+// a glance is a claim with nothing behind it on the page.
+// ---------------------------------------------------------------------------
 
-export const atAGlancePrompts: AtAGlance = {
-  problem: '[ who hurts, and how much ]',
-  approach: '[ what the system does about it ]',
-  output: '[ what somebody ends up in front of ]',
-  evidence: '[ the strongest proof it was real ]',
+// What I am working on now. Role and outcome only: no colleague names, no
+// company figures, nothing from a client.
+export const now = {
+  heading: 'WHAT I AM WORKING ON',
+  line: "I'm an Applied AI Engineer at Woodstone, a general contractor, where I build practical tools that take some of the manual work off the team. It's early days, and I'm learning the business as I go.",
 }
 
-// ---------------------------------------------------------------------------
-// Categories
-//
-// The filter chips in the WORK window, from the fabiodicec.ca reference T sent
-// on 2026-08-23. Tagging is deliberately tight: a project gets AI / ML only if
-// there is a model in it. Tagging generously made the chip return 10 of 13,
-// which is not a filter, it is a list with extra steps.
-// ---------------------------------------------------------------------------
+export const glanceStatus = 'In progress'
 
-export const categories: { id: Category; label: string }[] = [
-  { id: 'product', label: 'PRODUCT' },
-  { id: 'ai-ml', label: 'AI / ML' },
-  { id: 'data', label: 'DATA SCI' },
-  { id: 'hardware', label: 'HARDWARE' },
-  { id: 'tools', label: 'TOOLS' },
+export const glances: Glance[] = [
+  {
+    title: 'CSI Bid Intelligence',
+    line: 'Reading a highway contractor’s bid documents end to end, to pull out the traps and the likely competition.',
+  },
+  {
+    title: 'Pickleball IQ',
+    line: "An iOS app that turns a player's rating into the next drill to run.",
+  },
+  {
+    title: 'NLP Material Classifier',
+    line: 'Replacing a keyword matcher with a small local model that reads construction materials, scored against labels checked by hand.',
+  },
+  {
+    title: '4MATIV Fleet Analytics',
+    line: 'Telling a broken school bus GPS device apart from a driver who skipped the route.',
+  },
+  {
+    title: 'RoleRadar',
+    line: 'A job tracker that watches the careers pages of a fixed list of target companies.',
+  },
+  {
+    title: 'GED Candidate Segmentation',
+    line: 'Grouping GED candidates by how they behave rather than by demographics.',
+  },
 ]
-
-// `caseStudy` is the one switch, and it decides grouping only. Every project
-// opens a window; the depth of that window is decided by how much material the
-// entry actually has, because the panel renders a section only when its data
-// exists. A thin project produces a thin window without needing a second
-// template to maintain.
-export const caseStudyProjects = projects.filter((p) => p.caseStudy)
-export const archiveProjects = projects.filter((p) => !p.caseStudy)
-
-// Every project is routed and openable.
-export const windowProjects = projects
 
 export interface Role {
   org: string
@@ -375,7 +374,7 @@ export const home = {
   copyState: 'PLACEHOLDER' as Placeholder,
   // One line. HOME earns its keep by being short.
   line: 'I build software and AI systems: mostly, taking something a person currently reads by hand and finding out whether a machine can read it well enough to be trusted.',
-  status: 'CURRENTLY: PUTTING CSI INTO PRODUCTION',
+  status: 'CURRENTLY: APPLIED AI ENGINEER AT WOODSTONE',
 
   // PARKED 2026-08-25, T's call: the chip is not rendered on HOME right now.
   // The copy stays because it is approved and the decision may reverse, and
@@ -436,6 +435,8 @@ export const resume = {
   // Newest first, because every resume runs newest first and this one used to
   // run oldest first for no reason anyone recorded.
   experience: [
+    // Added 2026-11-16 with the pare back. Role only, per `now` above.
+    { org: 'Woodstone', role: 'Applied AI Engineer', when: 'Sept 2026 to now' },
     {
       org: 'Carlson Analytics Lab',
       role: 'Forward Deployed Engineer, Graduate Consultant',
