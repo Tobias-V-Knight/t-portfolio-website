@@ -147,7 +147,8 @@ function RoleList({ rows }: { rows: Role[] }) {
         <li key={r.org}>
           <span className="mac-role-org">{r.org}</span>
           <span className="mac-meta">
-            {withBlanks(r.role)} · {withBlanks(r.when)}
+            {withBlanks(r.role)}
+            {r.when && <> · {withBlanks(r.when)}</>}
           </span>
         </li>
       ))}
@@ -284,9 +285,6 @@ export function ResumePanel() {
       <h1>{home.name}</h1>
       <p className="mac-lede">{home.positioning}</p>
 
-      <h2>WHAT I CONTRACT IN</h2>
-      <CapabilityList />
-
       {/* Two levels, visually separate. Core skills are what he can do;
           the toolbox is what he does it with. Keeping them apart is what stops
           `Python` and `RAG` competing for the same slot. */}
@@ -326,18 +324,22 @@ export function ResumePanel() {
       <h2>EDUCATION</h2>
       <RoleList rows={resume.education} />
 
-      <h2>RESUME</h2>
-      {home.resume.present ? (
-        <p>
-          <a href={`${import.meta.env.BASE_URL}${home.resume.file}`} download>
-            RESUME.PDF
-          </a>
-        </p>
-      ) : (
-        <p>{withBlanks(`[ drop resume.pdf into public/ and flip present to true ]`)}</p>
-      )}
+      {/* The record first, then what he contracts in (T, 2026-11-17). */}
+      <h2>WHAT I CONTRACT IN</h2>
+      <CapabilityList />
 
-      {resume.copyState === 'PLACEHOLDER' && <PlaceholderTag />}
+      {/* The PDF link shows only once a real resume.pdf is in public/. The
+          old placeholder note and stamp came off on 2026-11-17. */}
+      {home.resume.present && (
+        <>
+          <h2>RESUME</h2>
+          <p>
+            <a href={`${import.meta.env.BASE_URL}${home.resume.file}`} download>
+              RESUME.PDF
+            </a>
+          </p>
+        </>
+      )}
     </div>
   )
 }

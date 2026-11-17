@@ -61,10 +61,6 @@ export const glances: Glance[] = [
     title: 'RoleRadar',
     line: 'A job tracker that watches the careers pages of a fixed list of target companies.',
   },
-  {
-    title: 'GED Candidate Segmentation',
-    line: 'Grouping GED candidates by how they behave rather than by demographics.',
-  },
 ]
 
 export interface Role {
@@ -370,8 +366,9 @@ export const home = {
   name: 'TOBIAS KNIGHT',
   // Was 'technical founder / builder / applied AI'. The founder half came off
   // on 2026-08-23: the site's job is getting hired, and a prominent founder
-  // title reads to a hiring manager as someone who will leave.
-  positioning: 'builder / applied AI',
+  // title reads to a hiring manager as someone who will leave. Then
+  // 'builder / applied AI' until 2026-11-17, when it became the job title.
+  positioning: 'Applied AI Engineer',
   location: 'MINNEAPOLIS, MN',
   copyState: 'PLACEHOLDER' as Placeholder,
   // One line. HOME earns its keep by being short.
@@ -461,12 +458,12 @@ export const resume = {
   education: [
     {
       org: 'University of Minnesota, Carlson',
-      // Every career document says "Candidate for" and the Aug 2026 date has
-      // now passed, so whether this is conferred is a fact only T has.
-      role: 'MS Business Analytics [ conferred, or still candidate? ]',
+      // Conferred Aug 2026 (T, 2026-11-17).
+      role: 'MS Business Analytics',
       when: 'Aug 2026',
     },
-    { org: 'University of St. Thomas', role: 'BA Finance', when: 'May 2018' },
+    // No year, by T's call on 2026-11-17.
+    { org: 'University of St. Thomas', role: 'BA Finance', when: '' },
   ] as Role[],
 }
 
